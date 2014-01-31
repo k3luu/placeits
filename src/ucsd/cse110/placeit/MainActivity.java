@@ -11,6 +11,7 @@ import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -19,17 +20,17 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class MainActivity extends FragmentActivity implements OnMarkerClickListener, OnMapLongClickListener, OnCameraChangeListener { 
 	
 	private GoogleMap mMap;
-    private TextView mTapTextView;
-    private TextView mCameraTextView;
+//    private TextView mTapTextView;
+//    private TextView mCameraTextView;
 
  
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        
-        mTapTextView = (TextView) findViewById(R.id.tap_text);
-        mCameraTextView = (TextView) findViewById(R.id.camera_text);
+//        
+//        mTapTextView = (TextView) findViewById(R.id.tap_text);
+//        mCameraTextView = (TextView) findViewById(R.id.camera_text);
 
         setUpMapIfNeeded();
     }
@@ -69,20 +70,20 @@ public class MainActivity extends FragmentActivity implements OnMarkerClickListe
     public void onMapLongClick(LatLng point) {
     	mMap.addMarker(new MarkerOptions()
 	        .position(point)
-	        .draggable(true));
-        mTapTextView.setText("long pressed, point=" + point);
+	        .draggable(true))
+	        .setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_launcher));
+        //mTapTextView.setText("long pressed, point=" + point);
     }
 
     @Override
     public void onCameraChange(final CameraPosition position) {
-        mCameraTextView.setText(position.toString());
+        //mCameraTextView.setText(position.toString());
     }
 
 	@Override
 	public boolean onMarkerClick(Marker marker) {
 		
 		Intent intent = new Intent(this, PlaceItFormActivity.class); 
-		mCameraTextView.setText("MarkerClicked");
 	    //intent.putExtra(marker.getPosition(), position );
 	    startActivity(intent);
 		

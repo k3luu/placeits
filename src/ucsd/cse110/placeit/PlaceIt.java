@@ -11,13 +11,14 @@ public class PlaceIt {
 	
 	////////////////////// Private Variables //////////////////////
 	
-	private int id;					// db id must be unique
-	private String title;			// name of the PlaceIt
-	private String status; 			// posted (active), pulled down (triggered), expired
-	private String description;		// limited to 1000 characters
-	private LatLng location;		// the lat/lng of the location
+	private int id;						// db id must be unique
+	private String title;				// name of the PlaceIt
+	private String status; 				// posted (active), pulled down (triggered), expired
+	private String description;			// limited to 1000 characters
+	private LatLng location;			// the lat/lng of the location
+	private PlaceItScheduler scheduler; // handles PlaceIt's that are scheduled
 	
-	// NOTE: we might want to separate into another class
+	// NOTE: We might want to separate into another class
 	private Date expiration;		// the day the PlaceIt expires
 	private Date scheduled_date;	// the day to schedule
 	
