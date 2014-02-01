@@ -89,8 +89,8 @@ public class PlaceItDbHelper extends SQLiteOpenHelper {
 	    values.put(KEY_TITLE, placeIt.getTitle()); 					// PlaceIt Title
 	    values.put(KEY_STATUS, placeIt.getStatus()); 				// PlaceIt Status
 	    values.put(KEY_DESC, placeIt.getDescription()); 			// PlaceIt Description
-	    values.put(KEY_LAT, placeIt.getPlaceItLoc().latitude); 		// PlaceIt Latitude
-	    values.put(KEY_LNG, placeIt.getPlaceItLoc().longitude); 	// PlaceIt Longitude
+	    values.put(KEY_LAT, placeIt.getLocation().latitude); 		// PlaceIt Latitude
+	    values.put(KEY_LNG, placeIt.getLocation().longitude); 	// PlaceIt Longitude
 	    values.put(KEY_EXP, placeIt.getExpiration()); 				// PlaceIt Expiration
 	    values.put(KEY_SCHED_DATE, placeIt.getScheduled_date()); 	// PlaceIt Scheduled Date
 	 
@@ -99,7 +99,7 @@ public class PlaceItDbHelper extends SQLiteOpenHelper {
 	    db.close(); // Closing database connection
 	}
 	
-	// Getting single PlaceIt
+	// Getting single PlaceIt by its ID
 	public PlaceIt getPlaceIt(int id) throws NumberFormatException, ParseException {
 
 		// get a readable instance of our database 
@@ -144,7 +144,7 @@ public class PlaceItDbHelper extends SQLiteOpenHelper {
 	            placeIt.setTitle(cursor.getString(0));
 	            placeIt.setStatus(cursor.getString(1));
 	            placeIt.setDescription(cursor.getString(2));
-	            placeIt.setPlaceItLocation(new LatLng(cursor.getDouble(3),cursor.getDouble(4)));
+	            placeIt.setLocation(new LatLng(cursor.getDouble(3),cursor.getDouble(4)));
 	            placeIt.setExpiration(cursor.getString(5));
 	            placeIt.setScheduled_date(cursor.getString(6));
 	            
@@ -181,8 +181,8 @@ public class PlaceItDbHelper extends SQLiteOpenHelper {
 	    values.put(KEY_TITLE, placeIt.getTitle()); 					// PlaceIt Title
 	    values.put(KEY_STATUS, placeIt.getStatus()); 				// PlaceIt Status
 	    values.put(KEY_DESC, placeIt.getDescription()); 			// PlaceIt Description
-	    values.put(KEY_LAT, placeIt.getPlaceItLoc().latitude); 		// PlaceIt Latitude
-	    values.put(KEY_LNG, placeIt.getPlaceItLoc().longitude); 	// PlaceIt Longitude
+	    values.put(KEY_LAT, placeIt.getLocation().latitude); 		// PlaceIt Latitude
+	    values.put(KEY_LNG, placeIt.getLocation().longitude); 	// PlaceIt Longitude
 	    values.put(KEY_EXP, placeIt.getExpiration()); 				// PlaceIt Expiration
 	    values.put(KEY_SCHED_DATE, placeIt.getScheduled_date()); 	// PlaceIt Scheduled Date
 	 

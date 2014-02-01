@@ -12,15 +12,12 @@ public class PlaceIt {
 	////////////////////// Private Variables //////////////////////
 	
 	private int id;						// db id must be unique
-	private String title;				// name of the PlaceIt
+	private String title;				// REQUIRED: name of the PlaceIt
 	private String status; 				// posted (active), pulled down (triggered), expired
-	private String description;			// limited to 1000 characters
-	private LatLng location;			// the lat/lng of the location
-	private PlaceItScheduler scheduler; // handles PlaceIt's that are scheduled
-	
-	// NOTE: We might want to separate into another class
-	private Date expiration;		// the day the PlaceIt expires
-	private Date scheduled_date;	// the day to schedule
+	private String description;			// REQUIRED: aditional details of our PlaceIt
+	private LatLng location;			// REQUIRED: the lat/lng of the location
+	private Date expiration;			// the day the PlaceIt expires
+	private Date scheduled_date;		// the day to schedule
 	
 	////////////////////// constructors //////////////////////
 	
@@ -59,7 +56,7 @@ public class PlaceIt {
 		return description;
 	}
 	
-	public LatLng getPlaceItLoc() {
+	public LatLng getLocation() {
 		return location;
 	}
 	
@@ -93,10 +90,11 @@ public class PlaceIt {
 		this.description = description;
 	}
 	
-	public void setPlaceItLocation(LatLng location) {
+	public void setLocation(LatLng location) {
 		this.location = location;
 	}
 	
+	// String parameter to be able to use with SQLite db
 	public void setExpiration(String expiration) {
 		
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
@@ -112,6 +110,7 @@ public class PlaceIt {
 		this.expiration = expirationDate;
 	}
 	
+	// String parameter to be able to use with SQLite db
 	public void setScheduled_date(String scheduled_date_string) {
 		
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
