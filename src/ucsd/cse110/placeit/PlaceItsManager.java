@@ -1,5 +1,7 @@
 package ucsd.cse110.placeit;
 
+import java.text.DecimalFormat;
+
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.Activity;
@@ -15,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 public class PlaceItsManager extends FragmentActivity implements
 ActionBar.TabListener {
@@ -28,16 +31,27 @@ ActionBar.TabListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		// Get the intent sent from the map/add button
-		Intent intent = getIntent();
-	    Double lat = intent.getDoubleExtra(MainActivity.LAT, 0.0);
-	    Double lng = intent.getDoubleExtra(MainActivity.LNG, 0.0);
-	    
-	    // for proof of concept
-//	    EditText editView = (EditText) findViewById(R.id.location);
-//	    editView.setText(lat.toString() + lng.toString());
-
+		// Load layout
 		setContentView(R.layout.place_its_manager_activity);
+		
+		Bundle b = getIntent().getExtras();
+		MyParcelable placeItWithLocationOnly = b.getParcelable("placeItWithLocationOnly");
+		// Get the intent sent from the map/add button
+		//Intent intent = getIntent();
+	    double lat = placeItWithLocationOnly.getLocation().latitude;
+	    //////double lng = placeItWithLocationOnly.getLocation().longitude;
+	    /*String reverseGeo = "http://maps.googleapis.com/maps/api/geocode/json?latlng=" + lat.toString() +","+
+	    		lng.toString() + "&sensor=false";*/
+	    
+	    DecimalFormat df = new DecimalFormat("#.#######");
+	    //String latFormat = df.format(lat);
+	    //String lngFormat = df.format(lng);
+	    // for proof of concept
+	    EditText editView = (EditText) findViewById(R.id.location);
+        ////////////editView.setText(latFormat + "; " + lngFormat);
+	    //editView.setText(reverseGeo);
+
+		//setContentView(R.layout.place_its_manager_activity);
 	}
 
 	@Override

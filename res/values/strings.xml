@@ -24,4 +24,15 @@
     <string name="place_it_manager_menu_add">Confirm</string>
     <string name="place_it_manager_menu_cancel">Cancel</string>
     <string name="title_data_manager">Place-Its Manager</string>
+    <string name="title_hint">Title:</string>
+    <string name="description_hint">Description:</string>
+    <string name="location_hint">Location:</string>
+    <string name="icon_gap">4sp</string>
+    <string name="sunday">Su</string>
+    <string name="monday">Mo</string>
+    <string name="tuesday">Tu</string>
+    <string name="wednesday">We</string>
+    <string name="thursday">Th</string>
+    <string name="friday">Fr</string>
+    <string name="saturday">Sa</string>
 </resources>

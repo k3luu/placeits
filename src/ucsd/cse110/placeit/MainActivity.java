@@ -8,7 +8,7 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
+import ucsd.cse110.placeit.PlaceIt;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
@@ -35,6 +35,7 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
 	
 	public final static String LAT = "ucsd.cse110.placeit.LAT";
 	public final static String LNG = "ucsd.cse110.placeit.LNG";
+	public final static String LATLNG = "ucsd.cse110.placeit.LATLNG";
 	
 	///////////////////////////// Private Variables ///////////////////////////
 	
@@ -88,6 +89,8 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
         	startActivity(intent1);
     	return true;
     	
+    	
+    	// add status putExtra
     	case R.id.create_event_btn:
     		Log.i("MainActive", "create button click");
     		Intent intent2 = new Intent(this, PlaceItsManager.class);
@@ -141,10 +144,12 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
 	        .draggable(true))
 	        .setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_launcher));
     	
+    	MyParcelable placeItWithLocationOnly = new MyParcelable(point);
+    	
     	Intent intent = new Intent(this, PlaceItsManager.class); 
-
-    	intent.putExtra(LAT, point.latitude);
-    	intent.putExtra(LNG, point.longitude);
+    	//intent.putExtra(LAT, point.latitude);
+    	//intent.putExtra(LNG, point.longitude);
+    	intent.putExtra("ucsd.cs110.placeit.placeItWithLocationOnly", placeItWithLocationOnly);
 	    startActivity(intent);
     }
 

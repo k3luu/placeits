@@ -118,8 +118,8 @@ public class PlaceItDbHelper extends SQLiteOpenHelper {
 	    // create the PlaceIt that'll be returned
 	    PlaceIt placeIt = new PlaceIt(Integer.parseInt(cursor.getString(0)),
 	            cursor.getString(1), cursor.getString(2), cursor.getString(3),
-	            new LatLng(cursor.getDouble(4),cursor.getDouble(5)), 
-	            formatter.parse(cursor.getString(6)), formatter.parse(cursor.getString(7)));
+	            new LatLng(cursor.getDouble(4),cursor.getDouble(5))/*, 
+	            formatter.parse(cursor.getString(6)), formatter.parse(cursor.getString(7))*/);
 	    
 	    // return placeIt
 	    return placeIt;

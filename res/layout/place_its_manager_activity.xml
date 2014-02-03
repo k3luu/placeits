@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/RelativeLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
@@ -17,7 +18,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:ems="10"
-        android:hint="Title:"
+        android:hint="@string/title_hint"
         android:textSize="16sp" />
 
     <EditText
@@ -28,12 +29,13 @@
         android:layout_alignParentRight="true"
         android:layout_below="@+id/editText1"
         android:ems="10"
-        android:hint="Description:"
+        android:hint="@string/description_hint"
         android:inputType="textMultiLine"
         android:textSize="16sp" />
 
     <EditText
-        android:id="@+id/editText3"
+        
+        android:id="@+id/location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/editText2"
@@ -41,79 +43,123 @@
         android:layout_below="@+id/editText2"
         android:layout_marginTop="64dp"
         android:ems="10"
-        android:hint="Location:"
-        android:inputType="textPostalAddress"
+        android:hint="@string/location_hint"
+        android:inputType="text"
         android:textSize="16sp" />
 
     <TextView
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/editText3"
-        android:layout_below="@+id/editText3"
+        android:layout_alignLeft="@+id/location"
+        android:layout_below="@+id/location"
         android:layout_marginTop="14dp"
-        android:text="  Recurrence:"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView4"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="18dp"
-        android:text=" Su  Mo  Tu  We  Th   Fr  Sa"
+        android:text="Recurrence:"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textSize="18sp" />
+        tools:ignore="HardcodedText" />
 
-    <CheckBox
-        android:id="@+id/checkBox5"
+    <ToggleButton
+        android:id="@+id/ToggleButton01"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/checkBox1"
-        android:layout_toRightOf="@+id/checkBox4" />
+        android:layout_alignBaseline="@+id/toggleButton1"
+        android:layout_alignBottom="@+id/toggleButton1"
+        android:layout_marginLeft="4dip"
+        android:layout_toRightOf="@+id/toggleButton1"
+        android:minHeight="38dip"
+        android:minWidth="42dip"
+        android:text="ToggleButton"
+        android:textOff="@string/monday"
+        android:textOn="@string/monday"
+        android:textSize="12sp" />
 
-    <CheckBox
-        android:id="@+id/checkBox6"
+    <ToggleButton
+        android:id="@+id/ToggleButton02"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView1"
-        android:layout_toRightOf="@+id/checkBox5" />
+        android:layout_alignBaseline="@+id/ToggleButton01"
+        android:layout_alignBottom="@+id/ToggleButton01"
+        android:layout_marginLeft="4dip"
+        android:layout_toRightOf="@+id/ToggleButton01"
+        android:minHeight="38dip"
+        android:minWidth="42dip"
+        android:text="ToggleButton"
+        android:textOff="@string/tuesday"
+        android:textOn="@string/tuesday"
+        android:textSize="12sp" />
 
-    <CheckBox
-        android:id="@+id/checkBox7"
+    <ToggleButton
+        android:id="@+id/ToggleButton03"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/checkBox1"
-        android:layout_toRightOf="@+id/checkBox6" />
+        android:layout_alignBaseline="@+id/ToggleButton02"
+        android:layout_alignBottom="@+id/ToggleButton02"
+        android:layout_marginLeft="4dip"
+        android:layout_toRightOf="@+id/ToggleButton02"
+        android:minHeight="38dip"
+        android:minWidth="42dip"
+        android:text="ToggleButton"
+        android:textOff="@string/wednesday"
+        android:textOn="@string/wednesday"
+        android:textSize="12sp" />
 
-    <CheckBox
-        android:id="@+id/checkBox1"
+    <ToggleButton
+        android:id="@+id/ToggleButton04"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView1"
-        android:layout_below="@+id/textView1"
-        android:textAppearance="?android:attr/textAppearanceSmallInverse" />
+        android:layout_alignBaseline="@+id/ToggleButton03"
+        android:layout_alignBottom="@+id/ToggleButton03"
+        android:layout_marginLeft="4dip"
+        android:layout_toRightOf="@+id/ToggleButton03"
+        android:minHeight="38dip"
+        android:minWidth="42dip"
+        android:text="ToggleButton"
+        android:textOff="@string/thursday"
+        android:textOn="@string/thursday"
+        android:textSize="12sp" />
 
-    <CheckBox
-        android:id="@+id/checkBox2"
+    <ToggleButton
+        android:id="@+id/ToggleButton05"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView1"
-        android:layout_toRightOf="@+id/checkBox1" />
+        android:layout_alignBaseline="@+id/ToggleButton04"
+        android:layout_alignBottom="@+id/ToggleButton04"
+        android:layout_marginLeft="4dip"
+        android:layout_toRightOf="@+id/ToggleButton04"
+        android:minHeight="38dip"
+        android:minWidth="42dip"
+        android:text="ToggleButton"
+        android:textOff="@string/friday"
+        android:textOn="@string/friday"
+        android:textSize="12sp" />
 
-    <CheckBox
-        android:id="@+id/checkBox3"
+    <ToggleButton
+        android:id="@+id/ToggleButton06"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView1"
-        android:layout_toRightOf="@+id/checkBox2" />
+        android:layout_alignBaseline="@+id/ToggleButton05"
+        android:layout_alignBottom="@+id/ToggleButton05"
+        android:layout_marginLeft="4dip"
+        android:layout_toRightOf="@+id/ToggleButton05"
+        android:minHeight="38dip"
+        android:minWidth="42dip"
+        android:text="ToggleButton"
+        android:textOff="@string/saturday"
+        android:textOn="@string/saturday"
+        android:textSize="12sp" />
 
-    <CheckBox
-        android:id="@+id/checkBox4"
+    <ToggleButton
+        android:id="@+id/toggleButton1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView1"
-        android:layout_toRightOf="@+id/checkBox3" />
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/textView4"
+        android:layout_marginTop="12dp"
+        android:minHeight="38dip"
+        android:minWidth="42dip"
+        android:text="ToggleButton"
+        android:textOff="@string/sunday"
+        android:textOn="@string/sunday"
+        android:textSize="12sp" />
 
 </RelativeLayout>

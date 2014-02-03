@@ -29,7 +29,7 @@ public class PlaceIt {
 	
 	// for Database constructor
 	public PlaceIt(int id, String title, String status, String description, 
-				   LatLng location, Date expiration, Date scheduled_date) {
+				   LatLng location) {
 		
 		this.id = id;
 		this.title = title;

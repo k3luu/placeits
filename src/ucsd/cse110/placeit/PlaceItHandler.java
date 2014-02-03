@@ -9,7 +9,7 @@ import com.google.android.gms.maps.model.LatLng;
 public class PlaceItHandler {
 	
 	// determines whether a PlaceIt should be rescheduled
-	public void checkIfTriggered(PlaceIt placeIt, LatLng user_loc) {
+	/*public void checkIfTriggered(PlaceIt placeIt, LatLng user_loc) {
 	
 		// Need to then check if users location is within a 1/2 mile of a PlaceIt
 		if (placeIt.getLocation() == user_loc) {
@@ -19,7 +19,7 @@ public class PlaceItHandler {
 		
 		
 		return;
-	}
+	}*/
 	
 	// determines whether a PlaceIt should be rescheduled
 	/*public void reSchedule(PlaceIt placeIt) {
