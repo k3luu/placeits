@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    
+    <item android:id="@+id/database_add_edit"
+        android:title="@string/place_it_manager_menu_add"
+        android:orderInCategory="1"
+        android:showAsAction="always"
+        />
+    
+    <item android:id="@+id/datebase_cancel"
+        android:title="@string/place_it_manager_menu_cancel"
+        android:orderInCategory="2"
+        android:showAsAction="always"
+        />
+
+</menu>

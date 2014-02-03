@@ -19,7 +19,7 @@
     <string name="menu_create">Create</string>
     <string name="title_section1">Pending</string>
     <string name="title_section2">Completed</string>
-    <string name="title_section3">Expired</string>
+    <!-- Ctring name="title_section3">Expired</string> -->
     <string name="title_list_view_activity">List View</string>
     <string name="place_it_manager_menu_add">Confirm</string>
     <string name="place_it_manager_menu_cancel">Cancel</string>

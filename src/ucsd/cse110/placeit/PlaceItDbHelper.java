@@ -39,7 +39,7 @@ public class PlaceItDbHelper extends SQLiteOpenHelper {
     private static final String KEY_DESC = "description";
     private static final String KEY_LAT = "latitude";
     private static final String KEY_LNG = "long";
-    private static final String KEY_EXP = "expiration";
+    //private static final String KEY_EXP = "expiration";
     private static final String KEY_SCHED_DATE = "scheduled_date";
  
 
@@ -60,7 +60,7 @@ public class PlaceItDbHelper extends SQLiteOpenHelper {
 										    KEY_DESC + " TEXT," + 
 										    KEY_LAT + " REAL," + 
 										    KEY_LNG + " REAL," + 
-										    KEY_EXP + " TEXT," +
+										    /*KEY_EXP + " TEXT," +*/
 										    KEY_SCHED_DATE + " TEXT" +
 									    ")";
         db.execSQL(CREATE_PLACEITS_TABLE);
@@ -91,8 +91,8 @@ public class PlaceItDbHelper extends SQLiteOpenHelper {
 	    values.put(KEY_DESC, placeIt.getDescription()); 			// PlaceIt Description
 	    values.put(KEY_LAT, placeIt.getLocation().latitude); 		// PlaceIt Latitude
 	    values.put(KEY_LNG, placeIt.getLocation().longitude); 	// PlaceIt Longitude
-	    values.put(KEY_EXP, placeIt.getExpiration()); 				// PlaceIt Expiration
-	    values.put(KEY_SCHED_DATE, placeIt.getScheduled_date()); 	// PlaceIt Scheduled Date
+	    //values.put(KEY_EXP, placeIt.getExpiration()); 				// PlaceIt Expiration
+	    //values.put(KEY_SCHED_DATE, placeIt.getScheduled_date()); 	// PlaceIt Scheduled Date
 	 
 	    // Inserting Row
 	    db.insert(TABLE_PLACEITS, null, values);
@@ -110,7 +110,7 @@ public class PlaceItDbHelper extends SQLiteOpenHelper {
 		 
 		// Cursor to go through the table
 	    Cursor cursor = db.query(TABLE_PLACEITS, new String[] { KEY_ID,
-	    		KEY_TITLE, KEY_STATUS, KEY_DESC, KEY_LAT, KEY_LNG, KEY_EXP, KEY_SCHED_DATE }, KEY_ID + "=?",
+	    		KEY_TITLE, KEY_STATUS, KEY_DESC, KEY_LAT, KEY_LNG, /*KEY_EXP,*/ KEY_SCHED_DATE }, KEY_ID + "=?",
 	            new String[] { String.valueOf(id) }, null, null, null, null);
 	    if (cursor != null)
 	        cursor.moveToFirst();
@@ -145,8 +145,8 @@ public class PlaceItDbHelper extends SQLiteOpenHelper {
 	            placeIt.setStatus(cursor.getString(1));
 	            placeIt.setDescription(cursor.getString(2));
 	            placeIt.setLocation(new LatLng(cursor.getDouble(3),cursor.getDouble(4)));
-	            placeIt.setExpiration(cursor.getString(5));
-	            placeIt.setScheduled_date(cursor.getString(6));
+	            //placeIt.setExpiration(cursor.getString(5));
+	            //placeIt.setScheduled_date(cursor.getString(6));
 	            
 	            // Adding placeIt to list
 	            placeItList.add(placeIt);
@@ -183,8 +183,8 @@ public class PlaceItDbHelper extends SQLiteOpenHelper {
 	    values.put(KEY_DESC, placeIt.getDescription()); 			// PlaceIt Description
 	    values.put(KEY_LAT, placeIt.getLocation().latitude); 		// PlaceIt Latitude
 	    values.put(KEY_LNG, placeIt.getLocation().longitude); 	// PlaceIt Longitude
-	    values.put(KEY_EXP, placeIt.getExpiration()); 				// PlaceIt Expiration
-	    values.put(KEY_SCHED_DATE, placeIt.getScheduled_date()); 	// PlaceIt Scheduled Date
+	   // values.put(KEY_EXP, placeIt.getExpiration()); 				// PlaceIt Expiration
+	   // values.put(KEY_SCHED_DATE, placeIt.getScheduled_date()); 	// PlaceIt Scheduled Date
 	 
 	 
 	    // updating row

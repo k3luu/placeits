@@ -141,7 +141,7 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
 	        .draggable(true))
 	        .setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_launcher));
     	
-    	Intent intent = new Intent(this, PlaceItFormActivity.class); 
+    	Intent intent = new Intent(this, PlaceItsManager.class); 
 
     	intent.putExtra(LAT, point.latitude);
     	intent.putExtra(LNG, point.longitude);

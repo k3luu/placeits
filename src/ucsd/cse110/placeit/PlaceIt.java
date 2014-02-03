@@ -16,15 +16,18 @@ public class PlaceIt {
 	private String status; 				// posted (active), pulled down (triggered), expired
 	private String description;			// REQUIRED: aditional details of our PlaceIt
 	private LatLng location;			// REQUIRED: the lat/lng of the location
-	private Date expiration;			// the day the PlaceIt expires
-	private Date scheduled_date;		// the day to schedule
+	//private Date expiration;			// the day the PlaceIt expires
+	//private Date scheduled_date;		// the day to schedule
 	
 	////////////////////// constructors //////////////////////
 	
 	// empty constructor
 	public PlaceIt() {}
 	
-	// constructor
+	// for map constructor
+	public PlaceIt(LatLng location) {this.location = location;}
+	
+	// for Database constructor
 	public PlaceIt(int id, String title, String status, String description, 
 				   LatLng location, Date expiration, Date scheduled_date) {
 		
@@ -33,8 +36,8 @@ public class PlaceIt {
 		this.status = status;
 		this.description  = description;
 		this.location = location;
-		this.expiration = expiration;
-		this.scheduled_date = scheduled_date;
+		//this.expiration = expiration;
+		//this.scheduled_date = scheduled_date;
 		
 	}
 	
@@ -62,15 +65,15 @@ public class PlaceIt {
 	
 	// Returns a String for the sake of our db but will possibly 
 	// need to be changed later on
-	public String getExpiration() {
-		return expiration.toString();
-	}
+	//public String getExpiration() {
+	//	return expiration.toString();
+	//}
 	
 	// Returns a String for the sake of our db but will possibly 
 	// need to be changed later on
-	public String getScheduled_date() {
-		return scheduled_date.toString();
-	}
+	//public String getScheduled_date() {
+	//	return scheduled_date.toString();
+	//}
 	
 	////////////////////// setters //////////////////////
 	
@@ -95,7 +98,7 @@ public class PlaceIt {
 	}
 	
 	// String parameter to be able to use with SQLite db
-	public void setExpiration(String expiration) {
+	/*public void setExpiration(String expiration) {
 		
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
 		Date expirationDate;
@@ -108,12 +111,12 @@ public class PlaceIt {
 		}
 		
 		this.expiration = expirationDate;
-	}
+	}*/
 	
 	// String parameter to be able to use with SQLite db
-	public void setScheduled_date(String scheduled_date_string) {
+	/*public void setScheduled_date(String scheduled_date_string) {
 		
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 		Date scheduled_date;
 		
 		try {
@@ -124,6 +127,6 @@ public class PlaceIt {
 		}
 		
 		this.scheduled_date = scheduled_date;
-	}
+	}*/
 
 }

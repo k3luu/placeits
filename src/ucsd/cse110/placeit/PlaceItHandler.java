@@ -22,12 +22,12 @@ public class PlaceItHandler {
 	}
 	
 	// determines whether a PlaceIt should be rescheduled
-	public void reSchedule(PlaceIt placeIt) {
+	/*public void reSchedule(PlaceIt placeIt) {
 		
 		if (placeIt.getScheduled_date() == null) {
 			return;
 		}
-	}
+	}*/
 	
 	
 	
