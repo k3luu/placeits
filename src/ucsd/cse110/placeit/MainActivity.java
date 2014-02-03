@@ -1,10 +1,14 @@
 package ucsd.cse110.placeit;
 
+import android.app.ActionBar;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
@@ -52,6 +56,14 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        
+        
+        final ActionBar actionBar = getActionBar();
+        // Hide Action bar Icon
+        actionBar.setDisplayShowHomeEnabled(false);
+ 
+        // Hide Action bar Title
+        //actionBar.setDisplayShowTitleEnabled(false);
 
         setUpMapIfNeeded();
     }
@@ -62,6 +74,30 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
+    
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+    	
+    	// Menu buttons click to associated activity
+    	switch (item.getItemId()) {
+    	
+    	case R.id.list_view_btn:
+    		Log.i("MainActive", "list button click");
+    		Intent intent1 = new Intent(this, ListActivity.class);
+        	startActivity(intent1);
+    	return true;
+    	
+    	case R.id.create_event_btn:
+    		Log.i("MainActive", "create button click");
+    		Intent intent2 = new Intent(this, PlaceItsManager.class);
+        	startActivity(intent2);
+    	return true;
+
+    	default:
+    		return super.onOptionsItemSelected(item);		
+    	}
+    }  
     
     // Defines what to do when this activity is opened again
     protected void onResume() {

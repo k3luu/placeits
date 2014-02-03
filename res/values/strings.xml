@@ -12,4 +12,16 @@
     <string name="enter_title">Title</string>
     <string name="enter_description">Description</string>
     <string name="enter_location">Location</string>
+    
+    <!-- Weijie Hu and Zhengde Zhen Added -->
+    <string name="menu_map">Map</string>
+    <string name="menu_list">List</string>
+    <string name="menu_create">Create</string>
+    <string name="title_section1">Pending</string>
+    <string name="title_section2">Completed</string>
+    <string name="title_section3">Expired</string>
+    <string name="title_list_view_activity">List View</string>
+    <string name="place_it_manager_menu_add">Confirm</string>
+    <string name="place_it_manager_menu_cancel">Cancel</string>
+    <string name="title_data_manager">Place-Its Manager</string>
 </resources>

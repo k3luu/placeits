@@ -221,18 +221,38 @@ containing a value of this type.
         public static final int ic_plusone_tall_off_client=0x7f02001c;
     }
     public static final class id {
-        public static final int action_settings=0x7f05000b;
-        public static final int camera_text=0x7f050007;
-        public static final int description=0x7f050009;
+        public static final int RelativeLayout1=0x7f05000c;
+        public static final int action_settings=0x7f05001d;
+        public static final int checkBox1=0x7f050013;
+        public static final int checkBox2=0x7f050017;
+        public static final int checkBox3=0x7f050018;
+        public static final int checkBox4=0x7f050014;
+        public static final int checkBox5=0x7f050012;
+        public static final int checkBox6=0x7f050015;
+        public static final int checkBox7=0x7f050016;
+        public static final int create_event_btn=0x7f05001c;
+        public static final int database_add_edit=0x7f05001e;
+        public static final int datebase_cancel=0x7f05001f;
+        public static final int description=0x7f050007;
+        public static final int editText1=0x7f05000d;
+        public static final int editText2=0x7f05000e;
+        public static final int editText3=0x7f05000f;
         public static final int hybrid=0x7f050004;
-        public static final int location=0x7f05000a;
+        public static final int listViewItems=0x7f05000a;
+        public static final int list_view_btn=0x7f05001b;
+        public static final int location=0x7f050008;
         public static final int map=0x7f050005;
+        public static final int map_view_btn=0x7f05001a;
         public static final int none=0x7f050000;
         public static final int normal=0x7f050001;
+        public static final int pager=0x7f05000b;
         public static final int satellite=0x7f050002;
-        public static final int tap_text=0x7f050006;
+        public static final int section_label=0x7f050009;
         public static final int terrain=0x7f050003;
-        public static final int title=0x7f050008;
+        public static final int textView1=0x7f050011;
+        public static final int textView2=0x7f050019;
+        public static final int textView4=0x7f050010;
+        public static final int title=0x7f050006;
     }
     public static final class integer {
         public static final int google_play_services_version=0x7f070000;
@@ -240,10 +260,14 @@ containing a value of this type.
     public static final class layout {
         public static final int activity_main=0x7f030000;
         public static final int activity_place_it_form=0x7f030001;
+        public static final int fragment_main_dummy=0x7f030002;
+        public static final int list_activity_main=0x7f030003;
+        public static final int place_its_manager_activity=0x7f030004;
     }
     public static final class menu {
         public static final int main=0x7f0a0000;
         public static final int place_it_form=0x7f0a0001;
+        public static final int place_it_manager_menu=0x7f0a0002;
     }
     public static final class string {
         public static final int action_settings=0x7f06001b;
@@ -346,11 +370,23 @@ containing a value of this type.
         public static final int enter_location=0x7f060024;
         public static final int enter_title=0x7f060022;
         public static final int hello_world=0x7f06001c;
+        public static final int menu_create=0x7f060027;
+        public static final int menu_list=0x7f060026;
+        /**  Weijie Hu and Zhengde Zhen Added 
+         */
+        public static final int menu_map=0x7f060025;
         public static final int move_the_camera=0x7f06001f;
         public static final int placeIt_details=0x7f06001d;
+        public static final int place_it_manager_menu_add=0x7f06002c;
+        public static final int place_it_manager_menu_cancel=0x7f06002d;
         public static final int str_btn_find=0x7f060021;
         public static final int tap_instructions=0x7f06001e;
         public static final int title_activity_place_it_form=0x7f060020;
+        public static final int title_data_manager=0x7f06002e;
+        public static final int title_list_view_activity=0x7f06002b;
+        public static final int title_section1=0x7f060028;
+        public static final int title_section2=0x7f060029;
+        public static final int title_section3=0x7f06002a;
     }
     public static final class style {
         /** 
