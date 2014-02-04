@@ -103,6 +103,7 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
         super.onResume();
         setUpMapIfNeeded();
         setUpLocationClientIfNeeded();
+        mLocationClient.connect();
         
     }
     

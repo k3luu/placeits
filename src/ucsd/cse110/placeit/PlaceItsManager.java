@@ -1,25 +1,31 @@
 package ucsd.cse110.placeit;
 
-import java.text.DecimalFormat;
-
-import com.google.android.gms.maps.model.LatLng;
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 import android.app.ActionBar;
-//import android.app.ActionBar.Tab;
-//import android.app.Activity;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
+import android.os.AsyncTask;
 import android.os.Bundle;
-//import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-//import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
+
+import com.google.android.gms.maps.model.LatLng;
+//import android.app.ActionBar.Tab;
+//import android.app.Activity;
+//import android.support.v4.app.Fragment;
+//import android.view.LayoutInflater;
 //import android.view.View;
 //import android.view.ViewGroup;
-import android.widget.EditText;
 
 public class PlaceItsManager extends FragmentActivity implements
 ActionBar.TabListener {
@@ -29,12 +35,16 @@ ActionBar.TabListener {
 	 */
 	ViewPager mViewPager;
 	
+	private EditText editView;
+	private LatLng location;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
 		// Load layout
 		setContentView(R.layout.place_its_manager_activity);
+		
+		
 		
 		// Three cases
 		// Case 1: called by createButton [no info]
@@ -45,10 +55,8 @@ ActionBar.TabListener {
 		Intent checkWhere = getIntent();
 		int validate = checkWhere.getIntExtra("ucsd.cs110.placeit.CheckSrouce", 1);
 		
-		double lat, lng;
-		
 		// Add case 3 later
-		if (validate == 1)
+		/*if (validate == 1)
 		{
 			Intent intent = getIntent();
 			lat = intent.getDoubleExtra(MainActivity.LAT, 0.0);
@@ -58,20 +66,11 @@ ActionBar.TabListener {
 		{
 			//Method A
 			Bundle b = getIntent().getParcelableExtra("locationOnlyBundle");
-			LatLng location = b.getParcelable("ucsd.cs110.placeit.LocationOnly");
-			Log.i("abc", "abc");
-			if (location == null)
-			{
-				lat = 0.0;
-				lng = 0.0;
-			}
-			else
-			{
-				lat = location.latitude;
-				lng = location.longitude;
-			}
-		}
+			location = b.getParcelable("ucsd.cs110.placeit.LocationOnly");
+		}*/
 		
+		Bundle b = getIntent().getParcelableExtra("locationOnlyBundle");
+		location = b.getParcelable("ucsd.cs110.placeit.LocationOnly");
 		
 		//
 		
@@ -85,6 +84,7 @@ ActionBar.TabListener {
 		/*String reverseGeo = "http://maps.googleapis.com/maps/api/geocode/json?latlng=" + lat.toString() +","+
 	    		lng.toString() + "&sensor=false";*/
 	    
+		/*
 	    DecimalFormat df = new DecimalFormat("#.#######");
 	    String latFormat = df.format(lat);
 	    String lngFormat = df.format(lng);
@@ -98,6 +98,10 @@ ActionBar.TabListener {
         String str = editView.getText().toString();
         Log.i(str, "what's being passed");
 	    //editView.setText(reverseGeo);
+	     * 
+	     */
+        
+        
 
 		setContentView(R.layout.place_its_manager_activity);
 	}
@@ -109,16 +113,38 @@ ActionBar.TabListener {
 		return true;
 	}
 
+	protected void onResume()
+	{
+		super.onResume();
+		// Geocoder
+		editView = (EditText) findViewById(R.id.location);
+		(new GetAddressTask(this)).execute(location);
+		Log.i(location.toString(), "What is the location");
+		Log.i(editView.getText().toString(), "What is there?");
+	}
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
     	
     	// Menu buttons click to associated activity
     	if ( item.getItemId() == R.id.database_add_edit ) {
+    		
+    		// When clicked, first validate
+    		
+    		// When clicked, go to map view and center the new Placeit
+    		
+    		// Add to DataBase
+    		
+    		
     		Intent intent1 = new Intent(this, MainActivity.class);
     		startActivity(intent1);
     		return true;
     	}
     	else if ( item.getItemId() == R.id.datebase_cancel ) {
+    		
+    		// When clicked, clear all the fields
+    		
+    		// Go back to the list view
+    		
     		Intent intent2 = new Intent(this, ListActivity.class);
         	startActivity(intent2);
         	return true;
@@ -146,4 +172,84 @@ ActionBar.TabListener {
 			FragmentTransaction fragmentTransaction) {
 	}
 	
+	private class GetAddressTask extends AsyncTask<LatLng, Void, String>
+	{
+		Context mContext;
+		public GetAddressTask(Context context) {
+		    super();
+		    mContext = context;
+		}
+	/**
+	 * Get a Geocoder instance, get the latitude and longitude
+	 * look up the address, and return it
+	 *
+	 * @params params One or more Location objects
+	 * @return A string containing the address of the current
+	 * location, or an empty string if no address can be found,
+	 * or an error message
+	 */
+		
+		
+
+		@Override
+		protected String doInBackground(LatLng... params)
+		{
+			Log.i("INTO", "hey");
+		    Geocoder geocoder = new Geocoder(mContext, Locale.getDefault());
+		    // Get the current location from the input parameter list
+		    LatLng loc = params[0];
+		    // Create a list to contain the result address
+		    List<Address> addresses = null;
+		    try {
+		        /*
+		         * Return 1 address.
+		         */
+		        addresses = geocoder.getFromLocation(loc.latitude,
+		                loc.longitude, 1);
+		    } catch (IOException e1) {
+		    Log.e("LocationSampleActivity",
+		            "IO Exception in getFromLocation()");
+		    e1.printStackTrace();
+		    return ("IO Exception trying to get address");
+		    } catch (IllegalArgumentException e2) {
+		    // Error message to post in the log
+		    String errorString = "Illegal arguments " +
+		            Double.toString(loc.latitude) +
+		            " , " +
+		            Double.toString(loc.longitude) +
+		            " passed to address service";
+		    Log.e("LocationSampleActivity", errorString);
+		    e2.printStackTrace();
+		    return errorString;
+		    }
+		    // If the reverse geocode returned an address
+		    if (addresses != null && addresses.size() > 0) {
+		        // Get the first address
+		        Address address = addresses.get(0);
+		        /*
+		         * Format the first line of address (if available),
+		         * city, and country name.
+		         */
+		        String addressText = String.format(
+		                "%s, %s, %s",
+		                // If there's a street address, add it
+		                address.getMaxAddressLineIndex() > 0 ?
+		                        address.getAddressLine(0) : "",
+		                // Locality is usually a city
+		                address.getLocality(),
+		                // The country of the address
+		                address.getCountryName());
+		        // Return the text
+		        return addressText;
+		    }
+		    else {
+		        return "No address found";
+		    }
+		}
+		protected void onPostExecute(String address) {
+            // Display the results of the lookup.
+			Log.i(address, "the address.!");
+            editView.setText(address);
+        }
+	}
 }

@@ -79,7 +79,7 @@ public class PlaceItDbHelper extends SQLiteOpenHelper {
 	///////////////////////////// CRUD Operations ///////////////////////////
 	
 	// Adding new PlaceIt
-	public void addPlaceIt(PlaceIt placeIt) {
+	public void addPlaceIt(MyParcelable placeIt) {
 		
 		// get a writable instance of our database 
 		SQLiteDatabase db = this.getWritableDatabase();
