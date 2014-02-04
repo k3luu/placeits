@@ -1,10 +1,13 @@
 package ucsd.cse110.placeit;
 
+import java.util.List;
+
 import android.app.ActionBar;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -117,6 +120,7 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
         setUpMapIfNeeded();
         setUpLocationClientIfNeeded();
         mLocationClient.connect();
+        populateMap();
         
     }
     
@@ -147,12 +151,33 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
 
     ///////////////////////////// Other Methods /////////////////////////////
     
+    public void populateMap() {
+    	
+    	// get an instance of our database to add
+		PlaceItDbHelper db = new PlaceItDbHelper(this);
+    	
+    	LatLng markerPosition;
+    	PlaceIt pl;
+		
+    	// loop through all active PlaceIt's and populate map with them
+    	List<PlaceIt> activePlaceItList = db.getAllPlaceIts("Active");
+    	
+		for (int i = 0; i < activePlaceItList.size(); i++) {
+			pl = activePlaceItList.get(i);
+			markerPosition = pl.getLocation();
+			mMap.addMarker(new MarkerOptions()
+		        .position(markerPosition)
+		        .title(pl.getTitle())
+		        .snippet(pl.getLocation().toString())
+		        .draggable(true))
+		        .setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_launcher));
+		}
+    }
+    
+    
     // This is where we create a PlaceIt from the map
     public void onMapLongClick(LatLng point) {
-    	mMap.addMarker(new MarkerOptions()
-	        .position(point)
-	        .draggable(true))
-	        .setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_launcher));
+    	
     	
     	//method A
     	Bundle locationOnly = new Bundle();

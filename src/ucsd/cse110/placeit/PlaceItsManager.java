@@ -37,6 +37,7 @@ ActionBar.TabListener {
 	
 	private EditText editView;
 	private LatLng location;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -122,18 +123,36 @@ ActionBar.TabListener {
 		Log.i(location.toString(), "What is the location");
 		Log.i(editView.getText().toString(), "What is there?");
 	}
+	
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
     	
     	// Menu buttons click to associated activity
     	if ( item.getItemId() == R.id.database_add_edit ) {
     		
+    		// get an instance of our database to add
+    		PlaceItDbHelper db = new PlaceItDbHelper(this);
+    		
+    		EditText title_field = (EditText) findViewById(R.id.editText1);
+    		EditText description_field = (EditText) findViewById(R.id.editText2);
+    		EditText location_field = (EditText) findViewById(R.id.location);
+    		
+    		String title = title_field.getText().toString();
+    		String description = description_field.getText().toString();
+    		String location_str = location_field.getText().toString();
+    		Log.i("title",title);
+ 
+    		
     		// When clicked, first validate
-    		
-    		// When clicked, go to map view and center the new Placeit
-    		
+    		if( (title.length() == 0) || (location_str.length() == 0) ) {
+    			//throw some error
+    		}
     		// Add to DataBase
-    		
+    		else {
+        		
+        		db.addPlaceIt(new PlaceIt(title, "Active", location));
+    		}
+
     		
     		Intent intent1 = new Intent(this, MainActivity.class);
     		startActivity(intent1);
@@ -171,6 +190,8 @@ ActionBar.TabListener {
 	public void onTabReselected(ActionBar.Tab tab,
 			FragmentTransaction fragmentTransaction) {
 	}
+	
+	/////////////////////////////// Geocode AsyncTask /////////////////////////
 	
 	private class GetAddressTask extends AsyncTask<LatLng, Void, String>
 	{

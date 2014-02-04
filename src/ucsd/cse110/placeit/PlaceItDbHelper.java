@@ -79,7 +79,7 @@ public class PlaceItDbHelper extends SQLiteOpenHelper {
 	///////////////////////////// CRUD Operations ///////////////////////////
 	
 	// Adding new PlaceIt
-	public void addPlaceIt(MyParcelable placeIt) {
+	public void addPlaceIt(PlaceIt placeIt) {
 		
 		// get a writable instance of our database 
 		SQLiteDatabase db = this.getWritableDatabase();
@@ -131,7 +131,7 @@ public class PlaceItDbHelper extends SQLiteOpenHelper {
 	    // Select All Query
 	    String selectQuery = "SELECT  * " +
 	    					 "FROM " + TABLE_PLACEITS + " " +
-	    					 "WHERE status = " + placeIt_status;
+	    					 "WHERE status = \"" + placeIt_status +"\"";
 	 
 	    // get a writable instance of our database 
 	    SQLiteDatabase db = this.getWritableDatabase();
@@ -141,12 +141,12 @@ public class PlaceItDbHelper extends SQLiteOpenHelper {
 	    if (cursor.moveToFirst()) {
 	        do {
 	        	PlaceIt placeIt = new PlaceIt();
-	            placeIt.setTitle(cursor.getString(0));
-	            placeIt.setStatus(cursor.getString(1));
-	            placeIt.setDescription(cursor.getString(2));
-	            placeIt.setLocation(new LatLng(cursor.getDouble(3),cursor.getDouble(4)));
-	            //placeIt.setExpiration(cursor.getString(5));
-	            //placeIt.setScheduled_date(cursor.getString(6));
+	            placeIt.setTitle(cursor.getString(1));
+	            placeIt.setStatus(cursor.getString(2));
+	            placeIt.setDescription(cursor.getString(3));
+	            placeIt.setLocation(new LatLng(cursor.getDouble(4),cursor.getDouble(5)));
+	            //placeIt.setExpiration(cursor.getString(6));
+	            //placeIt.setScheduled_date(cursor.getString(7));
 	            
 	            // Adding placeIt to list
 	            placeItList.add(placeIt);

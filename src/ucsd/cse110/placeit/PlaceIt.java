@@ -12,12 +12,12 @@ public class PlaceIt {
 	////////////////////// Private Variables //////////////////////
 	
 	private int id;						// db id must be unique
-	private String title;				// REQUIRED: name of the PlaceIt
+	public String title;				// REQUIRED: name of the PlaceIt
 	private String status; 				// posted (active), pulled down (triggered), expired
-	private String description;			// REQUIRED: aditional details of our PlaceIt
+	private String description;			// aditional details of our PlaceIt
 	private LatLng location;			// REQUIRED: the lat/lng of the location
 	//private Date expiration;			// the day the PlaceIt expires
-	//private Date scheduled_date;		// the day to schedule
+	private Date scheduled_date;		// the day to schedule
 	
 	////////////////////// constructors //////////////////////
 	
@@ -28,18 +28,27 @@ public class PlaceIt {
 	public PlaceIt(LatLng location) {this.location = location;}
 	
 	// for Database constructor
-	public PlaceIt(int id, String title, String status, String description, 
-				   LatLng location) {
+	public PlaceIt(String title, String status, LatLng location) {
 		
-		this.id = id;
 		this.title = title;
 		this.status = status;
-		this.description  = description;
 		this.location = location;
-		//this.expiration = expiration;
-		//this.scheduled_date = scheduled_date;
 		
 	}
+	
+	// for Database constructor
+		public PlaceIt(int id, String title, String status, String description, 
+					   LatLng location) {
+			
+			this.id = id;
+			this.title = title;
+			this.status = status;
+			this.description  = description;
+			this.location = location;
+			//this.expiration = expiration;
+			this.scheduled_date = scheduled_date;
+			
+		}
 	
 	////////////////////// getters //////////////////////
 	
@@ -114,7 +123,7 @@ public class PlaceIt {
 	}*/
 	
 	// String parameter to be able to use with SQLite db
-	/*public void setScheduled_date(String scheduled_date_string) {
+	public void setScheduled_date(String scheduled_date_string) {
 		
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 		Date scheduled_date;
@@ -127,6 +136,10 @@ public class PlaceIt {
 		}
 		
 		this.scheduled_date = scheduled_date;
-	}*/
+	}
+	
+	public String toString() {
+		return this.title;
+	}
 
 }
