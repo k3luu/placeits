@@ -18,7 +18,7 @@ public class MyParcelable implements Parcelable {
 		public MyParcelable() {}
 		
 	// for map constructor
-		public MyParcelable(LatLng location) {this.location = location;}
+		//public MyParcelable(LatLng location) {this.location = location;}
 		
 	// Constructor to re-constructing
 		public MyParcelable(Parcel in) {

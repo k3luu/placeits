@@ -10,18 +10,18 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.NavUtils;
+//import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
-import android.view.Gravity;
+//import android.util.Log;
+//import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
+//import android.widget.ArrayAdapter;
+//import android.widget.ListView;
+//import android.widget.TextView;
 
 public class ListActivity extends FragmentActivity implements
 		ActionBar.TabListener {
@@ -99,22 +99,18 @@ public class ListActivity extends FragmentActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
     	
     	// Menu buttons click to associated activity
-    	switch (item.getItemId()) {
-    	case R.id.map_view_btn:
-    		Log.i("MainActive", "map button click");
+    	if ( item.getItemId() == R.id.map_view_btn ) {
     		Intent intent1 = new Intent(this, MainActivity.class);
         	startActivity(intent1);
-    	return true;
-    	
-    	case R.id.create_event_btn:
-    		Log.i("MainActive", "create button click");
+        	return true;
+    	}
+    	else if ( item.getItemId() == R.id.create_event_btn ) {
     		Intent intent2 = new Intent(this, PlaceItsManager.class);
         	startActivity(intent2);
-    		
-    	return true;
-
-    	default:
-    		return super.onOptionsItemSelected(item);		
+        	return true;
+    	}
+    	else {
+    		return super.onOptionsItemSelected(item);
     	}
     }  
 	

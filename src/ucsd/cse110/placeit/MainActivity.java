@@ -5,10 +5,10 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
+
 import android.view.Menu;
 import android.view.MenuItem;
-import ucsd.cse110.placeit.PlaceIt;
+
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
@@ -81,24 +81,20 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
     public boolean onOptionsItemSelected(MenuItem item) {
     	
     	// Menu buttons click to associated activity
-    	switch (item.getItemId()) {
     	
-    	case R.id.list_view_btn:
-    		Log.i("MainActive", "list button click");
+    	if ( item.getItemId() == R.id.list_view_btn ) {
     		Intent intent1 = new Intent(this, ListActivity.class);
         	startActivity(intent1);
-    	return true;
-    	
-    	
-    	// add status putExtra
-    	case R.id.create_event_btn:
-    		Log.i("MainActive", "create button click");
+        	return true;
+    	}
+    	else if ( item.getItemId() == R.id.create_event_btn ) {
     		Intent intent2 = new Intent(this, PlaceItsManager.class);
+    		intent2.putExtra("ucsd.cs110.placeit.CheckSrouce", 1);
         	startActivity(intent2);
-    	return true;
-
-    	default:
-    		return super.onOptionsItemSelected(item);		
+        	return true;
+    	}
+    	else {
+    		return super.onOptionsItemSelected(item);
     	}
     }  
     
@@ -144,13 +140,20 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
 	        .draggable(true))
 	        .setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_launcher));
     	
-    	MyParcelable placeItWithLocationOnly = new MyParcelable(point);
-    	
+    	//method A
+    	Bundle locationOnly = new Bundle();
+    	locationOnly.putParcelable("ucsd.cs110.placeit.LocationOnly", point);
+    	Intent intent = new Intent(this, PlaceItsManager.class);
+    	intent.putExtra("locationOnlyBundle", locationOnly);
+    	intent.putExtra("ucsd.cs110.placeit.CheckSrouce", 2);
+    	/*
     	Intent intent = new Intent(this, PlaceItsManager.class); 
-    	//intent.putExtra(LAT, point.latitude);
-    	//intent.putExtra(LNG, point.longitude);
-    	intent.putExtra("ucsd.cs110.placeit.placeItWithLocationOnly", placeItWithLocationOnly);
-	    startActivity(intent);
+    	intent.putExtra(LAT, point.latitude);
+    	intent.putExtra(LNG, point.longitude);
+    	*/
+    	//intent.putExtra("ucsd.cs110.placeit.placeItWithLocationOnly", placeItWithLocationOnly);
+    	//intent.putParcelableArrayListExtra("ucsd.cs110.placeit.placeItWithLocationOnly", placeItWithLocationOnly);
+    	startActivity(intent);
     }
 
     @Override
