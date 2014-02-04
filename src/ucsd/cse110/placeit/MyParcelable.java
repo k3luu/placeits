@@ -1,9 +1,9 @@
 package ucsd.cse110.placeit;
 
-import com.google.android.gms.maps.model.LatLng;
-
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import com.google.android.gms.maps.model.LatLng;
 
 public class MyParcelable implements Parcelable {
 

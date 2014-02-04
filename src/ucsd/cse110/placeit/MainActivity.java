@@ -5,10 +5,14 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-
 import android.view.Menu;
 import android.view.MenuItem;
-
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AutoCompleteTextView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
@@ -57,16 +61,25 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        
+        setUpMapIfNeeded();
         
         final ActionBar actionBar = getActionBar();
         // Hide Action bar Icon
         actionBar.setDisplayShowHomeEnabled(false);
  
-        // Hide Action bar Title
-        //actionBar.setDisplayShowTitleEnabled(false);
+        AutoCompleteTextView autoCompView = (AutoCompleteTextView) findViewById(R.id.search_bar);
+        autoCompView.setAdapter(new PlacesAutoCompleteAdapter(this));
+        
+        autoCompView.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+			    // When clicked, show a toast with the TextView text
+			    Toast.makeText(getApplicationContext(),
+				((TextView) view).getText(), Toast.LENGTH_SHORT).show();
+			}
+		});
 
-        setUpMapIfNeeded();
+        
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
