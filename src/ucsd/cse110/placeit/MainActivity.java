@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,19 +25,17 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
-import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MainActivity extends FragmentActivity implements 
-OnMarkerClickListener, OnMapLongClickListener, OnCameraChangeListener,
-ConnectionCallbacks, OnConnectionFailedListener, LocationListener { 
+OnMapLongClickListener, OnCameraChangeListener,ConnectionCallbacks, 
+OnConnectionFailedListener, LocationListener { 
 	
-	///////////////////////////// Keys ///////////////////////////
+	/////////////////////////////////// Keys //////////////////////////////////
 	
 	public final static String LAT = "ucsd.cse110.placeit.LAT";
 	public final static String LNG = "ucsd.cse110.placeit.LNG";
@@ -70,6 +67,7 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
         // Hide Action bar Icon
         actionBar.setDisplayShowHomeEnabled(false);
  
+        // The search bar
         AutoCompleteTextView autoCompView = (AutoCompleteTextView) findViewById(R.id.search_bar);
         autoCompView.setAdapter(new PlacesAutoCompleteAdapter(this));
         
@@ -134,7 +132,6 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
             if (mMap != null) {
             	mMap.setOnMapLongClickListener(this);
                 mMap.setOnCameraChangeListener(this);
-                mMap.setOnMarkerClickListener(this);
                 mMap.setMyLocationEnabled(true);
             }
         }
@@ -151,6 +148,7 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
 
     ///////////////////////////// Other Methods /////////////////////////////
     
+    // populates the map with all the PlaceIt's stored in the database
     public void populateMap() {
     	
     	// get an instance of our database to add
@@ -175,23 +173,16 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
     }
     
     
-    // This is where we create a PlaceIt from the map
+    // Create a PlaceIt at the position clicked
     public void onMapLongClick(LatLng point) {
     	
-    	
-    	//method A
-    	Bundle locationOnly = new Bundle();
-    	locationOnly.putParcelable("ucsd.cs110.placeit.LocationOnly", point);
+    	// store the LatLng position of the the clicked position to pass into the form
+    	Bundle location_bundle = new Bundle();
+    	location_bundle.putParcelable("ucsd.cs110.placeit.LocationOnly", point);
     	Intent intent = new Intent(this, PlaceItsManager.class);
-    	intent.putExtra("locationOnlyBundle", locationOnly);
+    	intent.putExtra("locationOnlyBundle", location_bundle);
     	intent.putExtra("ucsd.cs110.placeit.CheckSrouce", 2);
-    	/*
-    	Intent intent = new Intent(this, PlaceItsManager.class); 
-    	intent.putExtra(LAT, point.latitude);
-    	intent.putExtra(LNG, point.longitude);
-    	*/
-    	//intent.putExtra("ucsd.cs110.placeit.placeItWithLocationOnly", placeItWithLocationOnly);
-    	//intent.putParcelableArrayListExtra("ucsd.cs110.placeit.placeItWithLocationOnly", placeItWithLocationOnly);
+    
     	startActivity(intent);
     }
 
@@ -199,14 +190,6 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
     public void onCameraChange(final CameraPosition position) {
     	//Do nothing... for now
     }
-
-	// Should show a dialog 
-	public boolean onMarkerClick(Marker marker) {
-		
-		// Code to show info box
-		
-		return false;
-	}
 	
 	public void onLocationChanged(Location location) {
 		// We need to figure out some way to check if this location corresponds to 
@@ -227,8 +210,7 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
 
 	@Override
 	public void onDisconnected() {
-		// TODO Auto-generated method stub
-		
+		// Do nothing... for now
 	}
     
 }
