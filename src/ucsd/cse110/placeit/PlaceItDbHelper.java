@@ -9,6 +9,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -22,7 +23,7 @@ public class PlaceItDbHelper extends SQLiteOpenHelper {
 	///////////////////////// Static variables //////////////////////////
     
 	// Database Version
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
  
     // Database Name
     private static final String DATABASE_NAME = "PlaceItsManager";
@@ -36,7 +37,8 @@ public class PlaceItDbHelper extends SQLiteOpenHelper {
     private static final String KEY_STATUS = "status";
     private static final String KEY_DESC = "description";
     private static final String KEY_LAT = "latitude";
-    private static final String KEY_LNG = "long";
+    private static final String KEY_LNG = "longitude";
+    private static final String KEY_LOC = "location_str";
     private static final String KEY_SCHED_DATE = "scheduled_date";
  
 
@@ -57,7 +59,7 @@ public class PlaceItDbHelper extends SQLiteOpenHelper {
 										    KEY_DESC + " TEXT," + 
 										    KEY_LAT + " REAL," + 
 										    KEY_LNG + " REAL," + 
-										    /*KEY_EXP + " TEXT," +*/
+										    KEY_LOC + " TEXT," +
 										    KEY_SCHED_DATE + " TEXT" +
 									    ")";
         db.execSQL(CREATE_PLACEITS_TABLE);
@@ -81,15 +83,15 @@ public class PlaceItDbHelper extends SQLiteOpenHelper {
 		// get a writable instance of our database 
 		SQLiteDatabase db = this.getWritableDatabase();
 		 
-		// insert all the firelds of the PlaceIt into the db
+		// insert all the fields of the PlaceIt into the db
 	    ContentValues values = new ContentValues();
 	    values.put(KEY_TITLE, placeIt.getTitle()); 					// PlaceIt Title
 	    values.put(KEY_STATUS, placeIt.getStatus()); 				// PlaceIt Status
 	    values.put(KEY_DESC, placeIt.getDescription()); 			// PlaceIt Description
 	    values.put(KEY_LAT, placeIt.getLocation().latitude); 		// PlaceIt Latitude
-	    values.put(KEY_LNG, placeIt.getLocation().longitude); 	// PlaceIt Longitude
-	    //values.put(KEY_EXP, placeIt.getExpiration()); 				// PlaceIt Expiration
-	    //values.put(KEY_SCHED_DATE, placeIt.getScheduled_date()); 	// PlaceIt Scheduled Date
+	    values.put(KEY_LNG, placeIt.getLocation().longitude); 		// PlaceIt Longitude
+	    values.put(KEY_LOC, placeIt.getLocation_str()); 			// PlaceIt Location String
+	    values.put(KEY_SCHED_DATE, placeIt.getScheduled_date()); 	// PlaceIt Scheduled Date
 	 
 	    // Inserting Row
 	    db.insert(TABLE_PLACEITS, null, values);
@@ -101,13 +103,10 @@ public class PlaceItDbHelper extends SQLiteOpenHelper {
 
 		// get a readable instance of our database 
 		SQLiteDatabase db = this.getReadableDatabase();
-		
-		// Date formatter for the expiration and schedule_date
-		//SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-		 
+				 
 		// Cursor to go through the table
-	    Cursor cursor = db.query(TABLE_PLACEITS, new String[] { KEY_ID,
-	    		KEY_TITLE, KEY_STATUS, KEY_DESC, KEY_LAT, KEY_LNG, KEY_SCHED_DATE }, KEY_ID + "=?",
+	    Cursor cursor = db.query(TABLE_PLACEITS, new String[] { KEY_ID, KEY_TITLE, KEY_STATUS,
+	    		 KEY_DESC, KEY_LAT, KEY_LNG, KEY_LOC, KEY_SCHED_DATE }, KEY_ID + "=?",
 	            new String[] { String.valueOf(id) }, null, null, null, null);
 	    if (cursor != null)
 	        cursor.moveToFirst();
@@ -115,9 +114,9 @@ public class PlaceItDbHelper extends SQLiteOpenHelper {
 	    // create the PlaceIt that'll be returned
 	    PlaceIt placeIt = new PlaceIt(Integer.parseInt(cursor.getString(0)),
 	            cursor.getString(1), cursor.getString(2), cursor.getString(3),
-	            new LatLng(cursor.getDouble(4),cursor.getDouble(5)), null);
+	            new LatLng(cursor.getDouble(4),cursor.getDouble(5)), 
+	            cursor.getString(6), cursor.getString(7));
 	    
-	    // return placeIt
 	    return placeIt;
 	}
 	 
@@ -127,7 +126,7 @@ public class PlaceItDbHelper extends SQLiteOpenHelper {
 	    // Select All Query
 	    String selectQuery = "SELECT  * " +
 	    					 "FROM " + TABLE_PLACEITS + " " +
-	    					 "WHERE status = \"" + placeIt_status +"\"";
+	    					 "WHERE "+ KEY_STATUS + " = \"" + placeIt_status +"\"";
 	 
 	    // get a writable instance of our database 
 	    SQLiteDatabase db = this.getWritableDatabase();
@@ -141,6 +140,7 @@ public class PlaceItDbHelper extends SQLiteOpenHelper {
 	            placeIt.setStatus(cursor.getString(2));
 	            placeIt.setDescription(cursor.getString(3));
 	            placeIt.setLocation(new LatLng(cursor.getDouble(4),cursor.getDouble(5)));
+	            placeIt.setLocation_str(cursor.getString(6));
 	            placeIt.setScheduled_date(cursor.getString(7));
 	            
 	            // Adding placeIt to list
@@ -177,8 +177,8 @@ public class PlaceItDbHelper extends SQLiteOpenHelper {
 	    values.put(KEY_STATUS, placeIt.getStatus()); 				// PlaceIt Status
 	    values.put(KEY_DESC, placeIt.getDescription()); 			// PlaceIt Description
 	    values.put(KEY_LAT, placeIt.getLocation().latitude); 		// PlaceIt Latitude
-	    values.put(KEY_LNG, placeIt.getLocation().longitude); 	// PlaceIt Longitude
-	   // values.put(KEY_EXP, placeIt.getExpiration()); 				// PlaceIt Expiration
+	    values.put(KEY_LNG, placeIt.getLocation().longitude); 		// PlaceIt Longitude
+	    values.put(KEY_LOC, placeIt.getLocation_str()); 			// PlaceIt Location string
 	    values.put(KEY_SCHED_DATE, placeIt.getScheduled_date()); 	// PlaceIt Scheduled Date
 	 
 	 

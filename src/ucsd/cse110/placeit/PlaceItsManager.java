@@ -145,12 +145,12 @@ ActionBar.TabListener {
     		
     		// When clicked, first validate
     		if( (title.length() == 0) || (location_str.length() == 0) ) {
-    			//throw some error
+    			// prompt user for invalid input
     		}
     		// Add to DataBase
     		else {
+        		db.addPlaceIt(new PlaceIt(title, "Active", location, location_str));
         		
-        		db.addPlaceIt(new PlaceIt(title, "Active", location));
     		}
 
     		

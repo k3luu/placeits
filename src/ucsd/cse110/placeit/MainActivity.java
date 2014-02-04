@@ -4,6 +4,7 @@ import java.util.List;
 
 import android.app.ActionBar;
 import android.content.Intent;
+import android.location.Address;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -13,8 +14,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AutoCompleteTextView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
@@ -25,15 +24,17 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
+import com.google.android.gms.maps.GoogleMap.OnMarkerDragListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MainActivity extends FragmentActivity implements 
 OnMapLongClickListener, OnCameraChangeListener,ConnectionCallbacks, 
-OnConnectionFailedListener, LocationListener { 
+OnConnectionFailedListener, LocationListener, OnMarkerDragListener { 
 	
 	/////////////////////////////////// Keys //////////////////////////////////
 	
@@ -45,6 +46,9 @@ OnConnectionFailedListener, LocationListener {
 	
 	private GoogleMap mMap; 				// the google map 
 	private LocationClient mLocationClient; // tracks user movement
+	
+	// get an instance of our database to add
+	PlaceItDbHelper db = new PlaceItDbHelper(this);
 
  
 	// These settings are the same as the settings for the map. They will 
@@ -74,9 +78,9 @@ OnConnectionFailedListener, LocationListener {
         autoCompView.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-			    // When clicked, show a toast with the TextView text
-			    Toast.makeText(getApplicationContext(),
-				((TextView) view).getText(), Toast.LENGTH_SHORT).show();
+				Address address = (Address) parent.getItemAtPosition(position);
+				LatLng location = new LatLng(address.getLatitude(), address.getLongitude());
+				onMapLongClick(location);
 			}
 		});
 
@@ -151,9 +155,6 @@ OnConnectionFailedListener, LocationListener {
     // populates the map with all the PlaceIt's stored in the database
     public void populateMap() {
     	
-    	// get an instance of our database to add
-		PlaceItDbHelper db = new PlaceItDbHelper(this);
-    	
     	LatLng markerPosition;
     	PlaceIt pl;
 		
@@ -166,7 +167,7 @@ OnConnectionFailedListener, LocationListener {
 			mMap.addMarker(new MarkerOptions()
 		        .position(markerPosition)
 		        .title(pl.getTitle())
-		        .snippet(pl.getLocation().toString())
+		        .snippet(pl.getLocation_str())
 		        .draggable(true))
 		        .setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_launcher));
 		}
@@ -211,6 +212,24 @@ OnConnectionFailedListener, LocationListener {
 	@Override
 	public void onDisconnected() {
 		// Do nothing... for now
+	}
+
+	@Override
+	public void onMarkerDrag(Marker marker) {
+		// update the location
+		
+	}
+
+	@Override
+	public void onMarkerDragEnd(Marker marker) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onMarkerDragStart(Marker marker) {
+		// TODO Auto-generated method stub
+		
 	}
     
 }

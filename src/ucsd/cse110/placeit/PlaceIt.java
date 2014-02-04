@@ -17,7 +17,6 @@ public class PlaceIt {
 	private String location_str;		// The string representation of the LatLng
 	private String status; 				// posted (active), pulled down (triggered), expired
 	private String description;			// aditional details of our PlaceIt
-	//private Date expiration;			// the day the PlaceIt expires
 	private Date scheduled_date;		// the day to schedule
 	
 	////////////////////// constructors //////////////////////
@@ -29,24 +28,25 @@ public class PlaceIt {
 	public PlaceIt(LatLng location) {this.location = location;}
 	
 	// Minimal constructor
-	public PlaceIt(String title, String status, LatLng location) {
+	public PlaceIt(String title, String status, LatLng location, String location_str) {
 		
 		this.title = title;
 		this.status = status;
 		this.location = location;
+		this.location_str = location_str;
 	}
 	
 	// for Database constructor
 	public PlaceIt(int id, String title, String status, String description, 
-				   LatLng location, Date scheduled_date) {
+				   LatLng location, String location_str, String scheduled_date) {
 		
 		this.id = id;
 		this.title = title;
 		this.status = status;
 		this.description  = description;
 		this.location = location;
-		//this.expiration = expiration;
-		this.scheduled_date = scheduled_date;
+		this.location_str = location_str;
+		this.scheduled_date = stringToDate(scheduled_date);
 		
 	}
 	
@@ -79,7 +79,9 @@ public class PlaceIt {
 	 //Returns a String for the sake of our db but will possibly 
 	 //need to be changed later on
 	public String getScheduled_date() {
-		return scheduled_date.toString();
+		if (scheduled_date != null ) {
+			return scheduled_date.toString();
+		}else return "";
 	}
 	
 	////////////////////// setters //////////////////////
@@ -111,23 +113,27 @@ public class PlaceIt {
 	// String parameter to be able to use with SQLite db
 	public void setScheduled_date(String scheduled_date_string) {
 		
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-		Date scheduled_date;
-		
-		try {
-			scheduled_date = formatter.parse(scheduled_date_string);
-		} catch (ParseException e) {
-			scheduled_date = null;
-			e.printStackTrace();
-		}
-		
-		this.scheduled_date = scheduled_date;
+		this.scheduled_date = stringToDate(scheduled_date_string);
 	}
 	
 	////////////////////// Other methods //////////////////////
 	
 	public String toString() {
 		return this.title;
+	}
+	
+	// converts a string to a Date object
+	private static Date stringToDate(String date_str) {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+		Date date;
+		
+		try {
+			date = formatter.parse(date_str);
+		} catch (ParseException e) {
+			date = null;
+			e.printStackTrace();
+		}
+		return date;
 	}
 
 }
