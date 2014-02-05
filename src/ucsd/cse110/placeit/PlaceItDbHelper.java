@@ -1,6 +1,5 @@
 package ucsd.cse110.placeit;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,7 +8,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -99,7 +97,7 @@ public class PlaceItDbHelper extends SQLiteOpenHelper {
 	}
 	
 	// Getting single PlaceIt by its ID
-	public PlaceIt getPlaceIt(int id) throws NumberFormatException, ParseException {
+	public PlaceIt getPlaceIt(int id) {
 
 		// get a readable instance of our database 
 		SQLiteDatabase db = this.getReadableDatabase();
@@ -112,7 +110,7 @@ public class PlaceItDbHelper extends SQLiteOpenHelper {
 	        cursor.moveToFirst();
 	 
 	    // create the PlaceIt that'll be returned
-	    PlaceIt placeIt = new PlaceIt(Integer.parseInt(cursor.getString(0)),
+	    PlaceIt placeIt = new PlaceIt(cursor.getInt(0),
 	            cursor.getString(1), cursor.getString(2), cursor.getString(3),
 	            new LatLng(cursor.getDouble(4),cursor.getDouble(5)), 
 	            cursor.getString(6), cursor.getString(7));

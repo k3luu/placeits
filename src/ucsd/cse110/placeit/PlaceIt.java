@@ -12,7 +12,7 @@ public class PlaceIt {
 	////////////////////// Private Variables //////////////////////
 	
 	private int id;						// db id must be unique
-	public String title;				// REQUIRED: name of the PlaceIt
+	private	String title;				// REQUIRED: name of the PlaceIt
 	private LatLng location;			// REQUIRED: the lat/lng of the location
 	private String location_str;		// The string representation of the LatLng
 	private String status; 				// posted (active), pulled down (triggered), expired
