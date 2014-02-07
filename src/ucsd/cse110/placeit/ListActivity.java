@@ -1,5 +1,6 @@
 package ucsd.cse110.placeit;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -11,18 +12,20 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-//import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
-//import android.util.Log;
-//import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+//import android.support.v4.app.NavUtils;
+//import android.util.Log;
+//import android.view.Gravity;
 //import android.widget.ArrayAdapter;
 //import android.widget.ListView;
 //import android.widget.TextView;
+import android.widget.ListView;
 
 public class ListActivity extends FragmentActivity implements
 		ActionBar.TabListener {
@@ -190,7 +193,7 @@ public class ListActivity extends FragmentActivity implements
 		public final static String TRIGGERED = "Triggered";
 		public final static String ACTIVE = "Active";
 		private List<PlaceIt> activePlaceItList;
-		PlaceItDbHelper db;
+		private PlaceItDbHelper db;
 		
 		public DummySectionFragment() {
 		}
@@ -206,14 +209,24 @@ public class ListActivity extends FragmentActivity implements
 					ARG_SECTION_NUMBER)));
 					*/
 			
-			/* later
+			db = new PlaceItDbHelper(getActivity());
 			if (getArguments().getInt(ARG_SECTION_NUMBER) == 1) {
 				
 				PlaceIt placeIt;
 				activePlaceItList = db.getAllPlaceIts(ACTIVE);
 				
+				
+				
+		    	ArrayList<String> titleStrArray = new ArrayList<String>();
+				for (int i = 0; i < activePlaceItList.size(); i++) {
+					placeIt = activePlaceItList.get(i);
+					titleStrArray.add(placeIt.getTitle().toString());
+				}
+				ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1,titleStrArray);
+				
+				ListView listView = (ListView) rootView.findViewById(R.id.listViewItems);
+				listView.setAdapter(adapter);
 			}
-			*/
 			
 			// implementing list view
 			
