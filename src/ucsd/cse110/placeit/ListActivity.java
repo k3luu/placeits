@@ -1,5 +1,6 @@
 package ucsd.cse110.placeit;
 
+import java.util.List;
 import java.util.Locale;
 
 import android.app.ActionBar;
@@ -105,8 +106,8 @@ public class ListActivity extends FragmentActivity implements
         	return true;
     	}
     	else if ( item.getItemId() == R.id.create_event_btn ) {
-    		Intent intent2 = new Intent(this, PlaceItsManager.class);
-        	startActivity(intent2);
+    		//Intent intent2 = new Intent(this, PlaceItsManager.class);
+        	//startActivity(intent2);
         	return true;
     	}
     	else {
@@ -157,7 +158,7 @@ public class ListActivity extends FragmentActivity implements
 
 		@Override
 		public int getCount() {
-			// Show 3 total pages.
+			// Show 3-1 total pages.
 			return 3-1;
 		}
 
@@ -186,7 +187,11 @@ public class ListActivity extends FragmentActivity implements
 		 * fragment.
 		 */
 		public static final String ARG_SECTION_NUMBER = "section_number";
-
+		public final static String TRIGGERED = "Triggered";
+		public final static String ACTIVE = "Active";
+		private List<PlaceIt> activePlaceItList;
+		PlaceItDbHelper db;
+		
 		public DummySectionFragment() {
 		}
 
@@ -201,6 +206,15 @@ public class ListActivity extends FragmentActivity implements
 					ARG_SECTION_NUMBER)));
 					*/
 			
+			/* later
+			if (getArguments().getInt(ARG_SECTION_NUMBER) == 1) {
+				
+				PlaceIt placeIt;
+				activePlaceItList = db.getAllPlaceIts(ACTIVE);
+				
+			}
+			*/
+			
 			// implementing list view
 			
 			//String[] myStringArray = this.getResources().getStringArray(R.array.placeItsTasks);
@@ -208,6 +222,8 @@ public class ListActivity extends FragmentActivity implements
 			
 			//ListView listView = (ListView) rootView.findViewById(R.id.listViewItems);
 			//listView.setAdapter(adapter);
+			
+			
 			return rootView;
 		}
 	}

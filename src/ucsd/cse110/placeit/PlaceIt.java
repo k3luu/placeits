@@ -36,6 +36,18 @@ public class PlaceIt {
 		this.location_str = location_str;
 	}
 	
+	// Minimal + description if exist constructor
+	public PlaceIt(String title, String status, String description, 
+					LatLng location, String location_str, String scheduled_date) {
+		
+		this.title = title;
+		this.status = status;
+		this.description = description;
+		this.location = location;
+		this.location_str = location_str;
+		this.scheduled_date = stringToDate(scheduled_date);
+	}
+	
 	// for Database constructor
 	public PlaceIt(int id, String title, String status, String description, 
 				   LatLng location, String location_str, String scheduled_date) {
@@ -73,7 +85,10 @@ public class PlaceIt {
 	}
 	
 	public String getDescription() {
-		return description;
+		if (description == null)
+			return "";
+		else
+			return description;
 	}
 	
 	 //Returns a String for the sake of our db but will possibly 

@@ -70,13 +70,25 @@ public class GetAddressTask extends AsyncTask<LatLng, Void, String>
 	         * Format the first line of address (if available),
 	         * city, and country name.
 	         */
+	        
+	        String city;
+	        if (address.getLocality() == null) {
+	        	city = address.getSubLocality();
+	        }
+	        else {
+	        	city = address.getLocality();
+	        }
+	        
 	        String addressText = String.format(
 	                "%s, %s, %s",
 	                // If there's a street address, add it
 	                address.getMaxAddressLineIndex() > 0 ?
 	                        address.getAddressLine(0) : "",
 	                // Locality is usually a city
-	                address.getLocality(),
+	                        
+	                // address.getLocality(), (REPLACED this with above null checker)
+	                        city,
+	                        
 	                // The country of the address
 	                address.getCountryName());
 	        // Return the text

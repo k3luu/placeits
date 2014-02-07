@@ -98,9 +98,9 @@ OnMapLongClickListener, OnCameraChangeListener, OnMarkerDragListener {
         	return true;
     	}
     	else if ( item.getItemId() == R.id.create_event_btn ) {
-    		Intent intent2 = new Intent(this, PlaceItsManager.class);
-    		intent2.putExtra("ucsd.cs110.placeit.CheckSrouce", 1);
-        	startActivity(intent2);
+    		//Intent intent2 = new Intent(this, PlaceItsManager.class);
+    		//intent2.putExtra("ucsd.cs110.placeit.CheckSrouce", 1);
+        	//startActivity(intent2);
         	return true;
     	}
     	else {

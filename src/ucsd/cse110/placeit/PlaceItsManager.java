@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 //import android.app.ActionBar.Tab;
@@ -47,8 +48,8 @@ ActionBar.TabListener {
 		// Case 3: called by ListView [All info]
 		// cases ended
 		
-		Intent checkWhere = getIntent();
-		int validate = checkWhere.getIntExtra("ucsd.cs110.placeit.CheckSrouce", 1);
+		//Intent checkWhere = getIntent();
+		//int validate = checkWhere.getIntExtra("ucsd.cs110.placeit.CheckSrouce", 1);
 		
 		// Add case 3 later
 		/*if (validate == 1)
@@ -141,10 +142,25 @@ ActionBar.TabListener {
     		String title = title_field.getText().toString();
     		String description = description_field.getText().toString();
     		String location_str = location_field.getText().toString();
+    		String scheduleData = "empty for now. implement toggle to string later";
     		Log.i("title",title);
- 
     		
+    		PlaceIt data = new PlaceIt(title, "Active", description, location, location_str, scheduleData);
+    		
+    		PlaceItDataChecker checker = new PlaceItDataChecker(data);
     		// When clicked, first validate
+    		
+    		if (checker.checkNormal()) {
+    			Log.i("True", "Checker passed!");
+    			db.addPlaceIt(data);
+    			Intent intent1 = new Intent(this, MainActivity.class);
+        		startActivity(intent1);
+    		}
+    		else {
+    			Toast.makeText(getApplicationContext(), "Incomplete form", Toast.LENGTH_SHORT).show();
+    		}
+    		
+    		/* modified by weijie (Reason: follow SRP to get higher grade? LOL)
     		if( (title.length() == 0) || (location_str.length() == 0) ) {
     			// prompt user for invalid input
     		}
@@ -153,19 +169,25 @@ ActionBar.TabListener {
         		db.addPlaceIt(new PlaceIt(title, "Active", location, location_str));
         		
     		}
-
+			*/
     		
-    		Intent intent1 = new Intent(this, MainActivity.class);
-    		startActivity(intent1);
+    		
     		return true;
     	}
     	else if ( item.getItemId() == R.id.datebase_cancel ) {
     		
     		// When clicked, clear all the fields
+    		EditText title_field = (EditText) findViewById(R.id.editText1);
+    		EditText description_field = (EditText) findViewById(R.id.editText2);
+    		EditText location_field = (EditText) findViewById(R.id.location);
+    		title_field.clearComposingText();
+    		description_field.clearComposingText();
+    		location_field.clearComposingText();
+    		// set toggles back to OFF position.
     		
-    		// Go back to the list view
+    		// Go back to the map view
     		
-    		Intent intent2 = new Intent(this, ListActivity.class);
+    		Intent intent2 = new Intent(this, MainActivity.class);
         	startActivity(intent2);
         	return true;
     	}
