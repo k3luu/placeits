@@ -2,12 +2,13 @@ package ucsd.cse110.placeit;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
-import android.app.ActionBar;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.location.Address;
-import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
@@ -16,13 +17,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AutoCompleteTextView;
+import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
-import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
-import com.google.android.gms.location.LocationClient;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
@@ -35,31 +31,32 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MainActivity extends FragmentActivity implements 
-OnMapLongClickListener, OnCameraChangeListener,ConnectionCallbacks, 
-OnConnectionFailedListener, LocationListener, OnMarkerDragListener { 
+OnMapLongClickListener, OnCameraChangeListener, OnMarkerDragListener { 
 	
-	///////////////////////////////// Keys ////////////////////////////////////
+	/////////////////////////////// Constants //////////////////////////////////
 	
 	public final static String LAT = "ucsd.cse110.placeit.LAT";
 	public final static String LNG = "ucsd.cse110.placeit.LNG";
 	public final static String LATLNG = "ucsd.cse110.placeit.LATLNG";
+	public final static String TRIGGERED = "Triggered";
+	public final static String ACTIVE = "Active";
+	public static final String PLACEIT_ID = "ucsd.cse110.placeit.PLACEIT_ID";
+	
+	private final static float ALERT_RADIUS = 804.672f;
+	private final static int ALERT_EXPIRATION = -1;
+	private final static String ALERT_INTENT = "ucsd.cse110.placeit.ALERT";
+	
 	
 	///////////////////////////// Private Variables ///////////////////////////
 	
-	private GoogleMap mMap; 				// the google map 
-	private LocationClient mLocationClient; // tracks user movement
-	private HashMap<String, Integer> placeItMarkers = new HashMap<String, Integer>(); //keeps a map of our markers and PLaceIts
+	private GoogleMap mMap; 						// the google map 
+	private LocationManager mLocationManager;		// manage users location
+	private HashMap<String, Integer> placeItMarkers 
+			= new HashMap<String, Integer>(); 		// HashMap between our markers and PLaceIts
+	private List<PlaceIt> activePlaceItList;		// a list of all the active placeIt
 	
 	// get an instance of our database to add
 	PlaceItDbHelper db = new PlaceItDbHelper(this);
-
- 
-	// These settings are the same as the settings for the map. They will 
-    // in fact give you updates at the maximal rates currently possible.
-    private static final LocationRequest REQUEST = LocationRequest.create()
-            .setInterval(5000)         // 5 seconds
-            .setFastestInterval(16)    // 16ms = 60fps
-            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 	
 	
     ///////////////////////////// Activity States /////////////////////////////
@@ -68,25 +65,17 @@ OnConnectionFailedListener, LocationListener, OnMarkerDragListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setUpMapIfNeeded();
         
-        final ActionBar actionBar = getActionBar();
         // Hide Action bar Icon
-        actionBar.setDisplayShowHomeEnabled(false);
- 
-        // The search bar
-        AutoCompleteTextView autoCompView = (AutoCompleteTextView) findViewById(R.id.search_bar);
-        autoCompView.setAdapter(new PlacesAutoCompleteAdapter(this));
+        getActionBar().setDisplayShowHomeEnabled(false);
         
-        autoCompView.setOnItemClickListener(new OnItemClickListener() {
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				Address address = (Address) parent.getItemAtPosition(position);
-				LatLng location = new LatLng(address.getLatitude(), address.getLongitude());
-				onMapLongClick(location);
-			}
-		});
-
+        // set up map and searchbar
+        setUpMapIfNeeded();
+        setUpSearchbar();
+        mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        
+        // add markers to the map and prximity sensors
+        generatePlaceIts();
         
     }
 
@@ -123,14 +112,12 @@ OnConnectionFailedListener, LocationListener, OnMarkerDragListener {
     protected void onResume() {
         super.onResume();
         setUpMapIfNeeded();
-        setUpLocationClientIfNeeded();
-        mLocationClient.connect();
-        populateMap();
-        
+
     }
     
     ///////////////////////////// Setup Methods ///////////////////////////////
     
+    // creates an instance of GoogleMap and sets the appropriate settings
     private void setUpMapIfNeeded() {
         if (mMap == null) {
             mMap = ((SupportMapFragment) getSupportFragmentManager()
@@ -144,37 +131,69 @@ OnConnectionFailedListener, LocationListener, OnMarkerDragListener {
         }
     }
     
-    private void setUpLocationClientIfNeeded() {
-        if (mLocationClient == null) {
-            mLocationClient = new LocationClient(
-                    getApplicationContext(),
-                    this,  // ConnectionCallbacks
-                    this); // OnConnectionFailedListener
-        }
+    // sets up the search bar
+    private void setUpSearchbar() {
+    	AutoCompleteTextView autoCompView = (AutoCompleteTextView) findViewById(R.id.search_bar);
+        autoCompView.setAdapter(new PlacesAutoCompleteAdapter(this));
+        
+        autoCompView.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				Address address = (Address) parent.getItemAtPosition(position);
+				LatLng location = new LatLng(address.getLatitude(), address.getLongitude());
+				onMapLongClick(location);
+			}
+		});
     }
+    
 
     ///////////////////////////// Other Methods ///////////////////////////////
     
-    // populates the map with all the PlaceIt's stored in the database
-    public void populateMap() {
+    // create proximity alerts for each PlaceIt
+    private void addProximityAlert(PlaceIt placeIt) {
+    	int placeIt_Id = placeIt.getId();
     	
-    	LatLng markerPosition;
-    	PlaceIt pl;
+        Intent intent = new Intent(ALERT_INTENT);
+        intent.putExtra(PLACEIT_ID, placeIt_Id);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, placeIt_Id, intent, 0);
+        mLocationManager.addProximityAlert(
+        		placeIt.getLocation().latitude, 
+        		placeIt.getLocation().longitude, 
+                ALERT_RADIUS, 
+                ALERT_EXPIRATION, 
+                pendingIntent 
+        );
+
+        IntentFilter filter = new IntentFilter(ALERT_INTENT);
+        registerReceiver(new PlaceItIntentReceiever(), filter);
+        Toast.makeText(getApplicationContext(),"PlaceIt Added",Toast.LENGTH_SHORT).show();
+    }
+    
+    
+    // populates the map with all the PlaceIt's stored in the database
+    public void generatePlaceIts() {
+    	
+    	PlaceIt placeIt;
 		
     	// loop through all active PlaceIt's and populate map with them
-    	List<PlaceIt> activePlaceItList = db.getAllPlaceIts("Active");
+    	activePlaceItList = db.getAllPlaceIts(ACTIVE);
     	
 		for (int i = 0; i < activePlaceItList.size(); i++) {
-			pl = activePlaceItList.get(i);
-			markerPosition = pl.getLocation();
+			placeIt = activePlaceItList.get(i);
+			
+			// create markers
 			Marker marker = mMap.addMarker(new MarkerOptions()
-									        .position(markerPosition)
-									        .title(pl.getTitle())
-									        .snippet(pl.getLocation_str())
+									        .position(placeIt.getLocation())
+									        .title(placeIt.getTitle())
+									        .snippet(placeIt.getLocation_str())
 									        .draggable(true)
 									        );
 			marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_launcher));
-			placeItMarkers.put(marker.getId(), pl.getId());
+			placeItMarkers.put(marker.getId(), placeIt.getId());
+			
+			// create proximity alerts
+			// NOTE: Maybe should not be calling it from here
+			addProximityAlert(placeIt);
 		}
     }
     
@@ -198,33 +217,6 @@ OnConnectionFailedListener, LocationListener, OnMarkerDragListener {
     public void onCameraChange(final CameraPosition position) {
     	//Do nothing... for now
     }
-	
-    /////////////////////// LocationListener Methods //////////////////////////
-	public void onLocationChanged(Location location) {
-		// We need to figure out some way to check if this location corresponds to 
-		// a location of one the PlaceIt's in the DB. 
-	}
-
-	////////////////////// ConnectionCallbacks Methods ////////////////////////
-	@Override
-	public void onConnected(Bundle connectionHint) {
-        mLocationClient.requestLocationUpdates(
-                REQUEST,
-                this);  // LocationListener
-    }
-	
-	@Override
-	public void onDisconnected() {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	/////////////////// OnConnectionFailedListener Methods ////////////////////
-	@Override
-	public void onConnectionFailed(ConnectionResult result) {
-		// Do nothing... for now
-	}
-
 
 
 	/////////////////////// OnMarkerDragListener Methods //////////////////////
@@ -234,25 +226,25 @@ OnConnectionFailedListener, LocationListener, OnMarkerDragListener {
 
 	@Override
 	public void onMarkerDragEnd(Marker marker) {
-		// get the PlaceIt that corresponds to the this marker
-		int pl_ID = placeItMarkers.get(marker.getId()).intValue();
-		PlaceIt tmp_Pl = db.getPlaceIt(pl_ID);
-		
-		// update the location of the PlaceIt
-		LatLng location = marker.getPosition();
-		String location_str = "";
-		 
-		try {
-			location_str = (new GetAddressTask(this)).execute(location).get();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (ExecutionException e) {
-			e.printStackTrace();
-		}
-		
-		tmp_Pl.setLocation_str(location_str);
-		marker.setTitle("kljahsdflkjahs");
-		db.updatePlaceIt(tmp_Pl);
+//		// get the PlaceIt that corresponds to the this marker
+//		int pl_ID = placeItMarkers.get(marker.getId()).intValue();
+//		PlaceIt tmp_Pl = db.getPlaceIt(pl_ID);
+//		
+//		// update the location of the PlaceIt
+//		LatLng location = marker.getPosition();
+//		String location_str = "";
+//		 
+//		try {
+//			location_str = (new GetAddressTask(this)).execute(location).get();
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		} catch (ExecutionException e) {
+//			e.printStackTrace();
+//		}
+//		
+//		tmp_Pl.setLocation_str(location_str);
+//		marker.setTitle("kljahsdflkjahs");
+//		db.updatePlaceIt(tmp_Pl);
 	}
 
 	@Override
