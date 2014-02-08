@@ -244,9 +244,8 @@ containing a value of this type.
         public static final int ToggleButton04=0x7f050013;
         public static final int ToggleButton05=0x7f050014;
         public static final int ToggleButton06=0x7f050015;
-        public static final int create_event_btn=0x7f050018;
-        public static final int database_add_edit=0x7f050019;
-        public static final int datebase_cancel=0x7f05001a;
+        public static final int database_add_edit=0x7f050018;
+        public static final int datebase_cancel=0x7f050019;
         public static final int editText1=0x7f05000b;
         public static final int editText2=0x7f05000c;
         public static final int hybrid=0x7f050004;

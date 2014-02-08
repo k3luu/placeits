@@ -17,12 +17,6 @@
         android:orderInCategory="2"
         android:showAsAction="always"
         />
-    
-    <item android:id="@+id/create_event_btn"
-        android:title="@string/menu_create"
-        android:orderInCategory="3"
-        android:showAsAction="always"
-        />
         
 
 </menu>

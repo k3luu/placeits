@@ -51,7 +51,7 @@ public class PlaceItDbHelper extends SQLiteOpenHelper {
 		String CREATE_PLACEITS_TABLE = "CREATE TABLE " + 
 										TABLE_PLACEITS + 
 										"(" +
-										    KEY_ID + " INTEGER PRIMARY KEY," +
+										    KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
 										    KEY_TITLE + " TEXT," +
 										    KEY_STATUS + " TEXT," +
 										    KEY_DESC + " TEXT," + 
@@ -119,8 +119,8 @@ public class PlaceItDbHelper extends SQLiteOpenHelper {
 	}
 	 
 	// Getting PlaceIts based on status
-	public List<PlaceIt> getAllPlaceIts(String placeIt_status) {
-		List<PlaceIt> placeItList = new ArrayList<PlaceIt>();
+	public ArrayList<PlaceIt> getAllPlaceIts(String placeIt_status) {
+		ArrayList<PlaceIt> placeItList = new ArrayList<PlaceIt>();
 	    // Select All Query
 	    String selectQuery = "SELECT  * " +
 	    					 "FROM " + TABLE_PLACEITS + " " +
@@ -134,6 +134,7 @@ public class PlaceItDbHelper extends SQLiteOpenHelper {
 	    if (cursor.moveToFirst()) {
 	        do {
 	        	PlaceIt placeIt = new PlaceIt();
+	        	placeIt.setId(cursor.getInt(0));
 	            placeIt.setTitle(cursor.getString(1));
 	            placeIt.setStatus(cursor.getString(2));
 	            placeIt.setDescription(cursor.getString(3));

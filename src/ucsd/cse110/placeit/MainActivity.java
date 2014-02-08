@@ -97,12 +97,6 @@ OnMapLongClickListener, OnCameraChangeListener, OnMarkerDragListener {
         	startActivity(intent1);
         	return true;
     	}
-    	else if ( item.getItemId() == R.id.create_event_btn ) {
-    		//Intent intent2 = new Intent(this, PlaceItsManager.class);
-    		//intent2.putExtra("ucsd.cs110.placeit.CheckSrouce", 1);
-        	//startActivity(intent2);
-        	return true;
-    	}
     	else {
     		return super.onOptionsItemSelected(item);
     	}
@@ -150,6 +144,7 @@ OnMapLongClickListener, OnCameraChangeListener, OnMarkerDragListener {
     ///////////////////////////// Other Methods ///////////////////////////////
     
     // create proximity alerts for each PlaceIt
+    /*
     private void addProximityAlert(PlaceIt placeIt) {
     	int placeIt_Id = placeIt.getId();
     	
@@ -168,7 +163,7 @@ OnMapLongClickListener, OnCameraChangeListener, OnMarkerDragListener {
         registerReceiver(new PlaceItIntentReceiever(), filter);
         Toast.makeText(getApplicationContext(),"PlaceIt Added",Toast.LENGTH_SHORT).show();
     }
-    
+    */
     
     // populates the map with all the PlaceIt's stored in the database
     public void generatePlaceIts() {
@@ -177,6 +172,7 @@ OnMapLongClickListener, OnCameraChangeListener, OnMarkerDragListener {
 		
     	// loop through all active PlaceIt's and populate map with them
     	activePlaceItList = db.getAllPlaceIts(ACTIVE);
+    	
     	
 		for (int i = 0; i < activePlaceItList.size(); i++) {
 			placeIt = activePlaceItList.get(i);
@@ -193,8 +189,9 @@ OnMapLongClickListener, OnCameraChangeListener, OnMarkerDragListener {
 			
 			// create proximity alerts
 			// NOTE: Maybe should not be calling it from here
-			addProximityAlert(placeIt);
+			//addProximityAlert(placeIt);
 		}
+		db.close();
     }
     
     ///////////////////// OnMapLongClickListener Methods //////////////////////
