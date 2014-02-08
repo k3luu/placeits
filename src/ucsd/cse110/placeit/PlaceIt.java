@@ -140,7 +140,11 @@ public class PlaceIt {
 	// converts a string to a Date object
 	private static Date stringToDate(String date_str) {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-		Date date;
+		Date date; 
+		
+		if (date_str.equals("") || date_str == null) {
+			return null;
+		}
 		
 		try {
 			date = formatter.parse(date_str);

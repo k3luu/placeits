@@ -1,7 +1,6 @@
 package ucsd.cse110.placeit;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -21,7 +20,7 @@ public class PlaceItDbHelper extends SQLiteOpenHelper {
 	///////////////////////// Static variables //////////////////////////
     
 	// Database Version
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 4;
  
     // Database Name
     private static final String DATABASE_NAME = "PlaceItsManager";

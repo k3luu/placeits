@@ -1,7 +1,6 @@
 package ucsd.cse110.placeit;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 import android.app.ActionBar;
@@ -15,7 +14,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,6 +23,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 //import android.support.v4.app.NavUtils;
 //import android.util.Log;
@@ -32,7 +31,6 @@ import android.widget.Toast;
 //import android.widget.ArrayAdapter;
 //import android.widget.ListView;
 //import android.widget.TextView;
-import android.widget.ListView;
 
 public class ListActivity extends FragmentActivity implements
 		ActionBar.TabListener {

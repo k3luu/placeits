@@ -11,13 +11,13 @@ import android.location.Address;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AutoCompleteTextView;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
@@ -42,9 +42,11 @@ OnMapLongClickListener, OnCameraChangeListener, OnMarkerDragListener {
 	public final static String ACTIVE = "Active";
 	public static final String PLACEIT_ID = "ucsd.cse110.placeit.PLACEIT_ID";
 	
-	private final static float ALERT_RADIUS = 804.672f;
+	private final static float ALERT_RADIUS = 804.672f; //1.5 mile
 	private final static int ALERT_EXPIRATION = -1;
 	private final static String ALERT_INTENT = "ucsd.cse110.placeit.ALERT";
+	
+	private static boolean alerts_set = false;
 	
 	
 	///////////////////////////// Private Variables ///////////////////////////
@@ -74,8 +76,10 @@ OnMapLongClickListener, OnCameraChangeListener, OnMarkerDragListener {
         setUpSearchbar();
         mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         
-        // add markers to the map and prximity sensors
-        generatePlaceIts();
+        if (!alerts_set) {
+	        // add markers to the map and prximity sensors
+	        generatePlaceIts();
+    	}
         
     }
 
@@ -143,8 +147,37 @@ OnMapLongClickListener, OnCameraChangeListener, OnMarkerDragListener {
 
     ///////////////////////////// Other Methods ///////////////////////////////
     
+    // populates the map with all the PlaceIt's stored in the database
+    public void generatePlaceIts() {
+    	
+    	PlaceIt placeIt;
+		
+    	// loop through all active PlaceIt's and populate map with them
+    	activePlaceItList = db.getAllPlaceIts(ACTIVE);
+    	
+    	
+		for (int i = 0; i < activePlaceItList.size(); i++) {
+			placeIt = activePlaceItList.get(i);
+			
+			// create markers
+			Log.i("MARKER MADE", placeIt.getTitle() + String.valueOf(placeIt.getId()));
+			Marker marker = mMap.addMarker(new MarkerOptions()
+									        .position(placeIt.getLocation())
+									        .title(placeIt.getTitle())
+									        .snippet(placeIt.getLocation_str())
+									        .draggable(true)
+									        );
+			marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_launcher));
+			placeItMarkers.put(marker.getId(), placeIt.getId());
+			
+			// create proximity alerts
+			// NOTE: Maybe should not be calling it from here
+			addProximityAlert(placeIt);
+		}
+		db.close();
+    }
+    
     // create proximity alerts for each PlaceIt
-    /*
     private void addProximityAlert(PlaceIt placeIt) {
     	int placeIt_Id = placeIt.getId();
     	
@@ -161,37 +194,7 @@ OnMapLongClickListener, OnCameraChangeListener, OnMarkerDragListener {
 
         IntentFilter filter = new IntentFilter(ALERT_INTENT);
         registerReceiver(new PlaceItIntentReceiever(), filter);
-        Toast.makeText(getApplicationContext(),"PlaceIt Added",Toast.LENGTH_SHORT).show();
-    }
-    */
-    
-    // populates the map with all the PlaceIt's stored in the database
-    public void generatePlaceIts() {
-    	
-    	PlaceIt placeIt;
-		
-    	// loop through all active PlaceIt's and populate map with them
-    	activePlaceItList = db.getAllPlaceIts(ACTIVE);
-    	
-    	
-		for (int i = 0; i < activePlaceItList.size(); i++) {
-			placeIt = activePlaceItList.get(i);
-			
-			// create markers
-			Marker marker = mMap.addMarker(new MarkerOptions()
-									        .position(placeIt.getLocation())
-									        .title(placeIt.getTitle())
-									        .snippet(placeIt.getLocation_str())
-									        .draggable(true)
-									        );
-			marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_launcher));
-			placeItMarkers.put(marker.getId(), placeIt.getId());
-			
-			// create proximity alerts
-			// NOTE: Maybe should not be calling it from here
-			//addProximityAlert(placeIt);
-		}
-		db.close();
+//        Toast.makeText(getApplicationContext(),"PlaceIt Proximity Alert Added"+ placeIt_Id,Toast.LENGTH_SHORT).show();
     }
     
     ///////////////////// OnMapLongClickListener Methods //////////////////////

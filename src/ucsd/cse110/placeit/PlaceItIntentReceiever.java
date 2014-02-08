@@ -25,26 +25,31 @@ public class PlaceItIntentReceiever extends BroadcastReceiver {
 		Boolean userEntering = intent.getBooleanExtra(lm_key, false);
 		if (userEntering) {
 			
+			Log.i("ENTERING", placeIt.getTitle());
+			
 			// set the status of the PlaceIt to triggered
 			placeIt.setStatus(MainActivity.TRIGGERED);
 			
-			Intent alertIntent = new Intent(context, MainActivity.class);
-			PendingIntent alertPendingIntent = PendingIntent.getActivity(context, placeIt_id, alertIntent, 0);
-			
-			// create the notification
-			NotificationCompat.Builder mBuilder =
-					new NotificationCompat.Builder(context)
-	 			    .setSmallIcon(R.drawable.ic_launcher)
-	 			    .setContentTitle("The PlaceIt Title")
-	 			    .setContentText("It's description");
-			
-			NotificationManager mNotifyMgr = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-			mBuilder.setContentIntent(alertPendingIntent);
-			mNotifyMgr.notify(placeIt_id, mBuilder.build());
 		}
 		else {
+			Log.i("EXITING", "LKJHASLKJFHALKSJH");
+			
 			Log.d(getClass().getSimpleName(), "exiting");
 		}
+		
+		Intent alertIntent = new Intent(context, MainActivity.class);
+		PendingIntent alertPendingIntent = PendingIntent.getActivity(context, placeIt_id, alertIntent, 0);
+		
+		// create the notification
+		NotificationCompat.Builder mBuilder =
+				new NotificationCompat.Builder(context)
+ 			    .setSmallIcon(R.drawable.ic_launcher)
+ 			    .setContentTitle(placeIt.getTitle())
+ 			    .setContentText(placeIt.getDescription());
+		
+		NotificationManager mNotifyMgr = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+		mBuilder.setContentIntent(alertPendingIntent);
+		mNotifyMgr.notify(placeIt_id, mBuilder.build());
 	}
 
 }

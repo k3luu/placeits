@@ -1,8 +1,5 @@
 package ucsd.cse110.placeit;
 
-import java.util.Date;
-
-import com.google.android.gms.maps.model.LatLng;
 
 public class PlaceItDataChecker {
 	
