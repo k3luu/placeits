@@ -191,7 +191,7 @@ public class ListActivity extends FragmentActivity implements
 	 * A dummy fragment representing a section of the app, but that simply
 	 * displays dummy text.
 	 */
-	public static class DummySectionFragment extends Fragment implements OnItemClickListener, OnItemLongClickListener{
+	public static class DummySectionFragment extends Fragment implements OnItemClickListener/*, OnItemLongClickListener*/{
 		/**
 		 * The fragment argument representing the section number for this
 		 * fragment.
@@ -237,7 +237,7 @@ public class ListActivity extends FragmentActivity implements
 				
 				
 				listView.setOnItemClickListener(this);
-				listView.setOnItemLongClickListener(this);
+				//listView.setOnItemLongClickListener(this);
 				
 			}
 			else {	// Here is the Completed List View fragment
@@ -256,7 +256,7 @@ public class ListActivity extends FragmentActivity implements
 				
 				
 				listView.setOnItemClickListener(this);
-				listView.setOnItemLongClickListener(this);
+				//listView.setOnItemLongClickListener(this);
 			}
 			db.close();
 			return rootView;
@@ -270,75 +270,79 @@ public class ListActivity extends FragmentActivity implements
 			PlaceIt place = (PlaceIt) arg0.getItemAtPosition(arg2);
 			String activeOrTriggered = place.getStatus();
 			if (activeOrTriggered.equalsIgnoreCase(ACTIVE)) {
-				activeOrTriggered = "Completed";
+				activeOrTriggered = "Modify";
 			}
 			else {
 				activeOrTriggered = "Reactivate";
 			}
 			
-			alert.setTitle(activeOrTriggered+" or Modify?");
-			alert.setMessage("You want to MODIFY this Place-Its or make it "+ activeOrTriggered.toUpperCase(Locale.ENGLISH) +"?");
+			alert.setTitle(" ???????");
+			alert.setMessage("?????? "+ activeOrTriggered.toUpperCase(Locale.ENGLISH) +"?");
 			
 			
 			final int id = place.getId();
-			alert.setNeutralButton("Modify", new DialogInterface.OnClickListener() {
+			alert.setNeutralButton(activeOrTriggered, new DialogInterface.OnClickListener() {
 				
-				PlaceItDbHelper db = new PlaceItDbHelper(getActivity());
-		        PlaceIt place = (db.getPlaceIt(id));
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					// Go to Place-it manager with Intent. case from list view edit. ID. case 3
-					
-					// store the LatLng position of the the clicked position to pass into the form
-			    	Bundle location_bundle = new Bundle();
-			    	
-			    	// TODO SCHEDULE
-			    	int passID = place.getId();
-			    	String passTitle = place.getTitle();
-			    	LatLng passPoint = place.getLocation();
-			    	String passDescription = place.getDescription();
-			    	
-			    	location_bundle.putParcelable("ucsd.cs110.placeit.LocationOnly", passPoint);
-			    	Intent intent = new Intent(getActivity(), PlaceItsManager.class);
-			    	intent.putExtra("idIntent", passID);
-			    	intent.putExtra("titleIntent", passTitle);
-			    	intent.putExtra("locationOnlyBundle", location_bundle);
-			    	intent.putExtra("descriptionIntent", passDescription);
-			    	intent.putExtra("ucsd.cs110.placeit.CheckSrouce", 3);
-			    	
-			    	
-			    	db.deletePlaceIt(place); //delete it after getting info because it will reactivate ?
-			    	startActivity(intent);
-					
-					
-					//Toast.makeText(getActivity(),"clicked to modify ", Toast.LENGTH_SHORT).show();
-					
-				}
-			});
-			alert.setPositiveButton(activeOrTriggered, new DialogInterface.OnClickListener() {
 				
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					// when this is clicked, change place it status to complete
 					
-					PlaceItDbHelper db = new PlaceItDbHelper(getActivity());
+					
+					
+			    	
+			    	PlaceItDbHelper db = new PlaceItDbHelper(getActivity());
 			        PlaceIt place = (db.getPlaceIt(id));
 			        
 			        if (place.getStatus().equalsIgnoreCase(TRIGGERED)) {
 			        	place.setStatus(ACTIVE);
+			        	db.updatePlaceIt(place);
+			        	//////////////////////////////////////
 			        }
 			        else {
-			        	place.setStatus(TRIGGERED);
+			        	// Go to Place-it manager with Intent. case from list view edit. ID. case 3
+						
+						// store the LatLng position of the the clicked position to pass into the form
+				    	Bundle location_bundle = new Bundle();
+				    	
+				    	// TODO SCHEDULE
+				    	int passID = place.getId();
+				    	String passTitle = place.getTitle();
+				    	LatLng passPoint = place.getLocation();
+				    	String passDescription = place.getDescription();
+				    	
+				    	location_bundle.putParcelable("ucsd.cs110.placeit.LocationOnly", passPoint);
+				    	Intent intent = new Intent(getActivity(), PlaceItsManager.class);
+				    	intent.putExtra("idIntent", passID);
+				    	intent.putExtra("titleIntent", passTitle);
+				    	intent.putExtra("locationOnlyBundle", location_bundle);
+				    	intent.putExtra("descriptionIntent", passDescription);
+				    	intent.putExtra("ucsd.cs110.placeit.CheckSrouce", 3);
+				    	
+				    	SaveLastLocation action = new SaveLastLocation(passPoint);
+						action.lastSavedPlaceIt(db);
+				    	db.deletePlaceIt(place); //delete it after getting info because it will reactivate ?
+				    	startActivity(intent);
 			        }
-			        
-			        db.updatePlaceIt(place);
-			        Intent intent = new Intent(getActivity(), ListActivity.class);
-		        	startActivity(intent);
+					//Toast.makeText(getActivity(),"clicked to modify ", Toast.LENGTH_SHORT).show();
 					
+				}
+			});
+			alert.setNegativeButton("Delete", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					PlaceItDbHelper db = new PlaceItDbHelper(getActivity());
+					
+			        SaveLastLocation action = new SaveLastLocation(db.getPlaceIt(id).getLocation());
+			        db.deletePlaceIt(db.getPlaceIt(id));
+					action.lastSavedPlaceIt(db);
+			        
+					Toast.makeText(getActivity(),"Item deleted", Toast.LENGTH_SHORT).show();
+					Intent intent = new Intent(getActivity(), ListActivity.class);
+		        	startActivity(intent);
 					//Toast.makeText(getActivity(),"clicked to change status to completed", Toast.LENGTH_SHORT).show();
 				}
 			});
-			alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+			alert.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
 				
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
@@ -353,6 +357,7 @@ public class ListActivity extends FragmentActivity implements
 			
 		}
 
+		/*
 		@Override
 		public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
 				int arg2, long arg3) {
@@ -384,7 +389,6 @@ public class ListActivity extends FragmentActivity implements
 			
 			alert.show();
 			return true;
-		}
+		} */
 	}
-
 }

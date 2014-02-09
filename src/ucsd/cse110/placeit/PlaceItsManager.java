@@ -35,7 +35,7 @@ ActionBar.TabListener {
 	private EditText editViewTitle;
 	private EditText editViewDescription;
 	private LatLng location;
-	private int id;
+	//private int id;
 	private String title;
 	private String description;
 	
@@ -72,7 +72,7 @@ ActionBar.TabListener {
 					Log.i("I am inside case 3", "Case 3");
 					Bundle b = getIntent().getParcelableExtra("locationOnlyBundle");
 					location = b.getParcelable("ucsd.cs110.placeit.LocationOnly");
-					id = info.getIntExtra("idIntent", 0) ;
+					//id = info.getIntExtra("idIntent", 0) ;
 					title = info.getStringExtra("titleIntent");
 					description = info.getStringExtra("descriptionIntent");
 					
@@ -142,6 +142,8 @@ super.onResume();
     		if (checker.checkNormal()) {
     			//Log.i("True", "Checker passed!");
     			db.addPlaceIt(data);
+    			SaveLastLocation action = new SaveLastLocation(location);
+				action.lastSavedPlaceIt(db);
     			Intent intent1 = new Intent(this, MainActivity.class);
         		startActivity(intent1);
     		}

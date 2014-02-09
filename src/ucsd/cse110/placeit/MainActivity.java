@@ -3,8 +3,10 @@ package ucsd.cse110.placeit;
 import java.util.HashMap;
 import java.util.List;
 
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.location.Address;
@@ -18,7 +20,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AutoCompleteTextView;
+import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
@@ -56,6 +60,7 @@ OnMapLongClickListener, OnCameraChangeListener, OnInfoWindowClickListener {
 	private HashMap<String, Integer> placeItMarkers 
 			= new HashMap<String, Integer>(); 		// HashMap between our markers and PLaceIts
 	private List<PlaceIt> activePlaceItList;		// a list of all the active placeIt
+	private List<PlaceIt> systemPlaceItList;
 	
 	// get an instance of our database to add
 	PlaceItDbHelper db = new PlaceItDbHelper(this);
@@ -80,6 +85,10 @@ OnMapLongClickListener, OnCameraChangeListener, OnInfoWindowClickListener {
 	        // add markers to the map and prximity sensors
 	        generatePlaceIts();
     	}
+        PlaceIt placeTmp;
+        initTheFirstDatabase();
+        placeTmp = db.getAllPlaceIts("HACKER").get(0);
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(placeTmp.getLocation(), 12),2000,null);
         
     }
 
@@ -165,8 +174,7 @@ OnMapLongClickListener, OnCameraChangeListener, OnInfoWindowClickListener {
 			Marker marker = mMap.addMarker(new MarkerOptions()
 									        .position(placeIt.getLocation())
 									        .title(placeIt.getTitle())
-									        .snippet(placeIt.getLocation_str())
-									        .draggable(true)
+									        .draggable(false)
 									        );
 			marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.placeit));
 			placeItMarkers.put(marker.getId(), placeIt.getId());
@@ -226,7 +234,132 @@ OnMapLongClickListener, OnCameraChangeListener, OnInfoWindowClickListener {
     	
     	Intent detailsIntent = new Intent(this, DetailsActivity.class);
     	detailsIntent.putExtra(PLACEIT_ID, placeItMarkers.get(marker.getId()));
-    	startActivity(detailsIntent);
+    	//startActivity(detailsIntent);
+    	
+    	final PlaceIt placeIt = getPlaceItObjectFromMarker(placeItMarkers.get(marker.getId()));
+    	String title_field;
+    	String description_field;
+    	String location_field;
+    	String schedule_field;
+    	
+		title_field = placeIt.getTitle();
+		description_field = placeIt.getDescription();
+		location_field = placeIt.getLocation_str();
+		schedule_field = placeIt.getScheduled_date();
+		
+		
+    	AlertDialog.Builder alert = new AlertDialog.Builder(this);
+    	
+    	String info = "Description:  "
+    			+ description_field+"\n\n"
+    			+ "Address:  "
+    			+ location_field+"\n\n"
+    			+ "Scheduled Day:  "
+    			+ schedule_field+"\n";
+    	alert.setTitle(title_field);
+    	alert.setMessage(info);
+    	
+    	alert.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				Toast.makeText(getApplication(),"Action Cancelled", Toast.LENGTH_SHORT).show();
+			}
+		});
+    	
+    	alert.setNegativeButton("Delete", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				PlaceItDbHelper db = new PlaceItDbHelper(getApplication());
+		        db.deletePlaceIt(placeIt);
+		        removeProximityAlert(placeIt.getId());
+		        Toast.makeText(getApplication(),"Place-Its Deleted", Toast.LENGTH_SHORT).show();
+				Intent intent = new Intent(getApplication(), MainActivity.class);
+				
+				SaveLastLocation action = new SaveLastLocation(placeIt.getLocation());
+				action.lastSavedPlaceIt(db);
+				
+				db.close();
+	        	startActivity(intent);
+			}
+		});
+
+    	alert.setNeutralButton("Modify", new DialogInterface.OnClickListener() {
+	
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				
+				Bundle location_bundle = new Bundle();
+		    	
+		    	// TODO SCHEDULE
+		    	int passID = placeIt.getId();
+		    	String passTitle = placeIt.getTitle();
+		    	LatLng passPoint = placeIt.getLocation();
+		    	String passDescription = placeIt.getDescription();
+		    	
+		    	location_bundle.putParcelable("ucsd.cs110.placeit.LocationOnly", passPoint);
+		    	Intent intent = new Intent(getApplication(), PlaceItsManager.class);
+		    	intent.putExtra("idIntent", passID);
+		    	intent.putExtra("titleIntent", passTitle);
+		    	intent.putExtra("locationOnlyBundle", location_bundle);
+		    	intent.putExtra("descriptionIntent", passDescription);
+		    	intent.putExtra("ucsd.cs110.placeit.CheckSrouce", 3);
+		    	
+		    	db.deletePlaceIt(placeIt); //delete it after getting info because it will reactivate ?
+		    	removeProximityAlert(placeIt.getId());
+		    	startActivity(intent);
+				
+				Toast.makeText(getApplication(),"Modifying Plact-Its", Toast.LENGTH_SHORT).show();
+			}
+		});
+		    	
+    	alert.show();
 	}
     
+    public PlaceIt getPlaceItObjectFromMarker(int theID) {
+    	PlaceIt place;
+		db = new PlaceItDbHelper(this);
+		place = db.getPlaceIt(theID);
+    	return place;
+    }
+    
+    private void removeProximityAlert(int placeIt_id) {
+
+        String context = Context.LOCATION_SERVICE;
+        LocationManager locationManager = (LocationManager) getSystemService(context);
+
+        Intent intent = new Intent(MainActivity.PROX_ALERT_INTENT);
+        PendingIntent operation = PendingIntent.getBroadcast(getApplicationContext(), placeIt_id , intent, 0);
+        locationManager.removeProximityAlert(operation);
+    }
+    
+    /* Follow SRP
+    private void lastSavedPlaceIt(LatLng loc)
+    {
+    	systemPlaceItList = db.getAllPlaceIts("HACKER");
+    	PlaceIt place = systemPlaceItList.get(0);
+    	place.setLocation(loc);
+    	db.updatePlaceIt(place);
+    	db.close();
+    	Log.i("loc is", loc.toString());
+    }
+    */
+    
+    private void initTheFirstDatabase()
+    {
+    	systemPlaceItList = db.getAllPlaceIts("HACKER");
+    	
+    	if (systemPlaceItList.size() == 0)
+    	{
+	    	LatLng loc = new LatLng(32.8804, -117.242);
+	    	PlaceIt place = new PlaceIt();
+	    	place.setLocation(loc);
+	    	place.setStatus("HACKER");
+	    	place.setTitle("Hidden");
+	    	place.setDescription("YOU SHOULD NEVER SEE THIS OR MODIFY THIS.!");
+	    	PlaceItDbHelper database = new PlaceItDbHelper(this);
+			database.addPlaceIt(place);
+			database.close();
+    	}    	
+    }
 }
