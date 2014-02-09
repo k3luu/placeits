@@ -37,5 +37,6 @@
     <string name="saturday">Sa</string>
     <string name="search_location">Find a location</string>
     <string name="title_activity_details">DetailsActivity</string>
+    <string name="delete_btn">Delete PlaceIt</string>
 
 </resources>

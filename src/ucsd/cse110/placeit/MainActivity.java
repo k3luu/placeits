@@ -44,7 +44,7 @@ OnMapLongClickListener, OnCameraChangeListener, OnInfoWindowClickListener {
 	
 	private final static float ALERT_RADIUS = 804.672f; //1.5 mile
 	private final static int ALERT_EXPIRATION = -1;
-	private final static String ALERT_INTENT = "ucsd.cse110.placeit.ALERT";
+	public final static String PROX_ALERT_INTENT = "ucsd.cse110.placeit.ALERT";
 	
 	private static boolean alerts_set = false;
 	
@@ -182,7 +182,7 @@ OnMapLongClickListener, OnCameraChangeListener, OnInfoWindowClickListener {
     private void addProximityAlert(PlaceIt placeIt) {
     	int placeIt_Id = placeIt.getId();
     	
-        Intent intent = new Intent(ALERT_INTENT);
+        Intent intent = new Intent(PROX_ALERT_INTENT);
         intent.putExtra(PLACEIT_ID, placeIt_Id);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, placeIt_Id, intent, 0);
         mLocationManager.addProximityAlert(
@@ -193,7 +193,7 @@ OnMapLongClickListener, OnCameraChangeListener, OnInfoWindowClickListener {
                 pendingIntent 
         );
 
-        IntentFilter filter = new IntentFilter(ALERT_INTENT);
+        IntentFilter filter = new IntentFilter(PROX_ALERT_INTENT);
         registerReceiver(new PlaceItIntentReceiever(), filter);
 //        Toast.makeText(getApplicationContext(),"PlaceIt Proximity Alert Added"+ placeIt_Id,Toast.LENGTH_SHORT).show();
     }

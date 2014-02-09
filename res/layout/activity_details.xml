@@ -25,4 +25,15 @@
         android:layout_height="wrap_content"
         android:text="schedule"/>
 
+    <Button
+        android:id="@+id/delete_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:background="@color/red"
+        android:text="@string/delete_btn"
+        android:onClick="deletePlaceIt"
+        android:textColor="@color/white"
+        android:textColorHint="@color/silver" />
+
 </LinearLayout>
