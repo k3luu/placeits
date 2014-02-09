@@ -250,8 +250,8 @@ containing a value of this type.
         public static final int day_spinner=0x7f050013;
         public static final int delete_button=0x7f050009;
         public static final int description=0x7f050006;
-        public static final int editText1=0x7f050010;
-        public static final int editText2=0x7f050011;
+        public static final int editTextDesc=0x7f050011;
+        public static final int editTextTitle=0x7f050010;
         public static final int hybrid=0x7f050004;
         public static final int listViewItems=0x7f05000d;
         public static final int list_view_btn=0x7f050018;
