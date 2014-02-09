@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -126,7 +127,7 @@ ActionBar.TabListener {
 		}
 	}
 	
-    @Override
+	@Override
     public boolean onOptionsItemSelected(MenuItem item) {
     	
     	// Menu buttons click to associated activity
@@ -138,14 +139,17 @@ ActionBar.TabListener {
     		EditText title_field = (EditText) findViewById(R.id.editText1);
     		EditText description_field = (EditText) findViewById(R.id.editText2);
     		EditText location_field = (EditText) findViewById(R.id.location);
+    		Spinner day_field = (Spinner) findViewById(R.id.day_spinner);
+    		Spinner week_field = (Spinner) findViewById(R.id.week_spinner);
     		
     		String title = title_field.getText().toString();
     		String description = description_field.getText().toString();
     		String location_str = location_field.getText().toString();
-    		String scheduleData = "empty for now. implement toggle to string later";
-    		Log.i("title",title);
+    		String scheduleData = String.valueOf(day_field.getSelectedItem());
+    		String scheduleWeek = String.valueOf(week_field.getSelectedItem());
     		
-    		PlaceIt data = new PlaceIt(title, "Active", description, location, location_str, scheduleData);
+    		PlaceIt data = new PlaceIt(title, "Active", description, location, 
+    				location_str, scheduleData, scheduleWeek);
     		
     		PlaceItDataChecker checker = new PlaceItDataChecker(data);
     		// When clicked, first validate
@@ -195,7 +199,7 @@ ActionBar.TabListener {
     		return super.onOptionsItemSelected(item);
     	}
     }
-
+	
     @Override
 	public void onTabSelected(ActionBar.Tab tab,
 			FragmentTransaction fragmentTransaction) {

@@ -28,15 +28,30 @@
     <string name="description_hint">Description:</string>
     <string name="location_hint">Location:</string>
     <string name="icon_gap">4sp</string>
-    <string name="sunday">Su</string>
-    <string name="monday">Mo</string>
-    <string name="tuesday">Tu</string>
-    <string name="wednesday">We</string>
-    <string name="thursday">Th</string>
-    <string name="friday">Fr</string>
-    <string name="saturday">Sa</string>
     <string name="search_location">Find a location</string>
     <string name="title_activity_details">DetailsActivity</string>
     <string name="delete_btn">Delete PlaceIt</string>
+    
+    <!-- For day of week selection -->
+    <string name="week_day">Choose a day</string>
+    <string-array name="day_array">
+        <item>Sunday</item>
+        <item>Monday</item>
+        <item>Tuesday</item>
+        <item>Wednesday</item>
+        <item>Thursday</item>
+        <item>Friday</item>
+        <item>Saturday</item>
+    </string-array>
+    
+    <!-- For repeated events -->
+    <string name="week_interval">Choose an interval</string>
+    <string-array name="week_array">
+        <item>Every minute</item>
+        <item>Every week</item>
+        <item>Every two weeks</item>
+        <item>Every three weeks</item>
+        <item>Every four weeks</item>
+    </string-array>
 
 </resources>

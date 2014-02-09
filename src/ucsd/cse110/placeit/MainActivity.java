@@ -168,7 +168,7 @@ OnMapLongClickListener, OnCameraChangeListener, OnInfoWindowClickListener {
 									        .snippet(placeIt.getLocation_str())
 									        .draggable(true)
 									        );
-			marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_launcher));
+			marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.placeit));
 			placeItMarkers.put(marker.getId(), placeIt.getId());
 			
 			// create proximity alerts

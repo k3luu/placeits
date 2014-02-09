@@ -25,6 +25,8 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.google.android.gms.maps.model.LatLng;
 //import android.support.v4.app.NavUtils;
 //import android.util.Log;
 //import android.view.Gravity;
@@ -111,6 +113,11 @@ public class ListActivity extends FragmentActivity implements
     	if ( item.getItemId() == R.id.map_view_btn ) {
     		Intent intent1 = new Intent(this, MainActivity.class);
         	startActivity(intent1);
+        	return true;
+    	}
+    	else if (item.getItemId() == R.id.list_view_btn) {
+    		Intent intent2 = new Intent(this, ListActivity.class);
+        	startActivity(intent2);
         	return true;
     	}
     	else {
@@ -211,13 +218,12 @@ public class ListActivity extends FragmentActivity implements
 			
 			
 			db = new PlaceItDbHelper(getActivity());
-			if (getArguments().getInt(ARG_SECTION_NUMBER) == 1) {
+			
+			
+			if (getArguments().getInt(ARG_SECTION_NUMBER) == 1) {	// Here is the Pending List View fragment
 				
 				PlaceIt placeIt;
 				activePlaceItList = db.getAllPlaceIts(ACTIVE);
-				
-				
-				
 				
 		    	ArrayList<PlaceIt> placeItArray = new ArrayList<PlaceIt>();
 				for (int i = 0; i < activePlaceItList.size(); i++) {
@@ -233,34 +239,103 @@ public class ListActivity extends FragmentActivity implements
 				listView.setOnItemClickListener(this);
 				listView.setOnItemLongClickListener(this);
 				
-			}		
+			}
+			else {	// Here is the Completed List View fragment
+				PlaceIt placeIt;
+				activePlaceItList = db.getAllPlaceIts(TRIGGERED);
+				
+		    	ArrayList<PlaceIt> placeItArray = new ArrayList<PlaceIt>();
+				for (int i = 0; i < activePlaceItList.size(); i++) {
+					placeIt = activePlaceItList.get(i);
+					placeItArray.add(placeIt);
+				}
+				ArrayAdapter<PlaceIt> adapter = new ArrayAdapter<PlaceIt>(getActivity(),android.R.layout.simple_list_item_1,placeItArray);
+				
+				ListView listView = (ListView) rootView.findViewById(R.id.listViewItems);
+				listView.setAdapter(adapter);
+				
+				
+				listView.setOnItemClickListener(this);
+				listView.setOnItemLongClickListener(this);
+			}
 			db.close();
 			return rootView;
 		}
 
 		@Override
-		public void onItemClick(AdapterView<?> arg0, View arg1, int id,
+		public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 				long arg3) {
 			AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
 			
-			alert.setTitle("Completed or Modify?");
-			alert.setMessage("You want to MODIFY this Place-Its or make it COMPLETED?");
+			PlaceIt place = (PlaceIt) arg0.getItemAtPosition(arg2);
+			String activeOrTriggered = place.getStatus();
+			if (activeOrTriggered.equalsIgnoreCase(ACTIVE)) {
+				activeOrTriggered = "Completed";
+			}
+			else {
+				activeOrTriggered = "Reactivate";
+			}
 			
+			alert.setTitle(activeOrTriggered+" or Modify?");
+			alert.setMessage("You want to MODIFY this Place-Its or make it "+ activeOrTriggered.toUpperCase(Locale.ENGLISH) +"?");
+			
+			
+			final int id = place.getId();
 			alert.setNeutralButton("Modify", new DialogInterface.OnClickListener() {
 				
+				PlaceItDbHelper db = new PlaceItDbHelper(getActivity());
+		        PlaceIt place = (db.getPlaceIt(id));
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					// Go to Place-it manager with Intent. case from list view edit. ID. case 3
-					Toast.makeText(getActivity(),"clicked to modify ", Toast.LENGTH_SHORT).show();
+					
+					// store the LatLng position of the the clicked position to pass into the form
+			    	Bundle location_bundle = new Bundle();
+			    	
+			    	// TODO SCHEDULE
+			    	int passID = place.getId();
+			    	String passTitle = place.getTitle();
+			    	LatLng passPoint = place.getLocation();
+			    	String passDescription = place.getDescription();
+			    	
+			    	location_bundle.putParcelable("ucsd.cs110.placeit.LocationOnly", passPoint);
+			    	Intent intent = new Intent(getActivity(), PlaceItsManager.class);
+			    	intent.putExtra("idIntent", passID);
+			    	intent.putExtra("titleIntent", passTitle);
+			    	intent.putExtra("locationOnlyBundle", location_bundle);
+			    	intent.putExtra("descriptionIntent", passDescription);
+			    	intent.putExtra("ucsd.cs110.placeit.CheckSrouce", 3);
+			    	
+			    	
+			    	db.deletePlaceIt(place); //delete it after getting info because it will reactivate ?
+			    	startActivity(intent);
+					
+					
+					//Toast.makeText(getActivity(),"clicked to modify ", Toast.LENGTH_SHORT).show();
 					
 				}
 			});
-			alert.setPositiveButton("Completed", new DialogInterface.OnClickListener() {
+			alert.setPositiveButton(activeOrTriggered, new DialogInterface.OnClickListener() {
 				
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					// TODO Auto-generated method stub
-					Toast.makeText(getActivity(),"clicked to change status to completed", Toast.LENGTH_SHORT).show();
+					// when this is clicked, change place it status to complete
+					
+					PlaceItDbHelper db = new PlaceItDbHelper(getActivity());
+			        PlaceIt place = (db.getPlaceIt(id));
+			        
+			        if (place.getStatus().equalsIgnoreCase(TRIGGERED)) {
+			        	place.setStatus(ACTIVE);
+			        }
+			        else {
+			        	place.setStatus(TRIGGERED);
+			        }
+			        
+			        db.updatePlaceIt(place);
+			        Intent intent = new Intent(getActivity(), ListActivity.class);
+		        	startActivity(intent);
+					
+					//Toast.makeText(getActivity(),"clicked to change status to completed", Toast.LENGTH_SHORT).show();
 				}
 			});
 			alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -301,6 +376,8 @@ public class ListActivity extends FragmentActivity implements
 					PlaceItDbHelper db = new PlaceItDbHelper(getActivity());
 			        db.deletePlaceIt(db.getPlaceIt(id));
 					Toast.makeText(getActivity(),"Item deleted", Toast.LENGTH_SHORT).show();
+					Intent intent = new Intent(getActivity(), ListActivity.class);
+		        	startActivity(intent);
 					
 				}
 			});

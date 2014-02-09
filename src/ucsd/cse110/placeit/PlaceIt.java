@@ -17,7 +17,8 @@ public class PlaceIt {
 	private String location_str;		// The string representation of the LatLng
 	private String status; 				// posted (active), pulled down (triggered), expired
 	private String description;			// aditional details of our PlaceIt
-	private Date scheduled_date;		// the day to schedule
+	private String scheduled_date;		// the day to schedule
+	private String scheduled_week;		// week repeat interval
 	
 	////////////////////// constructors //////////////////////
 	
@@ -38,19 +39,22 @@ public class PlaceIt {
 	
 	// Minimal + description if exist constructor
 	public PlaceIt(String title, String status, String description, 
-					LatLng location, String location_str, String scheduled_date) {
+					LatLng location, String location_str, String scheduled_date,
+					String scheduled_week) {
 		
 		this.title = title;
 		this.status = status;
 		this.description = description;
 		this.location = location;
 		this.location_str = location_str;
-		this.scheduled_date = stringToDate(scheduled_date);
+		this.scheduled_date = scheduled_date;
+		this.scheduled_week = scheduled_week;
 	}
 	
 	// for Database constructor
 	public PlaceIt(int id, String title, String status, String description, 
-				   LatLng location, String location_str, String scheduled_date) {
+				   LatLng location, String location_str, String scheduled_date,
+				   String scheduled_week) {
 		
 		this.id = id;
 		this.title = title;
@@ -58,7 +62,8 @@ public class PlaceIt {
 		this.description  = description;
 		this.location = location;
 		this.location_str = location_str;
-		this.scheduled_date = stringToDate(scheduled_date);
+		this.scheduled_date = scheduled_date;
+		this.scheduled_week = scheduled_week;
 		
 	}
 	
@@ -99,6 +104,12 @@ public class PlaceIt {
 		}else return "";
 	}
 	
+	public String getScheduled_week() {
+		if (scheduled_week != null ) {
+			return scheduled_week.toString();
+		}else return "";
+	}
+	
 	////////////////////// setters //////////////////////
 	
 	public void setId(int id) {
@@ -127,8 +138,11 @@ public class PlaceIt {
 	
 	// String parameter to be able to use with SQLite db
 	public void setScheduled_date(String scheduled_date_string) {
-		
-		this.scheduled_date = stringToDate(scheduled_date_string);
+		this.scheduled_date = scheduled_date_string;
+	}
+	
+	public void setScheduled_week(String scheduled_week_string) {
+		this.scheduled_week = scheduled_week_string;
 	}
 	
 	////////////////////// Other methods //////////////////////
@@ -140,11 +154,7 @@ public class PlaceIt {
 	// converts a string to a Date object
 	private static Date stringToDate(String date_str) {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-		Date date; 
-		
-		if (date_str.equals("") || date_str == null) {
-			return null;
-		}
+		Date date;
 		
 		try {
 			date = formatter.parse(date_str);

@@ -20,7 +20,7 @@ public class PlaceItDbHelper extends SQLiteOpenHelper {
 	///////////////////////// Static variables //////////////////////////
     
 	// Database Version
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 6;
  
     // Database Name
     private static final String DATABASE_NAME = "PlaceItsManager";
@@ -37,6 +37,7 @@ public class PlaceItDbHelper extends SQLiteOpenHelper {
     private static final String KEY_LNG = "longitude";
     private static final String KEY_LOC = "location_str";
     private static final String KEY_SCHED_DATE = "scheduled_date";
+    private static final String KEY_WEEK = "scheduled_week";
  
 
     ///////////////////////// Required Methods ////////////////////////////
@@ -57,7 +58,8 @@ public class PlaceItDbHelper extends SQLiteOpenHelper {
 										    KEY_LAT + " REAL," + 
 										    KEY_LNG + " REAL," + 
 										    KEY_LOC + " TEXT," +
-										    KEY_SCHED_DATE + " TEXT" +
+										    KEY_SCHED_DATE + " TEXT," +
+										    KEY_WEEK + " TEXT" +
 									    ")";
         db.execSQL(CREATE_PLACEITS_TABLE);
 		
@@ -89,6 +91,7 @@ public class PlaceItDbHelper extends SQLiteOpenHelper {
 	    values.put(KEY_LNG, placeIt.getLocation().longitude); 		// PlaceIt Longitude
 	    values.put(KEY_LOC, placeIt.getLocation_str()); 			// PlaceIt Location String
 	    values.put(KEY_SCHED_DATE, placeIt.getScheduled_date()); 	// PlaceIt Scheduled Date
+	    values.put(KEY_WEEK, placeIt.getScheduled_week());			// PlaceIt Scheduled Week
 	 
 	    // Inserting Row
 	    db.insert(TABLE_PLACEITS, null, values);
@@ -103,7 +106,7 @@ public class PlaceItDbHelper extends SQLiteOpenHelper {
 				 
 		// Cursor to go through the table
 	    Cursor cursor = db.query(TABLE_PLACEITS, new String[] { KEY_ID, KEY_TITLE, KEY_STATUS,
-	    		 KEY_DESC, KEY_LAT, KEY_LNG, KEY_LOC, KEY_SCHED_DATE }, KEY_ID + "=?",
+	    		 KEY_DESC, KEY_LAT, KEY_LNG, KEY_LOC, KEY_SCHED_DATE, KEY_WEEK }, KEY_ID + "=?",
 	            new String[] { String.valueOf(id) }, null, null, null, null);
 	    if (cursor != null)
 	        cursor.moveToFirst();
@@ -112,7 +115,7 @@ public class PlaceItDbHelper extends SQLiteOpenHelper {
 	    PlaceIt placeIt = new PlaceIt(cursor.getInt(0),
 	            cursor.getString(1), cursor.getString(2), cursor.getString(3),
 	            new LatLng(cursor.getDouble(4),cursor.getDouble(5)), 
-	            cursor.getString(6), cursor.getString(7));
+	            cursor.getString(6), cursor.getString(7), cursor.getString(8));
 	    
 	    return placeIt;
 	}
@@ -140,6 +143,7 @@ public class PlaceItDbHelper extends SQLiteOpenHelper {
 	            placeIt.setLocation(new LatLng(cursor.getDouble(4),cursor.getDouble(5)));
 	            placeIt.setLocation_str(cursor.getString(6));
 	            placeIt.setScheduled_date(cursor.getString(7));
+	            placeIt.setScheduled_week(cursor.getString(8));
 	            
 	            // Adding placeIt to list
 	            placeItList.add(placeIt);
@@ -178,6 +182,7 @@ public class PlaceItDbHelper extends SQLiteOpenHelper {
 	    values.put(KEY_LNG, placeIt.getLocation().longitude); 		// PlaceIt Longitude
 	    values.put(KEY_LOC, placeIt.getLocation_str()); 			// PlaceIt Location string
 	    values.put(KEY_SCHED_DATE, placeIt.getScheduled_date()); 	// PlaceIt Scheduled Date
+	    values.put(KEY_WEEK, placeIt.getScheduled_week());			// PlaceIt Scheduled Week
 	 
 	 
 	    // updating row
