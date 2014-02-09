@@ -24,16 +24,14 @@ public class PlaceItIntentReceiever extends BroadcastReceiver {
 		
 		Boolean userEntering = intent.getBooleanExtra(lm_key, false);
 		if (userEntering) {
-			
-			Log.i("ENTERING", placeIt.getTitle());
-			
+						
 			// set the status of the PlaceIt to triggered
 			placeIt.setStatus(MainActivity.TRIGGERED);
+			db.updatePlaceIt(placeIt);
+			db.close();
 			
 		}
-		else {
-			Log.i("EXITING", "LKJHASLKJFHALKSJH");
-			
+		else {			
 			Log.d(getClass().getSimpleName(), "exiting");
 		}
 		

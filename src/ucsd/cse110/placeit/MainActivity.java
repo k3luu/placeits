@@ -21,8 +21,8 @@ import android.widget.AutoCompleteTextView;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
-import com.google.android.gms.maps.GoogleMap.OnMarkerDragListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
@@ -31,7 +31,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MainActivity extends FragmentActivity implements 
-OnMapLongClickListener, OnCameraChangeListener, OnMarkerDragListener { 
+OnMapLongClickListener, OnCameraChangeListener, OnInfoWindowClickListener { 
 	
 	/////////////////////////////// Constants //////////////////////////////////
 	
@@ -125,6 +125,7 @@ OnMapLongClickListener, OnCameraChangeListener, OnMarkerDragListener {
             	mMap.setOnMapLongClickListener(this);
                 mMap.setOnCameraChangeListener(this);
                 mMap.setMyLocationEnabled(true);
+                mMap.setOnInfoWindowClickListener(this);
             }
         }
     }
@@ -217,41 +218,15 @@ OnMapLongClickListener, OnCameraChangeListener, OnMarkerDragListener {
     public void onCameraChange(final CameraPosition position) {
     	//Do nothing... for now
     }
-
-
-	/////////////////////// OnMarkerDragListener Methods //////////////////////
-	public void onMarkerDrag(Marker marker) {
-		// do nothing
+    
+    ////////////////////// onInfoWindowListener Methods ///////////////////////
+    
+    // opens the detail page of a given placeIt
+    public void onInfoWindowClick(Marker marker) {
+    	
+    	Intent detailsIntent = new Intent(this, DetailsActivity.class);
+    	detailsIntent.putExtra(PLACEIT_ID, placeItMarkers.get(marker.getId()));
+    	startActivity(detailsIntent);
 	}
-
-	@Override
-	public void onMarkerDragEnd(Marker marker) {
-//		// get the PlaceIt that corresponds to the this marker
-//		int pl_ID = placeItMarkers.get(marker.getId()).intValue();
-//		PlaceIt tmp_Pl = db.getPlaceIt(pl_ID);
-//		
-//		// update the location of the PlaceIt
-//		LatLng location = marker.getPosition();
-//		String location_str = "";
-//		 
-//		try {
-//			location_str = (new GetAddressTask(this)).execute(location).get();
-//		} catch (InterruptedException e) {
-//			e.printStackTrace();
-//		} catch (ExecutionException e) {
-//			e.printStackTrace();
-//		}
-//		
-//		tmp_Pl.setLocation_str(location_str);
-//		marker.setTitle("kljahsdflkjahs");
-//		db.updatePlaceIt(tmp_Pl);
-	}
-
-	@Override
-	public void onMarkerDragStart(Marker marker) {
-		// TODO Auto-generated method stub
-		
-	}
-
     
 }
