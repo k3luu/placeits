@@ -5,6 +5,8 @@ package ucsd.cse110.placeit;
 
 import java.util.List;
 
+import android.location.Location;
+import android.location.LocationManager;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -21,7 +23,7 @@ public class SaveLastLocation {
 		this.location = loc;
 	}
 	
-	public void lastSavedPlaceIt(PlaceItDbHelper db)
+	public void saveLastPlaceIt(PlaceItDbHelper db)
     {
 		List<PlaceIt> systemPlaceItList;
     	systemPlaceItList = db.getAllPlaceIts("HACKER");
@@ -29,6 +31,5 @@ public class SaveLastLocation {
     	place.setLocation(location);
     	db.updatePlaceIt(place);
     	db.close();
-    	Log.i("loc is", location.toString());
     }
 }

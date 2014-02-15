@@ -37,38 +37,112 @@
         android:inputType="textPostalAddress"
         android:textSize="16sp" />
 
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="14dp"
-        android:paddingTop="50sp"
-        android:text="Select Day For PlaceIt:"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        tools:ignore="HardcodedText" />
+    <!-- scheduling options -->
+    <LinearLayout 
+        android:id="@+id/scheduling_option"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal">
+	    <TextView
+	        android:id="@+id/scheduling_option_title"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginTop="14dp"
+	        android:text="Schedule "
+	        android:textAppearance="?android:attr/textAppearanceMedium"
+	        tools:ignore="HardcodedText" />
+	
+	    <Spinner
+	        android:id="@+id/scheduling_option_spinner"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginTop="13dp"
+	        android:entries="@array/scheduling_choices_array"
+	        android:prompt="@string/scheduling_choices" />
 
-     <Spinner
-        android:id="@+id/day_spinner"
-        android:layout_width="match_parent"
+	 </LinearLayout>
+    
+    <!-- weekly choice made -->
+    <LinearLayout 
+        android:id="@+id/weekly_choices"
+        android:visibility="gone"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal">
+	    <TextView
+	        android:id="@+id/weekly_choices_title"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginTop="14dp"
+	        android:text="Repost "
+	        android:textAppearance="?android:attr/textAppearanceMedium"
+	        tools:ignore="HardcodedText" />
+	
+	     <Spinner
+	         android:id="@+id/day_spinner"
+	         android:layout_width="108dp"
+	         android:layout_height="wrap_content"
+	         android:layout_marginTop="14dp"
+	         android:entries="@array/day_array"
+	         android:prompt="@string/week_day" />
+	     
+	     <TextView
+	        android:id="@+id/weekly_choices_every"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginTop="14dp"
+	        android:text="every"
+	        android:textAppearance="?android:attr/textAppearanceMedium"
+	        tools:ignore="HardcodedText" />
+	     
+		<Spinner
+		    android:id="@+id/week_spinner"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_marginTop="14dp"
+		    android:entries="@array/week_array"
+		    android:prompt="@string/week_interval" />
+
+	 </LinearLayout>
+	 
+    <!-- minute choice made -->
+
+    <LinearLayout
+        android:id="@+id/minute_choice"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:entries="@array/day_array"
-        android:prompt="@string/week_day"/>
+        android:orientation="horizontal" >
+
+	    <TextView
+	        android:id="@+id/minute_choice_title"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginTop="14dp"
+	        android:text="Repost every"
+	        android:textAppearance="?android:attr/textAppearanceMedium"
+	        tools:ignore="HardcodedText" />
+	
+	    <EditText
+	        android:id="@+id/minute_field"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginTop="15dp"
+	        android:hint="5"
+	        android:inputType="number"
+	        android:textAppearance="?android:attr/textAppearanceMedium"
+	        tools:ignore="HardcodedText" />
+	     
+		<TextView
+	        android:id="@+id/minutes"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginTop="14dp"
+	        android:text="minutes "
+	        android:textAppearance="?android:attr/textAppearanceMedium"
+	        tools:ignore="HardcodedText" />
+	 </LinearLayout>
      
-     <TextView
-        android:id="@+id/textView5"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="14dp"
-        android:paddingTop="50sp"
-        android:text="Select An Interval:"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        tools:ignore="HardcodedText" />
      
-     <Spinner
-        android:id="@+id/week_spinner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:entries="@array/week_array"
-        android:prompt="@string/week_interval"/>
 
 </LinearLayout>

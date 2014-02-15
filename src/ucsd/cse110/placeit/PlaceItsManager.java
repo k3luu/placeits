@@ -11,20 +11,18 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
-//import android.app.ActionBar.Tab;
-//import android.app.Activity;
-//import android.support.v4.app.Fragment;
-//import android.view.LayoutInflater;
-//import android.view.View;
-//import android.view.ViewGroup;
 
 public class PlaceItsManager extends FragmentActivity implements
-ActionBar.TabListener {
+ActionBar.TabListener, OnItemSelectedListener {
 
 	/**
 	 * The {@link ViewPager} that will host the section contents.
@@ -34,10 +32,17 @@ ActionBar.TabListener {
 	private EditText editView;
 	private EditText editViewTitle;
 	private EditText editViewDescription;
+	private long data_id = -1;
 	private LatLng location;
-	//private int id;
 	private String title;
 	private String description;
+	private Scheduler schedule;
+	
+	// listening for the users scheduling option
+	private String schedulingOption;
+	private String scheduleDOW;
+	private String scheduleWeekInterval;
+	private int scheduleMinutes;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -46,40 +51,49 @@ ActionBar.TabListener {
 		// Load layout
 		setContentView(R.layout.place_its_manager_activity);
 		
-		
-		
 		// Three cases
-				// Case 1: called by search from search bar
-				// Case 2: called by pressOnMap [LatLng given]
-				// Case 3: called by ListView [All info]
-				// cases ended
+		// Case 1: called by search from search bar
+		// Case 2: called by pressOnMap [LatLng given]
+		// Case 3: called by ListView [All info]
+		// cases ended
 				
 				Intent info = getIntent();
-				int validate = info.getIntExtra("ucsd.cs110.placeit.CheckSrouce", 2);
+				int validate = info.getIntExtra("ucsd.cs110.placeit.CheckSrouce", 1);
+				
+				Log.i("validate: ", "It is ############### "+validate);
 				
 				// Add case 3 later
-				if (validate == 1)
-				{
-					// do nothing for now
-				}
-				else if (validate == 2)//change to else if later on
-				{
+				if (validate == 1)//change to else if later on
+				{	
+					Log.i("Here", "LALALALALALALA");
 					Bundle b = getIntent().getParcelableExtra("locationOnlyBundle");
 					location = b.getParcelable("ucsd.cs110.placeit.LocationOnly");
 				}
 				else // case 3
 				{
-					Log.i("I am inside case 3", "Case 3");
-					Bundle b = getIntent().getParcelableExtra("locationOnlyBundle");
-					location = b.getParcelable("ucsd.cs110.placeit.LocationOnly");
-					//id = info.getIntExtra("idIntent", 0) ;
-					title = info.getStringExtra("titleIntent");
-					description = info.getStringExtra("descriptionIntent");
+					data_id = info.getLongExtra("idIntent", -1);
+					PlaceItDbHelper db = new PlaceItDbHelper(this);
+					PlaceIt place = db.getPlaceIt(data_id);
+					//Log.i("I am inside case 2", "Case 2");
+					//Bundle b = getIntent().getParcelableExtra("locationOnlyBundle");
 					
+					
+					//Log.i("data_id", "is "+data_id+" "+place.getId()+" "+place.getLocation_str());
+					
+					//Log.i("info 4", "why why why?");
+					title = place.getTitle();
+					description = place.getDescription();
+					location = place.getLocation();
+					//Log.i("info1 ", "is "+data_id+" "+location+" "+title+" "+description);
+					//schedule = place.getSchedule();
+					
+					// listening for the users scheduling option
+					//schedulingOption = schedule.getScheduled_option();
+					//scheduleDOW = schedule.getScheduled_dow();
+					//scheduleWeekInterval = schedule.getScheduled_week();
+					//scheduleMinutes = schedule.getScheduled_minutes();
 				}
         
-
-		setContentView(R.layout.place_its_manager_activity);
 	}
 
 	@Override
@@ -91,17 +105,21 @@ ActionBar.TabListener {
 
 	protected void onResume()
 	{
-super.onResume();
-		
-		// Geocoder
+		super.onResume();
+		Log.i("info ", "is "+data_id+" "+location+" "+title+" "+description);
+		// fills the Location with the string version passed by the map/search bar
 		editView = (EditText) findViewById(R.id.location);
 		editViewTitle = (EditText) findViewById(R.id.editTextTitle);
 		editViewDescription = (EditText) findViewById(R.id.editTextDesc);
+		
+		Spinner spinner = (Spinner) findViewById(R.id.scheduling_option_spinner);
+		spinner.setOnItemSelectedListener(this);
+		
+		Log.i("info ", "is "+data_id+" "+location+" "+title+" "+description);
 		try {
 			editView.setText((new GetAddressTask(this)).execute(location).get());
 			editViewTitle.setText(title);
 			editViewDescription.setText(description);
-			Log.i("what are title and desc?", title+" and "+description);
 			
 		} catch (InterruptedException e) {
 			editView.setText("");
@@ -109,7 +127,7 @@ super.onResume();
 		} catch (ExecutionException e) {
 			editView.setText("");
 			e.printStackTrace();
-		}
+		} 
 	}
 	
 	@Override
@@ -124,45 +142,78 @@ super.onResume();
     		EditText title_field = (EditText) findViewById(R.id.editTextTitle);
     		EditText description_field = (EditText) findViewById(R.id.editTextDesc);
     		EditText location_field = (EditText) findViewById(R.id.location);
-    		Spinner day_field = (Spinner) findViewById(R.id.day_spinner);
-    		Spinner week_field = (Spinner) findViewById(R.id.week_spinner);
     		
     		String title = title_field.getText().toString();
     		String description = description_field.getText().toString();
     		String location_str = location_field.getText().toString();
-    		String scheduleData = String.valueOf(day_field.getSelectedItem());
-    		String scheduleWeek = String.valueOf(week_field.getSelectedItem());
     		
-    		PlaceIt data = new PlaceIt(title, "Active", description, location, 
-    				location_str, scheduleData, scheduleWeek);
+    		// scheduling fields
+    		Spinner scheduling_field = (Spinner) findViewById(R.id.scheduling_option_spinner);
+    		Spinner day_field = (Spinner) findViewById(R.id.day_spinner);
+    		Spinner week_interval_field = (Spinner) findViewById(R.id.week_spinner);
+    		EditText minutes_field = (EditText) findViewById(R.id.minute_field);
     		
-    		PlaceItDataChecker checker = new PlaceItDataChecker(data);
-    		// When clicked, first validate
+    		String schedulingOption = String.valueOf(scheduling_field.getSelectedItem());
+    		String scheduleDOW = String.valueOf(day_field.getSelectedItem());
+    		String scheduleWeekInterval = String.valueOf(week_interval_field.getSelectedItem());
+    		int scheduleMinutes = -1;
+    		try {
+    			scheduleMinutes = Integer.parseInt(minutes_field.getText().toString());
+    		} catch (NumberFormatException e) {}
+
     		
+    		// let Scheduler class determine the PlaceIt's schedule
+    		Scheduler schedule = new Scheduler(schedulingOption, scheduleDOW, scheduleWeekInterval, scheduleMinutes);
+    		
+    		PlaceIt placeIt;
+    		if (data_id != -1) {
+				placeIt = db.getPlaceIt(data_id);
+				placeIt.setStatus("Active");
+				placeIt.setTitle(title);
+				placeIt.setDescription(description);
+				placeIt.setLocation(location);
+				placeIt.setLocation_str(location_str);
+				placeIt.setSchedule(schedule);
+			}
+			else {
+				// create our PlaceIt and validate the contents
+	    		placeIt = new PlaceIt(title, "Active", description, location, location_str, schedule);
+			}
+    		
+    		
+    		PlaceItDataChecker checker = new PlaceItDataChecker(placeIt);
+    		
+    		// If valid add it to the database otherwise prompt user
     		if (checker.checkNormal()) {
-    			//Log.i("True", "Checker passed!");
-    			db.addPlaceIt(data);
+    			
+    			long placeItId;
+    			// add the PlaceIt to our database
+    			if (data_id != -1) {
+    				placeItId = db.updatePlaceIt(placeIt);
+    				Log.i("I am fixing", "error");
+    			}
+    			else {
+    				placeItId = db.addPlaceIt(placeIt);
+        			db.close();
+    			}
+    			
+    			// set up the Alarm for the PlaceIt if possible
+    			placeIt.getSchedule().setRepeatingAlarm(this, placeItId);
+    			
+    			ProximityAlertManager pa = new ProximityAlertManager(this);
+    			pa.addProximityAlert(placeIt);
+    			
     			SaveLastLocation action = new SaveLastLocation(location);
-				action.lastSavedPlaceIt(db);
-    			Intent intent1 = new Intent(this, MainActivity.class);
-        		startActivity(intent1);
+    			action.saveLastPlaceIt(db);
+    			
+    			// navigate back to the map
+    			Intent mapIntent = new Intent(this, MainActivity.class);
+        		startActivity(mapIntent);
     		}
     		else {
     			Toast.makeText(getApplicationContext(), "Incomplete form", Toast.LENGTH_SHORT).show();
     		}
-    		
-    		/* modified by weijie (Reason: follow SRP to get higher grade? LOL)
-    		if( (title.length() == 0) || (location_str.length() == 0) ) {
-    			// prompt user for invalid input
-    		}
-    		// Add to DataBase
-    		else {
-        		db.addPlaceIt(new PlaceIt(title, "Active", location, location_str));
-        		
-    		}
-			*/
-    		
-    		
+	
     		return true;
     	}
     	else if ( item.getItemId() == R.id.datebase_cancel ) {
@@ -177,15 +228,15 @@ super.onResume();
     		// set toggles back to OFF position.
     		
     		// Go back to the map view
-    		
-    		Intent intent2 = new Intent(this, MainActivity.class);
-        	startActivity(intent2);
+    		Intent mapIntent = new Intent(this, MainActivity.class);
+        	startActivity(mapIntent);
         	return true;
     	}
     	else {
     		return super.onOptionsItemSelected(item);
     	}
     }
+	
 	
     @Override
 	public void onTabSelected(ActionBar.Tab tab,
@@ -204,6 +255,32 @@ super.onResume();
 	public void onTabReselected(ActionBar.Tab tab,
 			FragmentTransaction fragmentTransaction) {
 	}
+	
+	// when an item is selected from the Scheduling options make the appropriate spinner appear
+	public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+
+		String schedulingChoice = (String) parent.getItemAtPosition(pos);
 		
+		LinearLayout weekly_choicesLayout = (LinearLayout) findViewById(R.id.weekly_choices);
+		LinearLayout minute_choiceLayout = (LinearLayout) findViewById(R.id.minute_choice);
+		
+	    if(schedulingChoice.equals(PlaceItUtil.WEEKLY_SCHEDULE)) {
+	    	
+	    	weekly_choicesLayout.setVisibility(View.VISIBLE);
+	    	minute_choiceLayout.setVisibility(View.GONE);
+	    }
+	    else if(schedulingChoice.equals(PlaceItUtil.MINUTE_SCHEDULE)) {
+	    	weekly_choicesLayout.setVisibility(View.GONE);
+	    	minute_choiceLayout.setVisibility(View.VISIBLE);
+	    }
+	    else {
+	    	weekly_choicesLayout.setVisibility(View.GONE);
+	    	minute_choiceLayout.setVisibility(View.GONE);
+	    }
+	}
+	
+	public void onNothingSelected(AdapterView<?> parent) {
+	    // do nothing
+	}
 	
 }

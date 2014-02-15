@@ -9,11 +9,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Point;
 import android.location.Address;
+import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -64,6 +67,7 @@ OnMapLongClickListener, OnCameraChangeListener, OnInfoWindowClickListener {
 	
 	// get an instance of our database to add
 	PlaceItDbHelper db = new PlaceItDbHelper(this);
+	ProximityAlertManager paManager;
 	
 	
     ///////////////////////////// Activity States /////////////////////////////
@@ -80,16 +84,29 @@ OnMapLongClickListener, OnCameraChangeListener, OnInfoWindowClickListener {
         setUpMapIfNeeded();
         setUpSearchbar();
         mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        paManager = new ProximityAlertManager(this);
         
-        if (!alerts_set) {
-	        // add markers to the map and prximity sensors
-	        generatePlaceIts();
-    	}
+	    // add markers to the map and prximity sensors
+        generatePlaceIts();
+        
+        // Get screen width to set zoom level to 0.5 mile radius
+
+
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+
+        // Why do we need to do this?
+        // Init the map and take the first ID in DATABASE to store last change of location
+        // So we are able to view that on map instead of looking at the random place.
+        // Answered by weijie
         PlaceIt placeTmp;
         initTheFirstDatabase();
         placeTmp = db.getAllPlaceIts("HACKER").get(0);
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(placeTmp.getLocation(), 12),2000,null);
         
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(placeTmp.getLocation(), calculateZoomLevel(width)));
+//        startService(new Intent(this, PlaceItService.class));
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -106,6 +123,7 @@ OnMapLongClickListener, OnCameraChangeListener, OnInfoWindowClickListener {
     	// Menu buttons click to associated activity
     	
     	if ( item.getItemId() == R.id.list_view_btn ) {
+            
     		Intent intent1 = new Intent(this, ListActivity.class);
         	startActivity(intent1);
         	return true;
@@ -163,7 +181,7 @@ OnMapLongClickListener, OnCameraChangeListener, OnInfoWindowClickListener {
     	PlaceIt placeIt;
 		
     	// loop through all active PlaceIt's and populate map with them
-    	activePlaceItList = db.getAllPlaceIts(ACTIVE);
+    	activePlaceItList = db.getAllPlaceIts(PlaceItUtil.ACTIVE);
     	
     	
 		for (int i = 0; i < activePlaceItList.size(); i++) {
@@ -177,7 +195,7 @@ OnMapLongClickListener, OnCameraChangeListener, OnInfoWindowClickListener {
 									        .draggable(false)
 									        );
 			marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.placeit));
-			placeItMarkers.put(marker.getId(), placeIt.getId());
+			placeItMarkers.put(marker.getId(), (int) placeIt.getId());
 			
 			// create proximity alerts
 			// NOTE: Maybe should not be calling it from here
@@ -188,20 +206,20 @@ OnMapLongClickListener, OnCameraChangeListener, OnInfoWindowClickListener {
     
     // create proximity alerts for each PlaceIt
     private void addProximityAlert(PlaceIt placeIt) {
-    	int placeIt_Id = placeIt.getId();
+    	long placeIt_Id = placeIt.getId();
     	
-        Intent intent = new Intent(PROX_ALERT_INTENT);
-        intent.putExtra(PLACEIT_ID, placeIt_Id);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, placeIt_Id, intent, 0);
+        Intent intent = new Intent(PlaceItUtil.PROX_ALERT_INTENT);
+        intent.putExtra(PlaceItUtil.PLACEIT_ID, placeIt_Id);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, (int) placeIt_Id, intent, 0);
         mLocationManager.addProximityAlert(
         		placeIt.getLocation().latitude, 
         		placeIt.getLocation().longitude, 
-                ALERT_RADIUS, 
-                ALERT_EXPIRATION, 
+        		PlaceItUtil.ALERT_RADIUS, 
+        		PlaceItUtil.ALERT_EXPIRATION, 
                 pendingIntent 
         );
 
-        IntentFilter filter = new IntentFilter(PROX_ALERT_INTENT);
+        IntentFilter filter = new IntentFilter(PlaceItUtil.PROX_ALERT_INTENT);
         registerReceiver(new PlaceItIntentReceiever(), filter);
 //        Toast.makeText(getApplicationContext(),"PlaceIt Proximity Alert Added"+ placeIt_Id,Toast.LENGTH_SHORT).show();
     }
@@ -216,7 +234,7 @@ OnMapLongClickListener, OnCameraChangeListener, OnInfoWindowClickListener {
     	location_bundle.putParcelable("ucsd.cs110.placeit.LocationOnly", point);
     	Intent intent = new Intent(this, PlaceItsManager.class);
     	intent.putExtra("locationOnlyBundle", location_bundle);
-    	intent.putExtra("ucsd.cs110.placeit.CheckSrouce", 2);
+    	intent.putExtra("ucsd.cs110.placeit.CheckSrouce", 1);
     
     	startActivity(intent);
     }
@@ -233,10 +251,11 @@ OnMapLongClickListener, OnCameraChangeListener, OnInfoWindowClickListener {
     public void onInfoWindowClick(Marker marker) {
     	
     	Intent detailsIntent = new Intent(this, DetailsActivity.class);
-    	detailsIntent.putExtra(PLACEIT_ID, placeItMarkers.get(marker.getId()));
+    	detailsIntent.putExtra(PlaceItUtil.PLACEIT_ID, placeItMarkers.get(marker.getId()));
     	//startActivity(detailsIntent);
     	
     	final PlaceIt placeIt = getPlaceItObjectFromMarker(placeItMarkers.get(marker.getId()));
+    	
     	String title_field;
     	String description_field;
     	String location_field;
@@ -245,7 +264,7 @@ OnMapLongClickListener, OnCameraChangeListener, OnInfoWindowClickListener {
 		title_field = placeIt.getTitle();
 		description_field = placeIt.getDescription();
 		location_field = placeIt.getLocation_str();
-		schedule_field = placeIt.getScheduled_date();
+		schedule_field = placeIt.getSchedule().toString();
 		
 		
     	AlertDialog.Builder alert = new AlertDialog.Builder(this);
@@ -271,13 +290,18 @@ OnMapLongClickListener, OnCameraChangeListener, OnInfoWindowClickListener {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				PlaceItDbHelper db = new PlaceItDbHelper(getApplication());
+				
+				// remove proximity alert and any alarms set on the PlaceIt
+				// then remove it from the database
+		        paManager.removeProximityAlert(placeIt.getId());
+		        placeIt.getSchedule().removeAlarm(getApplication(), placeIt.getId());
 		        db.deletePlaceIt(placeIt);
-		        removeProximityAlert(placeIt.getId());
+		        
 		        Toast.makeText(getApplication(),"Place-Its Deleted", Toast.LENGTH_SHORT).show();
 				Intent intent = new Intent(getApplication(), MainActivity.class);
 				
 				SaveLastLocation action = new SaveLastLocation(placeIt.getLocation());
-				action.lastSavedPlaceIt(db);
+				action.saveLastPlaceIt(db);
 				
 				db.close();
 	        	startActivity(intent);
@@ -292,7 +316,7 @@ OnMapLongClickListener, OnCameraChangeListener, OnInfoWindowClickListener {
 				Bundle location_bundle = new Bundle();
 		    	
 		    	// TODO SCHEDULE
-		    	int passID = placeIt.getId();
+		    	long passID = placeIt.getId();
 		    	String passTitle = placeIt.getTitle();
 		    	LatLng passPoint = placeIt.getLocation();
 		    	String passDescription = placeIt.getDescription();
@@ -303,10 +327,12 @@ OnMapLongClickListener, OnCameraChangeListener, OnInfoWindowClickListener {
 		    	intent.putExtra("titleIntent", passTitle);
 		    	intent.putExtra("locationOnlyBundle", location_bundle);
 		    	intent.putExtra("descriptionIntent", passDescription);
-		    	intent.putExtra("ucsd.cs110.placeit.CheckSrouce", 3);
+		    	intent.putExtra("ucsd.cs110.placeit.CheckSrouce", 2);
 		    	
-		    	db.deletePlaceIt(placeIt); //delete it after getting info because it will reactivate ?
-		    	removeProximityAlert(placeIt.getId());
+		    	// remove proximity alert and any alarms set on the PlaceIt
+				// then remove it from the database
+		    	//db.deletePlaceIt(placeIt); //delete it after getting info because it will reactivate ?
+		    	
 		    	startActivity(intent);
 				
 				Toast.makeText(getApplication(),"Modifying Plact-Its", Toast.LENGTH_SHORT).show();
@@ -322,44 +348,44 @@ OnMapLongClickListener, OnCameraChangeListener, OnInfoWindowClickListener {
 		place = db.getPlaceIt(theID);
     	return place;
     }
-    
-    private void removeProximityAlert(int placeIt_id) {
 
-        String context = Context.LOCATION_SERVICE;
-        LocationManager locationManager = (LocationManager) getSystemService(context);
-
-        Intent intent = new Intent(MainActivity.PROX_ALERT_INTENT);
-        PendingIntent operation = PendingIntent.getBroadcast(getApplicationContext(), placeIt_id , intent, 0);
-        locationManager.removeProximityAlert(operation);
-    }
+    // Why do we need to do this?
+    // Can't we just pass the LatLng position through the intent?
     
-    /* Follow SRP
-    private void lastSavedPlaceIt(LatLng loc)
-    {
-    	systemPlaceItList = db.getAllPlaceIts("HACKER");
-    	PlaceIt place = systemPlaceItList.get(0);
-    	place.setLocation(loc);
-    	db.updatePlaceIt(place);
-    	db.close();
-    	Log.i("loc is", loc.toString());
-    }
-    */
-    
+    // Answer, we need this for sure.
+    // Because I want to make sure that the first item of the data is reserved
+    // It is useful because it takes care of first time running the application
     private void initTheFirstDatabase()
     {
     	systemPlaceItList = db.getAllPlaceIts("HACKER");
     	
     	if (systemPlaceItList.size() == 0)
     	{
+    		Scheduler schedule = new Scheduler("","","",-1);
 	    	LatLng loc = new LatLng(32.8804, -117.242);
 	    	PlaceIt place = new PlaceIt();
 	    	place.setLocation(loc);
 	    	place.setStatus("HACKER");
 	    	place.setTitle("Hidden");
 	    	place.setDescription("YOU SHOULD NEVER SEE THIS OR MODIFY THIS.!");
+	    	place.setSchedule(schedule);
 	    	PlaceItDbHelper database = new PlaceItDbHelper(this);
 			database.addPlaceIt(place);
 			database.close();
-    	}    	
+    	}
     }
+    
+    private int calculateZoomLevel(int screenWidth) {
+    	double equatorLength = 40075004; // in meters
+    	double widthInPixels = screenWidth;
+    	double metersPerPixel = equatorLength / 256;
+    	int zoomLevel = 1;
+    	while ((metersPerPixel * widthInPixels) > 1609.34) { // 1609.34 m = 1 mi
+    		metersPerPixel /= 2;
+    		++zoomLevel;
+    	}
+    	// Log.i("ADNAN", "zoom level = "+zoomLevel);
+    	return zoomLevel;
+    }
+
 }

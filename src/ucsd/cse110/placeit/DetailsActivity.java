@@ -1,11 +1,13 @@
 package ucsd.cse110.placeit;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
@@ -21,7 +23,7 @@ public class DetailsActivity extends Activity {
 		setContentView(R.layout.activity_details);
 		
 		Intent intent = getIntent();
-		int placeIt_id = intent.getIntExtra(MainActivity.PLACEIT_ID, -1);
+		int placeIt_id = intent.getIntExtra(PlaceItUtil.PLACEIT_ID, -1);
 		
 		TextView title_field = (TextView) findViewById(R.id.title);
 		TextView description_field = (TextView) findViewById(R.id.description);
@@ -35,7 +37,7 @@ public class DetailsActivity extends Activity {
 			title_field.setText(placeIt.getTitle());
 			description_field.setText(placeIt.getDescription());
 			location_field.setText(placeIt.getLocation_str());
-			schedule_field.setText(placeIt.getScheduled_date());
+//			schedule_field.setText(placeIt.getScheduled_date());
 		}
 		else {
 			title_field.setText("Invalid PlaceIt");
@@ -57,19 +59,35 @@ public class DetailsActivity extends Activity {
 	    
 	    // remove the ProximityAlert
 	    removeProximityAlert(placeIt.getId());
+	    removeAlarm(placeIt.getId());
 	    
 	    startActivity(intent);
 	    db.close();
 	}
 	
 	
-	private void removeProximityAlert(int placeIt_id) {
+	private void removeProximityAlert(long l) {
 
         String context = Context.LOCATION_SERVICE;
         LocationManager locationManager = (LocationManager) getSystemService(context);
 
-        Intent intent = new Intent(MainActivity.PROX_ALERT_INTENT);
-        PendingIntent operation = PendingIntent.getBroadcast(getApplicationContext(), placeIt_id , intent, 0);
+        Intent intent = new Intent(PlaceItUtil.PROX_ALERT_INTENT);
+        PendingIntent operation = PendingIntent.getBroadcast(getApplicationContext(), (int) l , intent, 0);
         locationManager.removeProximityAlert(operation);
+    }
+	
+	private void removeAlarm(long l) {
+
+		Intent reactivatePlaceIt = new Intent(this, AlarmReceiver.class);
+		reactivatePlaceIt.putExtra(PlaceItUtil.PLACEIT_ID, l);
+	    PendingIntent recurringActivation = PendingIntent.getBroadcast(this,
+	    		(int) l, reactivatePlaceIt, PendingIntent.FLAG_CANCEL_CURRENT);
+	    AlarmManager alarms = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+	    
+	    if (alarms!= null) {
+	    	Log.i("REMOVED", "ALARM");
+	    	alarms.cancel(recurringActivation);
+	    }
+	    
     }
 }

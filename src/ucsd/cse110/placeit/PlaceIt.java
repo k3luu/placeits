@@ -1,24 +1,18 @@
 package ucsd.cse110.placeit;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
 import com.google.android.gms.maps.model.LatLng;
 
 public class PlaceIt {
 	
 	////////////////////// Private Variables //////////////////////
 	
-	private int id;						// db id must be unique
+	private long id;						// db id must be unique
 	private	String title;				// REQUIRED: name of the PlaceIt
 	private LatLng location;			// REQUIRED: the lat/lng of the location
 	private String location_str;		// The string representation of the LatLng
 	private String status; 				// posted (active), pulled down (triggered), expired
 	private String description;			// aditional details of our PlaceIt
-	private String scheduled_date;		// the day to schedule
-	private String scheduled_week;		// week repeat interval
+	private Scheduler schedule;			// the PlaceIt schedule if any
 	
 	////////////////////// constructors //////////////////////
 	
@@ -38,23 +32,30 @@ public class PlaceIt {
 	}
 	
 	// Minimal + description if exist constructor
-	public PlaceIt(String title, String status, String description, 
-					LatLng location, String location_str, String scheduled_date,
-					String scheduled_week) {
+	public PlaceIt(String title, 
+				   String status, 
+				   String description, 
+				   LatLng location, 
+				   String location_str,
+				   Scheduler schedule) {
 		
 		this.title = title;
 		this.status = status;
 		this.description = description;
 		this.location = location;
 		this.location_str = location_str;
-		this.scheduled_date = scheduled_date;
-		this.scheduled_week = scheduled_week;
+		this.schedule = schedule;
+
 	}
 	
 	// for Database constructor
-	public PlaceIt(int id, String title, String status, String description, 
-				   LatLng location, String location_str, String scheduled_date,
-				   String scheduled_week) {
+	public PlaceIt(long id, 
+				   String title, 
+				   String status, 
+				   String description, 
+				   LatLng location, 
+				   String location_str,
+				   Scheduler schedule) {
 		
 		this.id = id;
 		this.title = title;
@@ -62,14 +63,13 @@ public class PlaceIt {
 		this.description  = description;
 		this.location = location;
 		this.location_str = location_str;
-		this.scheduled_date = scheduled_date;
-		this.scheduled_week = scheduled_week;
+		this.schedule = schedule;
 		
 	}
 	
 	////////////////////// getters //////////////////////
 	
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 	
@@ -96,23 +96,14 @@ public class PlaceIt {
 			return description;
 	}
 	
-	 //Returns a String for the sake of our db but will possibly 
-	 //need to be changed later on
-	public String getScheduled_date() {
-		if (scheduled_date != null ) {
-			return scheduled_date.toString();
-		}else return "";
+	public Scheduler getSchedule() {
+		return schedule;
 	}
 	
-	public String getScheduled_week() {
-		if (scheduled_week != null ) {
-			return scheduled_week.toString();
-		}else return "";
-	}
 	
 	////////////////////// setters //////////////////////
 	
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 	
@@ -136,33 +127,25 @@ public class PlaceIt {
 		this.description = description;
 	}
 	
-	// String parameter to be able to use with SQLite db
-	public void setScheduled_date(String scheduled_date_string) {
-		this.scheduled_date = scheduled_date_string;
-	}
-	
-	public void setScheduled_week(String scheduled_week_string) {
-		this.scheduled_week = scheduled_week_string;
+	public void setSchedule(Scheduler schedule) {
+		this.schedule = schedule;
 	}
 	
 	////////////////////// Other methods //////////////////////
 	
 	public String toString() {
-		return this.title;
+		return "ID: " + this.id + "\n" +
+			   "Title: " + this.title + "\n" +
+			   "Status: " + this.status + "\n" +
+			   "Description: " + this.description + "\n" +
+			   "LatLng: " + this.location.toString() + "\n" +
+			   "Location: " + this.location_str + "\n" +
+			   "Scheduling_Option: " + this.schedule.getScheduled_option() + "\n" +
+			   "Scheduling_DOW: " + this.schedule.getScheduled_dow() + "\n" +
+			   "Scheduling_WeekInterval: " + this.schedule.getScheduled_week() + "\n" +
+			   "Scheduling_Minutes: " + this.schedule.getScheduled_minutes() + "\n";
+				//this.title;
 	}
 	
-	// converts a string to a Date object
-	private static Date stringToDate(String date_str) {
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-		Date date;
-		
-		try {
-			date = formatter.parse(date_str);
-		} catch (ParseException e) {
-			date = null;
-			e.printStackTrace();
-		}
-		return date;
-	}
-
+	
 }

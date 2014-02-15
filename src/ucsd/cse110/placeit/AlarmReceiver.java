@@ -1,41 +1,37 @@
 package ucsd.cse110.placeit;
 
-import java.util.Calendar;
-
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
+/*
+ * Reposts a PlaceIt based on it's schedule
+ * Is called when a PlaceIt's scheduled repost time is hit
+ */
 public class AlarmReceiver extends BroadcastReceiver {
+	
 
+	private PlaceItDbHelper db;
+	
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		// TODO Auto-generated method stub
+		
+		db = new PlaceItDbHelper(context);
+		
+		// get the id of the placeIt that fired off this alarm
+		int placeIt_id = intent.getIntExtra(PlaceItUtil.PLACEIT_ID, -1);
+		PlaceIt placeIt = db.getPlaceIt(placeIt_id);
+		Log.i("AlarmReceiver", String.valueOf(placeIt_id));
+		
+		if(placeIt != null) {
+			Log.i("AlarmReceiver", placeIt.getTitle());
+			// set the status of the placeIt to active
+			placeIt.setStatus(PlaceItUtil.ACTIVE);
+			db.updatePlaceIt(placeIt);
+		}
+		
+		db.close();
 		
 	}
-	
-//	private AlarmManager alarmMgr;
-//	private PendingIntent alarmIntent;
-//	
-//	alarmMgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-//	Intent intent = new Intent(context, AlarmReceiver.class);
-//	alarmIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
-//
-//	// Set the alarm to start at 8:30 a.m.
-//	Calendar calendar = Calendar.getInstance();
-//	@Override
-//	public void onReceive(Context arg0, Intent arg1) {
-//		// TODO Auto-generated method stub
-//		
-//	}
-//	calendar.setTimeInMillis(System.currentTimeMillis());
-//	calendar.set(Calendar.HOUR_OF_DAY, 8);
-//	calendar.set(Calendar.MINUTE, 30);
-//
-//	// setRepeating() lets you specify a precise custom interval--in this case,
-//	// 20 minutes.
-//	alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-//	        1000 * 60 * 20, alarmIntent);
 }
