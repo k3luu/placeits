@@ -26,7 +26,7 @@ public class ProximityAlertManager {
 	// create proximity alerts for the given PlaceIt
     public void addProximityAlert(final PlaceIt placeIt) {
     	
-    	placeItLocation.setLatitude(placeIt.getLocation().latitude);
+    	/*placeItLocation.setLatitude(placeIt.getLocation().latitude);
     	placeItLocation.setLongitude(placeIt.getLocation().longitude);
     	lastKnowLocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
     	
@@ -45,12 +45,13 @@ public class ProximityAlertManager {
     	}
     	else {
     		runCommand(placeIt);
-    	}
+    	}*/
+    	runCommand(placeIt);
     }
     
     // command to add proximityAlert
     private void runCommand(PlaceIt placeIt) {
-    	int placeIt_Id = (int) placeIt.getId();
+    	int placeIt_Id = placeIt.getId();
     	
         Intent intent = new Intent(PlaceItUtil.PROX_ALERT_INTENT);
         intent.putExtra(PlaceItUtil.PLACEIT_ID, placeIt_Id);
@@ -69,13 +70,13 @@ public class ProximityAlertManager {
     }
     
     // remove proximity alerts for the given PlaceIt
-    public void removeProximityAlert(long l) {
+    public void removeProximityAlert(int placeIt_id) {
 
         String lsContext = Context.LOCATION_SERVICE;
         LocationManager locationManager = (LocationManager) context.getSystemService(lsContext);
 
         Intent intent = new Intent(PlaceItUtil.PROX_ALERT_INTENT);
-        PendingIntent operation = PendingIntent.getBroadcast(context.getApplicationContext(), (int) l , intent, 0);
+        PendingIntent operation = PendingIntent.getBroadcast(context.getApplicationContext(), placeIt_id , intent, 0);
         locationManager.removeProximityAlert(operation);
     }
 

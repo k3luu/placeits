@@ -281,7 +281,7 @@ public class ListActivity extends FragmentActivity implements
 					+ activeOrTriggered.toUpperCase(Locale.ENGLISH)
 					+ " this Place-It?");
 
-			final long id = place.getId();
+			final int id = place.getId();
 			alert.setNeutralButton(activeOrTriggered,
 					new DialogInterface.OnClickListener() {
 
@@ -305,7 +305,7 @@ public class ListActivity extends FragmentActivity implements
 								// position to pass into the form
 								// Bundle location_bundle = new Bundle();
 
-								long passID = place.getId();
+								int passID = place.getId();
 								// String passTitle = place.getTitle();
 								//LatLng passPoint = place.getLocation();
 								// String passDescription =

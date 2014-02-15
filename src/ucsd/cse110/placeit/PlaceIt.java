@@ -6,7 +6,7 @@ public class PlaceIt {
 	
 	////////////////////// Private Variables //////////////////////
 	
-	private long id;						// db id must be unique
+	private int id;						// db id must be unique
 	private	String title;				// REQUIRED: name of the PlaceIt
 	private LatLng location;			// REQUIRED: the lat/lng of the location
 	private String location_str;		// The string representation of the LatLng
@@ -49,7 +49,7 @@ public class PlaceIt {
 	}
 	
 	// for Database constructor
-	public PlaceIt(long id, 
+	public PlaceIt(int id, 
 				   String title, 
 				   String status, 
 				   String description, 
@@ -69,7 +69,7 @@ public class PlaceIt {
 	
 	////////////////////// getters //////////////////////
 	
-	public long getId() {
+	public int getId() {
 		return id;
 	}
 	
@@ -103,7 +103,7 @@ public class PlaceIt {
 	
 	////////////////////// setters //////////////////////
 	
-	public void setId(long id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 	

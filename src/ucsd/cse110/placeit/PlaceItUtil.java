@@ -23,6 +23,9 @@ public class PlaceItUtil {
 	public static final long INTERVAL_45_MINUTES = 2700000;
 	public static final int NOTSET = -1;
 	
+	public static final String REPOST = "ucsd.cse110.placeit.REPOST_PLACEIT";
+	public static final String DISCARD = "PRESS to repost | SWIPE to discard";
+	
 	
 
 }

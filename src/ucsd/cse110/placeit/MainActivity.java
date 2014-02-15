@@ -206,7 +206,7 @@ OnMapLongClickListener, OnCameraChangeListener, OnInfoWindowClickListener {
     
     // create proximity alerts for each PlaceIt
     private void addProximityAlert(PlaceIt placeIt) {
-    	long placeIt_Id = placeIt.getId();
+    	int placeIt_Id = placeIt.getId();
     	
         Intent intent = new Intent(PlaceItUtil.PROX_ALERT_INTENT);
         intent.putExtra(PlaceItUtil.PLACEIT_ID, placeIt_Id);
@@ -250,8 +250,8 @@ OnMapLongClickListener, OnCameraChangeListener, OnInfoWindowClickListener {
     // opens the detail page of a given placeIt
     public void onInfoWindowClick(Marker marker) {
     	
-    	Intent detailsIntent = new Intent(this, DetailsActivity.class);
-    	detailsIntent.putExtra(PlaceItUtil.PLACEIT_ID, placeItMarkers.get(marker.getId()));
+    	//Intent detailsIntent = new Intent(this, DetailsActivity.class);
+    	//detailsIntent.putExtra(PlaceItUtil.PLACEIT_ID, placeItMarkers.get(marker.getId()));
     	//startActivity(detailsIntent);
     	
     	final PlaceIt placeIt = getPlaceItObjectFromMarker(placeItMarkers.get(marker.getId()));
@@ -316,7 +316,7 @@ OnMapLongClickListener, OnCameraChangeListener, OnInfoWindowClickListener {
 				Bundle location_bundle = new Bundle();
 		    	
 		    	// TODO SCHEDULE
-		    	long passID = placeIt.getId();
+		    	int passID = placeIt.getId();
 		    	String passTitle = placeIt.getTitle();
 		    	LatLng passPoint = placeIt.getLocation();
 		    	String passDescription = placeIt.getDescription();

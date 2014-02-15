@@ -59,6 +59,7 @@ public class Scheduler {
 		
 		Intent reactivatePlaceIt = new Intent(context, AlarmReceiver.class);
 		reactivatePlaceIt.putExtra(PlaceItUtil.PLACEIT_ID, placeIt_Id);
+		Log.i("current placeIt_id is ", " "+placeIt_Id);
 	    PendingIntent recurringActivation = PendingIntent.getBroadcast(context,
 	    		(int)placeIt_Id, reactivatePlaceIt, PendingIntent.FLAG_CANCEL_CURRENT);
 	    AlarmManager alarms = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -98,12 +99,12 @@ public class Scheduler {
 		}
 	}
 	
-    public void removeAlarm(Context context, long l) {
+    public void removeAlarm(Context context, int placeIt_id) {
 
 		Intent reactivatePlaceIt = new Intent(context, AlarmReceiver.class);
-		reactivatePlaceIt.putExtra(PlaceItUtil.PLACEIT_ID, l);
+		reactivatePlaceIt.putExtra(PlaceItUtil.PLACEIT_ID, placeIt_id);
 	    PendingIntent recurringActivation = PendingIntent.getBroadcast(context,
-	    		(int) l, reactivatePlaceIt, PendingIntent.FLAG_CANCEL_CURRENT);
+	    		placeIt_id, reactivatePlaceIt, PendingIntent.FLAG_CANCEL_CURRENT);
 	    AlarmManager alarms = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 	    
 	    if (alarms!= null) {

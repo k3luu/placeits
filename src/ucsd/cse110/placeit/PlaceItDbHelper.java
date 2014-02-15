@@ -119,7 +119,7 @@ public class PlaceItDbHelper extends SQLiteOpenHelper{
 	        cursor.moveToFirst();
 	 
 		    // create the PlaceIt that'll be returned
-		    PlaceIt placeIt = new PlaceIt(cursor.getLong(0),					// id
+		    PlaceIt placeIt = new PlaceIt(cursor.getInt(0),					// id
 		            					  cursor.getString(1), 				// title
 		            					  cursor.getString(2), 				// status
 		            					  cursor.getString(3),				// description
@@ -156,7 +156,7 @@ public class PlaceItDbHelper extends SQLiteOpenHelper{
 	    if (cursor.moveToFirst()) {
 	        do {
 	        	PlaceIt placeIt = new PlaceIt();
-	        	placeIt.setId(cursor.getLong(0));
+	        	placeIt.setId(cursor.getInt(0));
 	            placeIt.setTitle(cursor.getString(1));
 	            placeIt.setStatus(cursor.getString(2));
 	            placeIt.setDescription(cursor.getString(3));

@@ -32,7 +32,7 @@ ActionBar.TabListener, OnItemSelectedListener {
 	private EditText editView;
 	private EditText editViewTitle;
 	private EditText editViewDescription;
-	private long data_id = -1;
+	private int data_id = -1;
 	private LatLng location;
 	private String title;
 	private String description;
@@ -71,7 +71,7 @@ ActionBar.TabListener, OnItemSelectedListener {
 				}
 				else // case 3
 				{
-					data_id = info.getLongExtra("idIntent", -1);
+					data_id = info.getIntExtra("idIntent", -1);
 					PlaceItDbHelper db = new PlaceItDbHelper(this);
 					PlaceIt place = db.getPlaceIt(data_id);
 					//Log.i("I am inside case 2", "Case 2");

@@ -20,7 +20,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 		db = new PlaceItDbHelper(context);
 		
 		// get the id of the placeIt that fired off this alarm
-		int placeIt_id = intent.getIntExtra(PlaceItUtil.PLACEIT_ID, -1);
+		long placeIt_id = intent.getLongExtra(PlaceItUtil.PLACEIT_ID, -1);
 		PlaceIt placeIt = db.getPlaceIt(placeIt_id);
 		Log.i("AlarmReceiver", String.valueOf(placeIt_id));
 		
