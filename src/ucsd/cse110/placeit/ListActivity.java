@@ -1,7 +1,9 @@
 package ucsd.cse110.placeit;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import android.app.ActionBar;
 import android.app.AlertDialog;
@@ -15,6 +17,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,8 +25,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -193,7 +198,7 @@ public class ListActivity extends FragmentActivity implements
 	 * displays dummy text.
 	 */
 	public static class DummySectionFragment extends Fragment implements
-			OnItemClickListener/* , OnItemLongClickListener */{
+			OnItemClickListener , OnItemLongClickListener{
 		/**
 		 * The fragment argument representing the section number for this
 		 * fragment.
@@ -201,7 +206,7 @@ public class ListActivity extends FragmentActivity implements
 		public static final String ARG_SECTION_NUMBER = "section_number";
 		public final static String TRIGGERED = "Triggered";
 		public final static String ACTIVE = "Active";
-		private ArrayList<PlaceIt> activePlaceItList;
+		private ArrayList<PlaceIt> currentPlaceItList;
 		private PlaceItDbHelper db;
 
 		public DummySectionFragment() {
@@ -215,15 +220,13 @@ public class ListActivity extends FragmentActivity implements
 
 			db = new PlaceItDbHelper(getActivity());
 
-			if (getArguments().getInt(ARG_SECTION_NUMBER) == 1) { // Here is the
-																	// Pending
-																	// List View
-																	// fragment
+			if (getArguments().getInt(ARG_SECTION_NUMBER) == 1) { 
+				// Here is the Pending List View fragment
 
-				PlaceIt placeIt;
-				activePlaceItList = db.getAllPlaceIts(ACTIVE);
+				//PlaceIt placeIt;
+				currentPlaceItList = db.getAllPlaceIts(ACTIVE);
 
-				ArrayList<PlaceIt> placeItArray = new ArrayList<PlaceIt>();
+				/*ArrayList<PlaceIt> placeItArray = new ArrayList<PlaceIt>();
 				for (int i = 0; i < activePlaceItList.size(); i++) {
 					placeIt = activePlaceItList.get(i);
 					placeItArray.add(placeIt);
@@ -231,19 +234,34 @@ public class ListActivity extends FragmentActivity implements
 				ArrayAdapter<PlaceIt> adapter = new ArrayAdapter<PlaceIt>(
 						getActivity(), android.R.layout.simple_list_item_1,
 						placeItArray);
+						*/
+				ArrayList<Map<String, String>> data = new ArrayList<Map<String, String>>();
+				for (PlaceIt item : currentPlaceItList) {
+					Map<String, String> datum = new HashMap<String, String>(3);
+					datum.put("title", "Title: "+item.getTitle());
+				    datum.put("desc", "Description: "+item.getDescription());
+				    datum.put("id", ""+item.getId());
+				    data.add(datum);
+				}
+				
+				SimpleAdapter adapter = new SimpleAdapter(this.getActivity(), data, 
+						android.R.layout.simple_list_item_2,
+                        new String[] {"title", "desc"},
+                        new int[] {android.R.id.text1,
+                                   android.R.id.text2});
+								
 
-				ListView listView = (ListView) rootView
-						.findViewById(R.id.listViewItems);
+				ListView listView = (ListView) rootView.findViewById(R.id.listViewItems);
 				listView.setAdapter(adapter);
 
 				listView.setOnItemClickListener(this);
-				// listView.setOnItemLongClickListener(this);
+				listView.setOnItemLongClickListener(this);
 
 			} else { // Here is the Completed List View fragment
 				PlaceIt placeIt;
-				activePlaceItList = db.getAllPlaceIts(TRIGGERED);
+				currentPlaceItList = db.getAllPlaceIts(TRIGGERED);
 
-				ArrayList<PlaceIt> placeItArray = new ArrayList<PlaceIt>();
+				/*ArrayList<PlaceIt> placeItArray = new ArrayList<PlaceIt>();
 				for (int i = 0; i < activePlaceItList.size(); i++) {
 					placeIt = activePlaceItList.get(i);
 					placeItArray.add(placeIt);
@@ -251,13 +269,28 @@ public class ListActivity extends FragmentActivity implements
 
 				ArrayAdapter<PlaceIt> adapter = new ArrayAdapter<PlaceIt>(
 						getActivity(), android.R.layout.simple_list_item_1,
-						placeItArray);
+						placeItArray); */
+				
+				ArrayList<Map<String, String>> data = new ArrayList<Map<String, String>>();
+				for (PlaceIt item : currentPlaceItList) {
+					Map<String, String> datum = new HashMap<String, String>(3);
+				    datum.put("title", "Title: "+item.getTitle());
+				    datum.put("desc", "Description: "+item.getDescription());
+				    datum.put("id", ""+item.getId());
+				    data.add(datum);
+				}
+				
+				SimpleAdapter adapter = new SimpleAdapter(this.getActivity(), data, 
+						android.R.layout.simple_list_item_2,
+                        new String[] {"title", "desc"},
+                        new int[] {android.R.id.text1,
+                                   android.R.id.text2});
 
-				ListView listView = (ListView) rootView
-						.findViewById(R.id.listViewItems);
+				ListView listView = (ListView) rootView.findViewById(R.id.listViewItems);
 				listView.setAdapter(adapter);
 
 				listView.setOnItemClickListener(this);
+				listView.setOnItemLongClickListener(this);
 			}
 			db.close();
 			return rootView;
@@ -268,7 +301,12 @@ public class ListActivity extends FragmentActivity implements
 				long arg3) {
 			AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
 
-			PlaceIt place = (PlaceIt) arg0.getItemAtPosition(arg2);
+			
+			HashMap<String, String> datum = (HashMap<String, String>) arg0.getItemAtPosition(arg2);
+			int id = Integer.parseInt(datum.get("id"));
+			PlaceItDbHelper db = new PlaceItDbHelper(getActivity());
+			PlaceIt place = (db.getPlaceIt(id));
+			//PlaceIt place = (PlaceIt) arg0.getItemAtPosition(arg2);
 			String activeOrTriggered = place.getStatus();
 			if (activeOrTriggered.equalsIgnoreCase(ACTIVE)) {
 				activeOrTriggered = "Modify";
@@ -281,16 +319,15 @@ public class ListActivity extends FragmentActivity implements
 					+ activeOrTriggered.toUpperCase(Locale.ENGLISH)
 					+ " this Place-It?");
 
-			final int id = place.getId();
+			final PlaceIt pl = place;
 			alert.setNeutralButton(activeOrTriggered,
 					new DialogInterface.OnClickListener() {
 
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 
-							PlaceItDbHelper db = new PlaceItDbHelper(
-									getActivity());
-							PlaceIt place = (db.getPlaceIt(id));
+							PlaceItDbHelper db = new PlaceItDbHelper(getActivity());
+							PlaceIt place = pl;
 
 							if (place.getStatus().equalsIgnoreCase(TRIGGERED)) {
 								place.setStatus(ACTIVE);
@@ -334,9 +371,6 @@ public class ListActivity extends FragmentActivity implements
 								
 								startActivity(intent);
 							}
-							// Toast.makeText(getActivity(),"clicked to modify ",
-							// Toast.LENGTH_SHORT).show();
-
 						}
 					});
 			alert.setNegativeButton("Delete",
@@ -346,19 +380,14 @@ public class ListActivity extends FragmentActivity implements
 							PlaceItDbHelper db = new PlaceItDbHelper(
 									getActivity());
 
-							SaveLastLocation action = new SaveLastLocation(db
-									.getPlaceIt(id).getLocation());
-							db.deletePlaceIt(db.getPlaceIt(id));
+							SaveLastLocation action = new SaveLastLocation(pl.getLocation());
+							db.deletePlaceIt(pl);
 							action.saveLastPlaceIt(db);
 
 							Toast.makeText(getActivity(), "Item deleted",
 									Toast.LENGTH_SHORT).show();
-							// Intent intent = new Intent(getActivity(),
-							// ListActivity.class);
-							// startActivity(intent);
-
-							// Toast.makeText(getActivity(),"clicked to change status to completed",
-							// Toast.LENGTH_SHORT).show();
+							Intent intent = new Intent(getActivity(), ListActivity.class);
+							startActivity(intent);
 						}
 					});
 			alert.setPositiveButton("Cancel",
@@ -368,38 +397,54 @@ public class ListActivity extends FragmentActivity implements
 						public void onClick(DialogInterface dialog, int which) {
 							Toast.makeText(getActivity(), "Action Cancelled",
 									Toast.LENGTH_SHORT).show();
-
 						}
 					});
 			alert.show();
 		}
 
-		/*
-		 * @Override public boolean onItemLongClick(AdapterView<?> arg0, View
-		 * arg1, int arg2, long arg3) { // TODO Auto-generated method stub
-		 * AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-		 * alert.setTitle("Are you sure?");
-		 * alert.setMessage("Warning! This action cannot be undone!"); PlaceIt
-		 * place = (PlaceIt) arg0.getItemAtPosition(arg2); final int id =
-		 * place.getId(); alert.setPositiveButton("Cancel", new
-		 * DialogInterface.OnClickListener() {
-		 * 
-		 * @Override public void onClick(DialogInterface dialog, int which) { //
-		 * TODO Auto-generated method stub
-		 * Toast.makeText(getActivity(),"Action Cancelled",
-		 * Toast.LENGTH_SHORT).show(); } }); alert.setNegativeButton("Delete",
-		 * new DialogInterface.OnClickListener() {
-		 * 
-		 * @Override public void onClick(DialogInterface dialog, int which) {
-		 * PlaceItDbHelper db = new PlaceItDbHelper(getActivity());
-		 * db.deletePlaceIt(db.getPlaceIt(id));
-		 * Toast.makeText(getActivity(),"Item deleted",
-		 * Toast.LENGTH_SHORT).show(); Intent intent = new Intent(getActivity(),
-		 * ListActivity.class); startActivity(intent);
-		 * 
-		 * } });
-		 * 
-		 * alert.show(); return true; }
-		 */
+		
+		 @Override
+		 public boolean onItemLongClick( AdapterView<?> arg0, View arg1, int arg2, long arg3 ) {
+			
+			 
+			HashMap<String, String> datum = (HashMap<String, String>) arg0.getItemAtPosition(arg2);
+			int id = Integer.parseInt(datum.get("id"));
+			PlaceItDbHelper db = new PlaceItDbHelper(getActivity());
+			PlaceIt place = (db.getPlaceIt(id));
+			
+			String str = "ID: " + place.getId() + "\n" +
+					   "Title: " + place.getTitle() + "\n" +
+					   "Status: " + place.getStatus() + "\n" +
+					   "Description: " + place.getDescription() + "\n" +
+					   "LatLng: " + place.getLocation().toString() + "\n" +
+					   "Location: " + place.getLocation_str() + "\n" +
+					   "Scheduling_Option: " + place.getSchedule().getScheduled_option() + "\n" +
+					   "Scheduling_DOW: " + place.getSchedule().getScheduled_dow() + "\n" +
+					   "Scheduling_WeekInterval: " + place.getSchedule().getScheduled_week() + "\n" +
+					   "Scheduling_Minutes: " + place.getSchedule().getScheduled_minutes() + "\n";
+			Toast.makeText(getActivity(), str, Toast.LENGTH_LONG).show();
+			
+
+			/*AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+			alert.setTitle("Are you sure?");
+			alert.setMessage("Warning! This action cannot be undone!"); 
+			PlaceIt place = (PlaceIt) arg0.getItemAtPosition(arg2);
+			final int id = place.getId();
+			alert.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
+				 @Override public void onClick(DialogInterface dialog, int which) {
+				 	Toast.makeText(getActivity(),"Action Cancelled", Toast.LENGTH_SHORT).show();
+				 	} }); 
+
+			alert.setNegativeButton("Delete", new DialogInterface.OnClickListener() {
+				@Override public void onClick(DialogInterface dialog, int which) {
+					PlaceItDbHelper db = new PlaceItDbHelper(getActivity());
+					db.deletePlaceIt(db.getPlaceIt(id));
+					Toast.makeText(getActivity(),"Item deleted", Toast.LENGTH_SHORT).show();
+					Intent intent = new Intent(getActivity(), ListActivity.class);
+					startActivity(intent);
+			 } });
+		 alert.show();  */
+		 return true; }
+		 
 	}
 }

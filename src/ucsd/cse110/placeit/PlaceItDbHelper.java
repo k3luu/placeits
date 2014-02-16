@@ -47,6 +47,7 @@ public class PlaceItDbHelper extends SQLiteOpenHelper{
 	public PlaceItDbHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 	}
+	
 
 	// Creates the PlaceIt database schema
 	public void onCreate(SQLiteDatabase db) {

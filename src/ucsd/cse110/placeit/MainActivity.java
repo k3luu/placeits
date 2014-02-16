@@ -384,7 +384,6 @@ OnMapLongClickListener, OnCameraChangeListener, OnInfoWindowClickListener {
     		metersPerPixel /= 2;
     		++zoomLevel;
     	}
-    	// Log.i("ADNAN", "zoom level = "+zoomLevel);
     	return zoomLevel;
     }
 

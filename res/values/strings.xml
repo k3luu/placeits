@@ -28,7 +28,7 @@
     <string name="description_hint">Description:</string>
     <string name="location_hint">Location:</string>
     <string name="icon_gap">4sp</string>
-    <string name="search_location">Find a location</string>
+    <string name="search_location">Find a location to add a Place-It</string>
     <string name="title_activity_details">DetailsActivity</string>
     <string name="delete_btn">Delete PlaceIt</string>
     <string name="schedule">schedule</string>

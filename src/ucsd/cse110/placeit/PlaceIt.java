@@ -134,7 +134,7 @@ public class PlaceIt {
 	////////////////////// Other methods //////////////////////
 	
 	public String toString() {
-		return "ID: " + this.id + "\n" +
+		return /*"ID: " + this.id + "\n" +
 			   "Title: " + this.title + "\n" +
 			   "Status: " + this.status + "\n" +
 			   "Description: " + this.description + "\n" +
@@ -143,8 +143,8 @@ public class PlaceIt {
 			   "Scheduling_Option: " + this.schedule.getScheduled_option() + "\n" +
 			   "Scheduling_DOW: " + this.schedule.getScheduled_dow() + "\n" +
 			   "Scheduling_WeekInterval: " + this.schedule.getScheduled_week() + "\n" +
-			   "Scheduling_Minutes: " + this.schedule.getScheduled_minutes() + "\n";
-				//this.title;
+			   "Scheduling_Minutes: " + this.schedule.getScheduled_minutes() + "\n";*/
+				this.title;
 	}
 	
 	
