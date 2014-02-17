@@ -21,6 +21,9 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
+/*
+ * Displays the form of the PlaceIt
+ */
 public class PlaceItsManager extends FragmentActivity implements
 ActionBar.TabListener, OnItemSelectedListener {
 
@@ -36,6 +39,7 @@ ActionBar.TabListener, OnItemSelectedListener {
 	private LatLng location;
 	private String title;
 	private String description;
+	private ProximityAlertManager paManager;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -50,43 +54,25 @@ ActionBar.TabListener, OnItemSelectedListener {
 		// Case 3: called by ListView [All info]
 		// cases ended
 				
-				Intent info = getIntent();
-				int validate = info.getIntExtra("ucsd.cs110.placeit.CheckSrouce", 1);
+		Intent info = getIntent();
+		int validate = info.getIntExtra(PlaceItUtil.CHECK_SOURCE, 1);
 				
-				Log.i("validate: ", "It is ############### "+validate);
-				
-				// Add case 3 later
-				if (validate == 1)//change to else if later on
-				{	
-					Log.i("Here", "LALALALALALALA");
-					Bundle b = getIntent().getParcelableExtra("locationOnlyBundle");
-					location = b.getParcelable("ucsd.cs110.placeit.LocationOnly");
-				}
-				else // case 3
-				{
-					data_id = info.getIntExtra("idIntent", -1);
-					PlaceItDbHelper db = new PlaceItDbHelper(this);
-					PlaceIt place = db.getPlaceIt(data_id);
-					//Log.i("I am inside case 2", "Case 2");
-					//Bundle b = getIntent().getParcelableExtra("locationOnlyBundle");
-					
-					
-					//Log.i("data_id", "is "+data_id+" "+place.getId()+" "+place.getLocation_str());
-					
-					//Log.i("info 4", "why why why?");
-					title = place.getTitle();
-					description = place.getDescription();
-					location = place.getLocation();
-					//Log.i("info1 ", "is "+data_id+" "+location+" "+title+" "+description);
-					//schedule = place.getSchedule();
-					
-					// listening for the users scheduling option
-					//schedulingOption = schedule.getScheduled_option();
-					//scheduleDOW = schedule.getScheduled_dow();
-					//scheduleWeekInterval = schedule.getScheduled_week();
-					//scheduleMinutes = schedule.getScheduled_minutes();
-				}
-        
+		// Add case 3 later
+		if (validate == 1)//change to else if later on
+		{	
+			Bundle locBundle = getIntent().getParcelableExtra(PlaceItUtil.LOC_BUNDLE);
+			location = locBundle.getParcelable(PlaceItUtil.LOC_ONLY);
+		}
+		else // case 3
+		{
+			data_id = info.getIntExtra(PlaceItUtil.PLACEIT_ID, -1);
+			PlaceItDbHelper db = new PlaceItDbHelper(this);
+			PlaceIt placeIt = db.getPlaceIt(data_id);
+
+			title = placeIt.getTitle();
+			description = placeIt.getDescription();
+			location = placeIt.getLocation();
+		}
 	}
 
 	@Override
@@ -99,7 +85,7 @@ ActionBar.TabListener, OnItemSelectedListener {
 	protected void onResume()
 	{
 		super.onResume();
-		Log.i("info ", "is " + data_id + " " + location+" "+title+" "+description);
+		
 		// fills the Location with the string version passed by the map/search bar
 		editView = (EditText) findViewById(R.id.location);
 		editViewTitle = (EditText) findViewById(R.id.editTextTitle);
@@ -126,12 +112,13 @@ ActionBar.TabListener, OnItemSelectedListener {
 	@Override
     public boolean onOptionsItemSelected(MenuItem item) {
     	
-    	// Menu buttons click to associated activity
+    	// the confirm button pressed
     	if ( item.getItemId() == R.id.database_add_edit ) {
     		
     		// get an instance of our database to add
     		PlaceItDbHelper db = new PlaceItDbHelper(this);
     		
+    		// recover the strings form the edit views
     		EditText title_field = (EditText) findViewById(R.id.editTextTitle);
     		EditText description_field = (EditText) findViewById(R.id.editTextDesc);
     		EditText location_field = (EditText) findViewById(R.id.location);
@@ -149,7 +136,7 @@ ActionBar.TabListener, OnItemSelectedListener {
     		String schedulingOption = String.valueOf(scheduling_field.getSelectedItem());
     		String scheduleDOW = String.valueOf(day_field.getSelectedItem());
     		String scheduleWeekInterval = String.valueOf(week_interval_field.getSelectedItem());
-    		int scheduleMinutes = -1;
+    		int scheduleMinutes = PlaceItUtil.NOTSET;
     		try {
     			scheduleMinutes = Integer.parseInt(minutes_field.getText().toString());
     		} catch (NumberFormatException e) {}
@@ -158,9 +145,15 @@ ActionBar.TabListener, OnItemSelectedListener {
     		Scheduler schedule = new Scheduler(schedulingOption, scheduleDOW, scheduleWeekInterval, scheduleMinutes);
     		
     		PlaceIt placeIt;
+    		
+    		// if a PlaceIt is already in the database
     		if (data_id != PlaceItUtil.NOTSET) {
 				placeIt = db.getPlaceIt(data_id);
-				placeIt.setStatus("Active");
+				
+				paManager.removeProximityAlert(placeIt.getId());
+		        placeIt.getSchedule().removeAlarm(this, placeIt.getId());
+				
+				placeIt.setStatus(PlaceItUtil.PLACEIT_ID);
 				placeIt.setTitle(title);
 				placeIt.setDescription(description);
 				placeIt.setLocation(location);
@@ -168,10 +161,9 @@ ActionBar.TabListener, OnItemSelectedListener {
 				placeIt.setSchedule(schedule);
 			}
 			else {
-				// create our PlaceIt and validate the contents
-	    		placeIt = new PlaceIt(title, "Active", description, location, location_str, schedule);
+				// create a new PlaceIt
+	    		placeIt = new PlaceIt(title, PlaceItUtil.ACTIVE, description, location, location_str, schedule);
 			}
-    		
     		
     		PlaceItDataChecker checker = new PlaceItDataChecker(placeIt);
     		
@@ -179,22 +171,22 @@ ActionBar.TabListener, OnItemSelectedListener {
     		if (checker.checkNormal()) {
     			
     			long placeItId;
+    			
     			// add the PlaceIt to our database
     			if (data_id != PlaceItUtil.NOTSET) {
     				placeItId = db.updatePlaceIt(placeIt);
-    				Log.i("I am fixing", "error");
     			}
     			else {
     				placeItId = db.addPlaceIt(placeIt);
-        			db.close();
     			}
     			
     			// set up the Alarm for the PlaceIt if possible
     			placeIt.getSchedule().setRepeatingAlarm(this, placeItId);
     			
-    			ProximityAlertManager paManager = new ProximityAlertManager(this);
+    			paManager = new ProximityAlertManager(this);
     			paManager.addProximityAlert(placeIt);
     			
+    			// save the location to return to later on
     			SaveLastLocation action = new SaveLastLocation(location);
     			action.saveLastPlaceIt(db);
     			
@@ -205,7 +197,7 @@ ActionBar.TabListener, OnItemSelectedListener {
     		else {
     			Toast.makeText(getApplicationContext(), "Incomplete form", Toast.LENGTH_SHORT).show();
     		}
-	
+    		db.close();
     		return true;
     	}
     	else if ( item.getItemId() == R.id.datebase_cancel ) {

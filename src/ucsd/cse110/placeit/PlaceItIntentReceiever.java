@@ -43,28 +43,31 @@ public class PlaceItIntentReceiever extends BroadcastReceiver {
 			Log.d(getClass().getSimpleName(), "exiting");
 		}
        
-        //Pass the notification to the notification manager
+        // Intent to display the contents of the PlaceIt
 		Intent displayDetailsIntent = new Intent(context,  NotificationActivity.class);
 		displayDetailsIntent.putExtra(PlaceItUtil.PLACEIT_ID, placeIt.getId());
+		displayDetailsIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		PendingIntent displayDetailsPendingIntent = PendingIntent.getActivity(context, 0, displayDetailsIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 		
+		// Intent to repost the PlaceIt
 		Intent repostIntent = new Intent(context,  NotificationActivity.class);
 		repostIntent.putExtra(PlaceItUtil.PLACEIT_ID, placeIt.getId());
 		repostIntent.putExtra(PlaceItUtil.REPOST, true);
-		PendingIntent repostPendingIntent = PendingIntent.getActivity(context, 0, repostIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-	
+		PendingIntent repostPendingIntent = PendingIntent.getActivity(context, 1, repostIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+		
 		// create the notification
 		NotificationCompat.Builder mBuilder =
 				new NotificationCompat.Builder(context)
  			    .setSmallIcon(R.drawable.launch)
  			    .setContentTitle(placeIt.getTitle())
- 			    .setContentText(placeIt.getStatus())
+ 			    .setContentText(placeIt.getShortDescription())
  			    .setDefaults(Notification.DEFAULT_VIBRATE | Notification.DEFAULT_SOUND)
- 			    .addAction(R.drawable.ic_launcher,"Details", displayDetailsPendingIntent) 
- 		        .addAction(R.drawable.ic_launcher, "Repost", repostPendingIntent);
+ 		        .addAction(R.drawable.ic_launcher, PlaceItUtil.REPOST_OPTION, repostPendingIntent);
 		
 		NotificationManager mNotifyMgr = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-//		mBuilder.setContentIntent(displayDetailsPendingIntent);
+		mBuilder.setContentIntent(displayDetailsPendingIntent);
+		mBuilder.setAutoCancel(true);
 		mNotifyMgr.notify(placeIt_id, mBuilder.build());
 	}
 }

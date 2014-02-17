@@ -12,6 +12,9 @@ import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 
+/*
+ * Handles the geocoding of positions
+ */
 public class GetAddressTask extends AsyncTask<LatLng, Void, String>
 {
 	Context mContext;

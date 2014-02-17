@@ -9,6 +9,9 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
+/*
+ * Displays the content of the PlaceIt
+ */
 public class Details{
 	
 	private Context context;
@@ -25,8 +28,6 @@ public class Details{
 	public void display(int placeItId) {
 
 		// retrieve the PlaceIt Id and recover the PlaceIt
-		Intent detailsIntent = new Intent(context, Details.class);
-		detailsIntent.putExtra(PlaceItUtil.PLACEIT_ID, placeItId);
 		final PlaceIt placeIt = getPlaceItFromDb(placeItId);
 		
 		String title_field = "No PlaceIt Found";
@@ -39,9 +40,9 @@ public class Details{
 			// determine what middle button should say
 			activeOrTriggered = placeIt.getStatus();
 			if (activeOrTriggered.equalsIgnoreCase(PlaceItUtil.ACTIVE)) {
-				activeOrTriggered = "Modify";
+				activeOrTriggered = PlaceItUtil.MODIFY;
 			} else {
-				activeOrTriggered = "Reactivate";
+				activeOrTriggered = PlaceItUtil.REACTIVATE;
 			}
 		}
 		
@@ -50,16 +51,14 @@ public class Details{
 		alert.setTitle(title_field);
 		alert.setMessage(info);
 		
-		
-		alert.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
+		alert.setPositiveButton(PlaceItUtil.CANCEL, new DialogInterface.OnClickListener() {
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				Toast.makeText(context,"Action Cancelled", Toast.LENGTH_SHORT).show();
 			}
 		});
 		
-		alert.setNegativeButton("Delete", new DialogInterface.OnClickListener() {
+		alert.setNegativeButton(PlaceItUtil.DELETE, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				PlaceItDbHelper db = new PlaceItDbHelper(context);
@@ -73,7 +72,7 @@ public class Details{
 		        
 			        // alert the user that the PlaceIt was deleted
 			        Toast.makeText(context, placeIt.getTitle() + " PlaceIt deleted", Toast.LENGTH_SHORT).show();
-					Intent intent = new Intent(context, MainActivity.class);
+					Intent intent = new Intent(context, context.getClass());
 					
 					// save the last location of the users screen
 					SaveLastLocation action = new SaveLastLocation(placeIt.getLocation());
@@ -94,19 +93,25 @@ public class Details{
 		    	
 				if(placeIt != null) {
 					
+					// allow for reactivation if already triggered
 					if (placeIt.getStatus().equalsIgnoreCase(PlaceItUtil.TRIGGERED)) {
 						placeIt.setStatus(PlaceItUtil.ACTIVE);
 						db.updatePlaceIt(placeIt);
 						db.close();
+						
+		    			paManager.addProximityAlert(placeIt);
+		    			
 						Intent intent = new Intent(context, ListActivity.class);
 						intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 						context.startActivity(intent);
-					} else {
+					} 
+					// allow for modification if Active
+					else {
 						
 						// Go to Place-it manager with Intent. case from
 						// list view edit. ID. case 3
 						// store the Place-It's ID and pass to PlaceItManager to edit
-						int passID = placeIt.getId();
+						int placeItId = placeIt.getId();
 				    	String passTitle = placeIt.getTitle();
 				    	LatLng passPoint = placeIt.getLocation();
 				    	String passDescription = placeIt.getDescription();
@@ -114,21 +119,14 @@ public class Details{
 				    	Bundle location_bundle = new Bundle();
 				    	location_bundle.putParcelable("ucsd.cs110.placeit.LocationOnly", passPoint);
 				    	Intent intent = new Intent(context, PlaceItsManager.class);
-				    	intent.putExtra("idIntent", passID);
+				    	intent.putExtra(PlaceItUtil.PLACEIT_ID, placeItId);
 				    	intent.putExtra("titleIntent", passTitle);
-				    	intent.putExtra("locationOnlyBundle", location_bundle);
+				    	intent.putExtra(PlaceItUtil.LOC_BUNDLE, location_bundle);
 				    	intent.putExtra("descriptionIntent", passDescription);
-				    	intent.putExtra("ucsd.cs110.placeit.CheckSrouce", 3);
+				    	intent.putExtra(PlaceItUtil.CHECK_SOURCE, 3);
 				    	
 				    	context.startActivity(intent);
 					}
-			    	
-			    	// remove proximity alert and any alarms set on the PlaceIt
-					// then remove it from the database
-//			    	paManager.removeProximityAlert(placeIt.getId());
-//			    	placeIt.getSchedule().removeAlarm(context, placeIt.getId());
-//			    	db.deletePlaceIt(placeIt); //delete it after getting info because it will reactivate ?
-					
 				}
 			}
 		});

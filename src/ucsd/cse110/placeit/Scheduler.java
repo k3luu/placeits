@@ -9,7 +9,6 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 /*
  * Handles the scheduling of a PlaceIt
@@ -55,7 +54,6 @@ public class Scheduler {
 		
 		Intent reactivatePlaceIt = new Intent(context, AlarmReceiver.class);
 		reactivatePlaceIt.putExtra(PlaceItUtil.PLACEIT_ID, placeIt_Id);
-		Log.i("current placeIt_id is ", " "+placeIt_Id);
 	    PendingIntent recurringActivation = PendingIntent.getBroadcast(context,
 	    		(int)placeIt_Id, reactivatePlaceIt, PendingIntent.FLAG_CANCEL_CURRENT);
 	    AlarmManager alarms = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -100,7 +98,6 @@ public class Scheduler {
 	    AlarmManager alarms = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 	    
 	    if (alarms!= null) {
-	    	Log.i("REMOVED", "ALARM");
 	    	alarms.cancel(recurringActivation);
 	    }  
     }
@@ -201,7 +198,7 @@ public class Scheduler {
 			return tmp;
 		}
 		else {
-			SimpleDateFormat sdf = new SimpleDateFormat("E, MMM dd yyyy");
+			SimpleDateFormat sdf = new SimpleDateFormat("E, MMM dd yyyy, HH");
 			return "Reposted " + scheduled_dow  + ", " + "every " + scheduled_week_interval
 					+ "\nNext repost scheduled for " + sdf.format(scheduleDate.getTime()) +"\n";
 		}		

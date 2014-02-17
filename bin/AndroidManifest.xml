@@ -61,18 +61,12 @@
         </activity>
         <activity
             android:name="ucsd.cse110.placeit.NotificationActivity"
-            android:label="@string/title_data_manager" >
+            android:label="@string/title_data_manager"
+            android:excludeFromRecents="true" >
         </activity>
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-
-        <activity
-            android:name="ucsd.cse110.placeit.DetailsActivity"
-            android:theme="@android:style/Theme.Dialog"
-            android:excludeFromRecents="true"
-            android:label="@string/title_activity_details" >
-        </activity>
         
         <!-- Proximity Alert Receiver -->
         <receiver
@@ -87,6 +81,9 @@
         
         <!-- Service PlaceIt -->
         <service android:enabled="true" android:name=".BootService" />
+        
+        <!-- Service PlaceIt -->
+        <service android:enabled="true" android:name=".AlarmService" />
         
         <!-- Boot Receiver -->
         <receiver android:name="ucsd.cse110.placeit.BootReceiver">

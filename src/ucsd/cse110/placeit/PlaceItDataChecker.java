@@ -1,6 +1,8 @@
 package ucsd.cse110.placeit;
 
-
+/*
+ * Validates the user input of the PlaceIt form
+ */
 public class PlaceItDataChecker {
 	
 	private PlaceIt theData;

@@ -3,8 +3,6 @@ package ucsd.cse110.placeit;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.Toast;
 
 /*
  *  this NotificationActivity class is used for reactive a event when the user press the repost button, 
@@ -22,17 +20,22 @@ public class NotificationActivity extends Activity {
 		Intent detailDialog = getIntent();
 	    int placeItId = detailDialog.getIntExtra(PlaceItUtil.PLACEIT_ID, -1);
 	    boolean repost = detailDialog.getBooleanExtra(PlaceItUtil.REPOST, false);
-	    Log.i("booloean", String.valueOf(repost));
 	    
+	    // if repost option selected
 	    if (repost) {
-	    	Toast.makeText(this,"Reposting", Toast.LENGTH_SHORT).show();
+
 			db = new PlaceItDbHelper(this);
 			PlaceIt placeIt = db.getPlaceIt(placeItId);
 			if (placeIt != null) {
 				placeIt.setStatus(PlaceItUtil.ACTIVE);
 				db.updatePlaceIt(placeIt);				
 			}
+			
 			db.close();
+			
+			// reset the ProximityAlerts
+			ProximityAlertManager paManager = new ProximityAlertManager(this);
+			paManager.addProximityAlert(placeIt);
 			
 			//finish the NotificationActivity
 			finish();
@@ -41,11 +44,9 @@ public class NotificationActivity extends Activity {
 			startActivity(new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME));
 	    }
 	    else {
-	    	Toast.makeText(this,"Displaying", Toast.LENGTH_SHORT).show();
-	    	// Display the contents of the PlaceIt
+			// Display the contents of the PlaceIt
 			Details placeItDetails = new Details(this);
 			placeItDetails.display(placeItId);
-			
 	    }
 	}
 

@@ -7,8 +7,10 @@ import android.content.IntentFilter;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Handler;
-import android.widget.Toast;
 
+/*
+ * handles the proximity alerts of the Placeits
+ */
 public class ProximityAlertManager { 
 	
 	private Context context;
@@ -62,7 +64,6 @@ public class ProximityAlertManager {
 
         IntentFilter filter = new IntentFilter(PlaceItUtil.PROX_ALERT_INTENT);
         context.registerReceiver(new PlaceItIntentReceiever(), filter);
-        Toast.makeText(context,"PlaceIt Proximity Alert Added"+ placeIt_Id,Toast.LENGTH_SHORT).show();
     }
     
     // remove proximity alerts for the given PlaceIt

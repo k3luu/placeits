@@ -12,7 +12,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 
 /**
- * @author danielloza
+ * The database that stores all the Placeit information
  *
  */
 public class PlaceItDbHelper extends SQLiteOpenHelper{
@@ -20,7 +20,7 @@ public class PlaceItDbHelper extends SQLiteOpenHelper{
 	///////////////////////// Static variables //////////////////////////
     
 	// Database Version
-    private static final int DATABASE_VERSION = 13;
+    private static final int DATABASE_VERSION = 14;
  
     // Database Name
     private static final String DATABASE_NAME = "PlaceItsManager";
@@ -216,10 +216,11 @@ public class PlaceItDbHelper extends SQLiteOpenHelper{
         SQLiteDatabase db = this.getReadableDatabase();
         
         Cursor cursor = db.rawQuery(countQuery, null);
+        int count = cursor.getCount();
         cursor.close();
  
         // return count
-        return cursor.getCount();
+        return count;
 	}
 	
 	// Updating single PlaceIt

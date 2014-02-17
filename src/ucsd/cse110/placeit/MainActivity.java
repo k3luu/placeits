@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Point;
 import android.location.Address;
 import android.os.Bundle;
@@ -23,11 +22,13 @@ import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+/*
+ * Displays the map 
+ */
 public class MainActivity extends FragmentActivity implements 
 OnMapLongClickListener, OnInfoWindowClickListener { 
 		
@@ -107,6 +108,10 @@ OnMapLongClickListener, OnInfoWindowClickListener {
 
     }
     
+    protected void onDestroy() {
+    	db.close();
+    }
+    
     ///////////////////////////// Setup Methods ///////////////////////////////
     
     // creates an instance of GoogleMap and sets the appropriate settings
@@ -149,7 +154,6 @@ OnMapLongClickListener, OnInfoWindowClickListener {
 		
     	// loop through all active PlaceIt's and populate map with them
     	activePlaceItList = db.getAllPlaceIts(PlaceItUtil.ACTIVE);
-    	db.close();
     	
     	PlaceIt placeIt;
 		for (int i = 0; i < activePlaceItList.size(); i++) {
@@ -161,11 +165,6 @@ OnMapLongClickListener, OnInfoWindowClickListener {
 									        .title(placeIt.getTitle())
 									        .draggable(false)
 									        );
-			mMap.addCircle(new CircleOptions()
-							     .center(placeIt.getLocation())
-							     .radius(PlaceItUtil.ALERT_RADIUS)
-							     .strokeColor(Color.RED)
-							     .fillColor(Color.BLUE));
 			marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.placeit));
 			placeItMarkers.put(marker.getId(), (int) placeIt.getId());
 			
@@ -181,10 +180,10 @@ OnMapLongClickListener, OnInfoWindowClickListener {
     	
     	// store the LatLng position of the the clicked position to pass into the form
     	Bundle location_bundle = new Bundle();
-    	location_bundle.putParcelable("ucsd.cs110.placeit.LocationOnly", point);
+    	location_bundle.putParcelable(PlaceItUtil.LOC_ONLY, point);
     	Intent intent = new Intent(this, PlaceItsManager.class);
-    	intent.putExtra("locationOnlyBundle", location_bundle);
-    	intent.putExtra("ucsd.cs110.placeit.CheckSrouce", 1);
+    	intent.putExtra(PlaceItUtil.LOC_BUNDLE, location_bundle);
+    	intent.putExtra(PlaceItUtil.CHECK_SOURCE, 1);
     
     	startActivity(intent);
     }

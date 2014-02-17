@@ -2,6 +2,10 @@ package ucsd.cse110.placeit;
 
 import com.google.android.gms.maps.model.LatLng;
 
+/*
+ * Defines the PlaceIt object using a LatLng object for the location and 
+ * Scheduler object for it's schedule
+ */
 public class PlaceIt {
 	
 	////////////////////// Private Variables //////////////////////
@@ -94,6 +98,18 @@ public class PlaceIt {
 			return "";
 		else
 			return description;
+	}
+	
+	public String getShortDescription() {
+		if (description == null)
+			return "";
+		
+		String desc = description;
+		if (desc.length() > PlaceItUtil.MAX_DESC) {
+			desc = desc.substring(0, PlaceItUtil.MAX_DESC) + "...";
+		}
+		
+		return desc;
 	}
 	
 	public Scheduler getSchedule() {

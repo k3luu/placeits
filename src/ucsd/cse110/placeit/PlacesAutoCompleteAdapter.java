@@ -15,6 +15,9 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
+/*
+ * And Array adapter to display an autocompleted search bar for the addresses
+ */
 public class PlacesAutoCompleteAdapter extends ArrayAdapter<Address> implements Filterable {
 	
 	private LayoutInflater mInflater;

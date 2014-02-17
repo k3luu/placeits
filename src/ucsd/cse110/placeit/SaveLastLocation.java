@@ -8,7 +8,7 @@ import java.util.List;
 import com.google.android.gms.maps.model.LatLng;
 
 /**
- * @author WeiJie
+ * Saves the last location of the application for later use
  *
  */
 public class SaveLastLocation {

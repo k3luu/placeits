@@ -5,9 +5,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import android.app.ActionBar;
-import android.app.AlertDialog;
 import android.app.FragmentTransaction;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -25,7 +23,10 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.Toast;
+
+/*
+ * Displays the PlaceIts in a list view
+ */
 public class ListActivity extends FragmentActivity implements
 		ActionBar.TabListener {
 	/**
@@ -132,7 +133,7 @@ public class ListActivity extends FragmentActivity implements
 			// below) with the page number as its lone argument.
 			Fragment fragment = new DummySectionFragment();
 			Bundle args = new Bundle();
-			args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1);
+			args.putInt(PlaceItUtil.ARG_SECTION_NUMBER, position + 1);
 			fragment.setArguments(args);
 			return fragment;
 		}
@@ -162,9 +163,7 @@ public class ListActivity extends FragmentActivity implements
 		 * The fragment argument representing the section number for this
 		 * fragment.
 		 */
-		public static final String ARG_SECTION_NUMBER = "section_number";
-		public final static String TRIGGERED = "Triggered";
-		public final static String ACTIVE = "Active";
+		
 		private ArrayList<PlaceIt> currentPlaceItList;
 		private PlaceItDbHelper db;
 		public DummySectionFragment() {
@@ -175,16 +174,16 @@ public class ListActivity extends FragmentActivity implements
 			View rootView = inflater.inflate(R.layout.fragment_main_dummy,
 					container, false);
 			db = new PlaceItDbHelper(getActivity());
-			if (getArguments().getInt(ARG_SECTION_NUMBER) == 1) { 
+			if (getArguments().getInt(PlaceItUtil.ARG_SECTION_NUMBER) == 1) { 
 				// Here is the Pending List View fragment
 				//PlaceIt placeIt;
-				currentPlaceItList = db.getAllPlaceIts(ACTIVE);
+				currentPlaceItList = db.getAllPlaceIts(PlaceItUtil.ACTIVE);
 				
 				ArrayList<Map<String, String>> data = new ArrayList<Map<String, String>>();
 				for (PlaceIt item : currentPlaceItList) {
 					Map<String, String> datum = new HashMap<String, String>(3);
 					datum.put("title", "Title: "+item.getTitle());
-				    datum.put("desc", "Description: "+item.getDescription());
+				    datum.put("desc", "Description: "+item.getShortDescription());
 				    datum.put("id", ""+item.getId());
 				    data.add(datum);
 				}
@@ -199,12 +198,12 @@ public class ListActivity extends FragmentActivity implements
 				listView.setOnItemClickListener(this);
 				listView.setOnItemLongClickListener(this);
 			} else { // Here is the Completed List View fragment
-				currentPlaceItList = db.getAllPlaceIts(TRIGGERED);
+				currentPlaceItList = db.getAllPlaceIts(PlaceItUtil.TRIGGERED);
 				ArrayList<Map<String, String>> data = new ArrayList<Map<String, String>>();
 				for (PlaceIt item : currentPlaceItList) {
 					Map<String, String> datum = new HashMap<String, String>(3);
 				    datum.put("title", "Title: "+item.getTitle());
-				    datum.put("desc", "Description: "+item.getDescription());
+				    datum.put("desc", "Description: "+item.getShortDescription());
 				    datum.put("id", ""+item.getId());
 				    data.add(datum);
 				}
@@ -223,9 +222,7 @@ public class ListActivity extends FragmentActivity implements
 			return rootView;
 		}
 		@Override
-		public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-				long arg3) {
-//			AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+		public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 			
 			HashMap<String, String> datum = (HashMap<String, String>) arg0.getItemAtPosition(arg2);
 			int placeItId = Integer.parseInt(datum.get("id"));
@@ -236,8 +233,7 @@ public class ListActivity extends FragmentActivity implements
 			
 		}
 		@Override
-		public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
-				int arg2, long arg3) {
+		public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 			// TODO Auto-generated method stub
 			return false;
 		}
