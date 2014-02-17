@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Handler;
+import android.widget.Toast;
 
 /*
  * handles the proximity alerts of the Placeits
@@ -33,14 +34,14 @@ public class ProximityAlertManager {
     	
     	// add the sensor after 45 Minutes if the user is within range
     	if (lastKnowLocation.distanceTo(placeItLocation) <= PlaceItUtil.ALERT_RADIUS) {
-    		    		
+    		Toast.makeText(context, "TEST MODE: SNOOZE SET TO 10 SECONDS", Toast.LENGTH_SHORT).show();   		
     		final Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                 	runCommand(placeIt);
                 }
-            }, PlaceItUtil.INTERVAL_45_MINUTES);
+            }, PlaceItUtil.SNOOZE_INTERVAL);
     	}
     	else {
     		runCommand(placeIt);

@@ -31,7 +31,7 @@ public class PlaceItUtil {
 	public static final String NO_SCHEDULE = "-";
 	public static final long INTERVAL_WEEK = 604800000;
 	public static final long INTERVAL_MINUTE = 60000;
-	public static final long INTERVAL_45_MINUTES = 2700000;
+	public static final long SNOOZE_INTERVAL = 10000;
 	public static final int NOTSET = -1;
 	
 	public static final String REPOST = "ucsd.cse110.placeit.REPOST_PLACEIT";
