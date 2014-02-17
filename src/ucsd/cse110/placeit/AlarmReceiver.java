@@ -11,7 +11,6 @@ import android.util.Log;
  */
 public class AlarmReceiver extends BroadcastReceiver {
 	
-
 	private PlaceItDbHelper db;
 	
 	@Override
@@ -19,7 +18,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 		
 		db = new PlaceItDbHelper(context);
 		
-		// get the id of the placeIt that fired off this alarm
+		// get placeIt that fired off this alarm
 		long placeIt_id = intent.getLongExtra(PlaceItUtil.PLACEIT_ID, -1);
 		PlaceIt placeIt = db.getPlaceIt(placeIt_id);
 		Log.i("AlarmReceiver", String.valueOf(placeIt_id));

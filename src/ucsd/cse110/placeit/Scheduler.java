@@ -3,7 +3,6 @@ package ucsd.cse110.placeit;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import android.app.AlarmManager;
@@ -14,16 +13,13 @@ import android.util.Log;
 
 /*
  * Handles the scheduling of a PlaceIt
- * scheduled_date_millis holds:
- *  (i) the milliseconds until the next scheduled event
- *  (ii) -1 indicating the PlaceIt has no set schedule
  * 
  */
 public class Scheduler {
 	
-	private Calendar scheduleDate = null;
+	private Calendar scheduleDate = Calendar.getInstance(); // get the current time
 	
-	private String scheduled_option;	// the day to schedule e.g. Monday
+	private String scheduled_option;	// the scheduling option e.g by the minute/ weekly
 	private String scheduled_dow;		// the day to schedule e.g. Monday
 	private String scheduled_week_interval;// week repeat interval e.g Every week
 	private int scheduled_minutes;		// minutes to repost e.g 5 minutes
@@ -82,8 +78,6 @@ public class Scheduler {
 										   scheduleDate.getTimeInMillis(),
 										   weekIntervalNum*PlaceItUtil.INTERVAL_WEEK, 
 										   recurringActivation);
-				SimpleDateFormat sdf = new SimpleDateFormat("E yyyy MMM dd HH:mm:ss");
-				Log.i("WeeklyAlarm set for", sdf.format(scheduleDate.getTime()) );
 			}
 		}
 		// if we are scheduling by the minute
@@ -93,8 +87,6 @@ public class Scheduler {
 				alarms.setInexactRepeating(AlarmManager.RTC_WAKEUP,
 						scheduleDate.getTimeInMillis(),
 						scheduled_minutes*PlaceItUtil.INTERVAL_MINUTE, recurringActivation);
-				SimpleDateFormat sdf = new SimpleDateFormat("E yyyy MMM dd HH:mm:ss");
-				Log.i("MinuteAlarm set for", sdf.format(scheduleDate.getTime()) );
 			}
 		}
 	}
@@ -189,14 +181,29 @@ public class Scheduler {
         return weekMap.get(week).intValue();
     }
 	
-	// prints the value of the scheuduled date
+	// prints the value of the scheduled date
 	public String toString() {
-		if (scheduleDate != null) {
-			SimpleDateFormat sdf = new SimpleDateFormat("E yyyy MMM dd HH:mm:ss", Locale.US);
-			return sdf.format(scheduleDate.getTime());
+		
+
+		if (scheduled_option.equals(PlaceItUtil.NO_SCHEDULE)) {
+			return "PlaceIt not scheduled for repost.";
+		}
+		else if (scheduled_option.equals(PlaceItUtil.MINUTE_SCHEDULE)) {
+			SimpleDateFormat sdf = new SimpleDateFormat("E, MMM dd yyyy, HH:mm");
+			String tmp;
+			tmp = "Reposted every " + scheduled_minutes + " min\n" 
+				  + "Next repost scheduled for " + sdf.format(scheduleDate.getTime()) + "\n";
+			
+			// make plural if more than 1 minute
+			if (scheduled_minutes > 1) {
+				tmp = tmp + "s";
+			}
+			return tmp;
 		}
 		else {
-			return "";
+			SimpleDateFormat sdf = new SimpleDateFormat("E, MMM dd yyyy");
+			return "Reposted " + scheduled_dow  + ", " + "every " + scheduled_week_interval
+					+ "\nNext repost scheduled for " + sdf.format(scheduleDate.getTime()) +"\n";
 		}		
 	}
 }

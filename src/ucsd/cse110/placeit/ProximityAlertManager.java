@@ -7,7 +7,6 @@ import android.content.IntentFilter;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Handler;
-import android.util.Log;
 import android.widget.Toast;
 
 public class ProximityAlertManager { 
@@ -26,15 +25,13 @@ public class ProximityAlertManager {
 	// create proximity alerts for the given PlaceIt
     public void addProximityAlert(final PlaceIt placeIt) {
     	
-    	/*placeItLocation.setLatitude(placeIt.getLocation().latitude);
+    	placeItLocation.setLatitude(placeIt.getLocation().latitude);
     	placeItLocation.setLongitude(placeIt.getLocation().longitude);
     	lastKnowLocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
     	
     	// add the sensor after 45 Minutes if the user is within range
     	if (lastKnowLocation.distanceTo(placeItLocation) <= PlaceItUtil.ALERT_RADIUS) {
-    		
-    		Log.i("User in proximity", "Waiting 45 minutes");
-    		
+    		    		
     		final Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
                 @Override
@@ -45,8 +42,7 @@ public class ProximityAlertManager {
     	}
     	else {
     		runCommand(placeIt);
-    	}*/
-    	runCommand(placeIt);
+    	}
     }
     
     // command to add proximityAlert

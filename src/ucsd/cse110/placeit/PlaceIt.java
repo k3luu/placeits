@@ -11,7 +11,7 @@ public class PlaceIt {
 	private LatLng location;			// REQUIRED: the lat/lng of the location
 	private String location_str;		// The string representation of the LatLng
 	private String status; 				// posted (active), pulled down (triggered), expired
-	private String description;			// aditional details of our PlaceIt
+	private String description;			// Additional details of our PlaceIt
 	private Scheduler schedule;			// the PlaceIt schedule if any
 	
 	////////////////////// constructors //////////////////////
@@ -134,18 +134,11 @@ public class PlaceIt {
 	////////////////////// Other methods //////////////////////
 	
 	public String toString() {
-		return /*"ID: " + this.id + "\n" +
-			   "Title: " + this.title + "\n" +
-			   "Status: " + this.status + "\n" +
-			   "Description: " + this.description + "\n" +
-			   "LatLng: " + this.location.toString() + "\n" +
-			   "Location: " + this.location_str + "\n" +
-			   "Scheduling_Option: " + this.schedule.getScheduled_option() + "\n" +
-			   "Scheduling_DOW: " + this.schedule.getScheduled_dow() + "\n" +
-			   "Scheduling_WeekInterval: " + this.schedule.getScheduled_week() + "\n" +
-			   "Scheduling_Minutes: " + this.schedule.getScheduled_minutes() + "\n";*/
-				this.title;
+		return "Description:  "
+	    		+ description+"\n\n"
+	    		+ "Address:  "
+	    		+ location_str+"\n\n"
+	    		+ "Schedule:\n"
+	    		+ schedule.toString();
 	}
-	
-	
 }

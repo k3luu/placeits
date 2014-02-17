@@ -9,8 +9,11 @@ import android.content.Intent;
 import android.location.LocationManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.widget.Toast;
 
+
+/*
+ * Defines what should be done when a proximityAlert is triggered
+ */
 public class PlaceItIntentReceiever extends BroadcastReceiver {
 	
 	String lm_key = LocationManager.KEY_PROXIMITY_ENTERING;
@@ -39,28 +42,17 @@ public class PlaceItIntentReceiever extends BroadcastReceiver {
 		else {		
 			Log.d(getClass().getSimpleName(), "exiting");
 		}
-		
-		//Intent alertIntent = new Intent(context, DetailsActivity.class);
-		//alertIntent.putExtra(PlaceItUtil.PLACEIT_ID, placeIt.getId());
-		//PendingIntent alertPendingIntent = PendingIntent.getActivity(context, placeIt_id, alertIntent, 0);
-		
-		/*Intent discardIntent = new Intent();
-		discardIntent.putExtra(PlaceItUtil.PLACEIT_ID, placeIt.getId());
-		PendingIntent discardPendingIntent = PendingIntent.getActivity(context, 0, discardIntent, PendingIntent.CONTENTS_FILE_DESCRIPTOR);
-		*/
-
-		
        
         //Pass the notification to the notification manager
-        
+		Intent displayDetailsIntent = new Intent(context,  NotificationActivity.class);
+		displayDetailsIntent.putExtra(PlaceItUtil.PLACEIT_ID, placeIt.getId());
+		PendingIntent displayDetailsPendingIntent = PendingIntent.getActivity(context, 0, displayDetailsIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+		
 		Intent repostIntent = new Intent(context,  NotificationActivity.class);
 		repostIntent.putExtra(PlaceItUtil.PLACEIT_ID, placeIt.getId());
 		repostIntent.putExtra(PlaceItUtil.REPOST, true);
-		//repostIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		//repostIntent.addFlags( Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 		PendingIntent repostPendingIntent = PendingIntent.getActivity(context, 0, repostIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 	
-		
 		// create the notification
 		NotificationCompat.Builder mBuilder =
 				new NotificationCompat.Builder(context)
@@ -68,11 +60,11 @@ public class PlaceItIntentReceiever extends BroadcastReceiver {
  			    .setContentTitle(placeIt.getTitle())
  			    .setContentText(placeIt.getStatus())
  			    .setDefaults(Notification.DEFAULT_VIBRATE | Notification.DEFAULT_SOUND)
- 			   //.addAction(R.drawable.ic_launcher,"Discard", discardPendingIntent) 
- 		        .addAction(R.drawable.ic_launcher, PlaceItUtil.DISCARD, repostPendingIntent);
+ 			    .addAction(R.drawable.ic_launcher,"Details", displayDetailsPendingIntent) 
+ 		        .addAction(R.drawable.ic_launcher, "Repost", repostPendingIntent);
 		
 		NotificationManager mNotifyMgr = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-		//mBuilder.setContentIntent(alertPendingIntent);
+//		mBuilder.setContentIntent(displayDetailsPendingIntent);
 		mNotifyMgr.notify(placeIt_id, mBuilder.build());
 	}
 }

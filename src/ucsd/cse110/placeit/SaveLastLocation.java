@@ -5,10 +5,6 @@ package ucsd.cse110.placeit;
 
 import java.util.List;
 
-import android.location.Location;
-import android.location.LocationManager;
-import android.util.Log;
-
 import com.google.android.gms.maps.model.LatLng;
 
 /**

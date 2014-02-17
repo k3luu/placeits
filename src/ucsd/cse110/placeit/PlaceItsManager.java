@@ -36,13 +36,6 @@ ActionBar.TabListener, OnItemSelectedListener {
 	private LatLng location;
 	private String title;
 	private String description;
-	private Scheduler schedule;
-	
-	// listening for the users scheduling option
-	private String schedulingOption;
-	private String scheduleDOW;
-	private String scheduleWeekInterval;
-	private int scheduleMinutes;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -106,7 +99,7 @@ ActionBar.TabListener, OnItemSelectedListener {
 	protected void onResume()
 	{
 		super.onResume();
-		Log.i("info ", "is "+data_id+" "+location+" "+title+" "+description);
+		Log.i("info ", "is " + data_id + " " + location+" "+title+" "+description);
 		// fills the Location with the string version passed by the map/search bar
 		editView = (EditText) findViewById(R.id.location);
 		editViewTitle = (EditText) findViewById(R.id.editTextTitle);
@@ -161,12 +154,11 @@ ActionBar.TabListener, OnItemSelectedListener {
     			scheduleMinutes = Integer.parseInt(minutes_field.getText().toString());
     		} catch (NumberFormatException e) {}
 
-    		
     		// let Scheduler class determine the PlaceIt's schedule
     		Scheduler schedule = new Scheduler(schedulingOption, scheduleDOW, scheduleWeekInterval, scheduleMinutes);
     		
     		PlaceIt placeIt;
-    		if (data_id != -1) {
+    		if (data_id != PlaceItUtil.NOTSET) {
 				placeIt = db.getPlaceIt(data_id);
 				placeIt.setStatus("Active");
 				placeIt.setTitle(title);
@@ -188,7 +180,7 @@ ActionBar.TabListener, OnItemSelectedListener {
     			
     			long placeItId;
     			// add the PlaceIt to our database
-    			if (data_id != -1) {
+    			if (data_id != PlaceItUtil.NOTSET) {
     				placeItId = db.updatePlaceIt(placeIt);
     				Log.i("I am fixing", "error");
     			}
@@ -200,8 +192,8 @@ ActionBar.TabListener, OnItemSelectedListener {
     			// set up the Alarm for the PlaceIt if possible
     			placeIt.getSchedule().setRepeatingAlarm(this, placeItId);
     			
-    			ProximityAlertManager pa = new ProximityAlertManager(this);
-    			pa.addProximityAlert(placeIt);
+    			ProximityAlertManager paManager = new ProximityAlertManager(this);
+    			paManager.addProximityAlert(placeIt);
     			
     			SaveLastLocation action = new SaveLastLocation(location);
     			action.saveLastPlaceIt(db);
