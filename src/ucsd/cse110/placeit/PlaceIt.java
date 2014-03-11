@@ -10,15 +10,16 @@ public class PlaceIt {
 	
 	////////////////////// Private Variables //////////////////////
 	
-	private int id;						// db id must be unique
-	private	String title;				// REQUIRED: name of the PlaceIt
+	private int id;						// db id must be unique *
+	private	String title;				// REQUIRED: name of the PlaceIt*
 	private LatLng location;			// REQUIRED: the lat/lng of the location
 	private String location_str;		// The string representation of the LatLng
-	private String status; 				// posted (active), pulled down (triggered), expired
-	private String description;			// Additional details of our PlaceIt
-	private Scheduler schedule;			// the PlaceIt schedule if any
-	private String username;			// the username
-	
+	private String status; 				// posted (active), pulled down (triggered), expired *
+	private String description;			// Additional details of our PlaceIt *
+	private Scheduler schedule;			// the PlaceIt schedule if any *
+	private String username;			// the username *
+	private String[] categories;		
+
 	////////////////////// constructors //////////////////////
 	
 	// empty constructor
@@ -65,7 +66,8 @@ public class PlaceIt {
 				   String description, 
 				   LatLng location, 
 				   String location_str,
-				   Scheduler schedule) {
+				   Scheduler schedule,
+				   String[] categories) {
 		
 		this.id = id;
 		this.title = title;
@@ -75,11 +77,12 @@ public class PlaceIt {
 		this.location_str = location_str;
 		this.schedule = schedule;
 		this.username = PlaceItUtil.USERNAME;
+		this.categories = categories;
 		
 	}
 	
 	////////////////////// getters //////////////////////
-	
+
 	public int getId() {
 		return id;
 	}
@@ -127,6 +130,9 @@ public class PlaceIt {
 		return username;
 	}
 	
+	public String[] getCategories() {
+		return categories;
+	}
 	
 	////////////////////// setters //////////////////////
 	
@@ -160,6 +166,10 @@ public class PlaceIt {
 	
 	public void setUsername(String name) {
 		this.username = name;
+	}
+	
+	public void setCategories(String[] categories) {
+		this.categories = categories;
 	}
 	////////////////////// Other methods //////////////////////
 	

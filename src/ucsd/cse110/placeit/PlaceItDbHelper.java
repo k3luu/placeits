@@ -41,6 +41,9 @@ public class PlaceItDbHelper extends SQLiteOpenHelper{
     private static final String KEY_SCHED_WEEK = "scheduled_week_interval";
     private static final String KEY_SCHED_MINUTES = "scheduled_minutes";
     private static final String KEY_USER = "username";
+    private static final String KEY_CAT1 = "category1";
+    private static final String KEY_CAT2 = "category2";
+    private static final String KEY_CAT3 = "category3";
  
 
     ///////////////////////// Required Methods ////////////////////////////
@@ -66,7 +69,10 @@ public class PlaceItDbHelper extends SQLiteOpenHelper{
 										    KEY_SCHED_DOW + " TEXT," +
 										    KEY_SCHED_WEEK + " TEXT," +
 										    KEY_SCHED_MINUTES + " INTEGER," +
-										    KEY_USER + " TEXT" +
+										    KEY_USER + " TEXT," +
+										    KEY_CAT1 + " TEXT," +
+										    KEY_CAT2 + " TEXT," +
+										    KEY_CAT3 + " TEXT" +
 									    ")";
         db.execSQL(CREATE_PLACEITS_TABLE);
 		
@@ -116,6 +122,9 @@ public class PlaceItDbHelper extends SQLiteOpenHelper{
 	    									   	KEY_SCHED_WEEK, 	// 9
 	    									   	KEY_SCHED_MINUTES,  // 10
 	    									   	KEY_USER,			// 11
+	    									   	KEY_CAT1,			// 12
+	    									   	KEY_CAT2,			// 13
+	    									   	KEY_CAT3,			// 14
 	    									   }, KEY_ID + "=?",
 	    						 new String[] { String.valueOf(placeIt_id) }, 
 	    						 null, null, null, null);
@@ -134,7 +143,10 @@ public class PlaceItDbHelper extends SQLiteOpenHelper{
 		            							  		cursor.getString(8),// scheduled_dow
 		            							  		cursor.getString(9),// scheduled_week
 		            							  		cursor.getInt(10)	// scheduled_minutes
-		            							  		)
+		            							  		),
+		            					  new String[]{cursor.getString(12),			// category 1
+		            					   			   cursor.getString(13),			// category 2	
+		            					   			   cursor.getString(14)}			// category 3
 		    					);
 		    return placeIt;
 	    }
@@ -173,6 +185,9 @@ public class PlaceItDbHelper extends SQLiteOpenHelper{
 	            								   cursor.getString(8),
 	            								   cursor.getString(9),
 	            								   cursor.getInt(10)));
+	            placeIt.setCategories(new String[]{cursor.getString(12),
+							            		   cursor.getString(13),
+							            		   cursor.getString(14)});
 	            // Adding placeIt to list
 	            placeItList.add(placeIt);
 	        } while (cursor.moveToNext());
@@ -210,6 +225,9 @@ public class PlaceItDbHelper extends SQLiteOpenHelper{
 	            								   cursor.getString(8),
 	            								   cursor.getString(9),
 	            								   cursor.getInt(10)));
+	            placeIt.setCategories(new String[]{cursor.getString(12),
+							            		   cursor.getString(13),
+							            		   cursor.getString(14)});
 	            // Adding placeIt to list
 	            placeItList.add(placeIt);
 	        } while (cursor.moveToNext());
@@ -218,6 +236,48 @@ public class PlaceItDbHelper extends SQLiteOpenHelper{
 	    // return placeIt list
 	    return placeItList;
 	}
+	
+	
+		// Getting Category PlaceIts 
+		public ArrayList<PlaceIt> getCategoryPlaceIts(String username) {
+			ArrayList<PlaceIt> placeItList = new ArrayList<PlaceIt>();
+		    // Select All Query
+		    String selectQuery = "SELECT  * " +
+		    					 "FROM " + TABLE_PLACEITS + " " +
+		    					 "WHERE "+ KEY_USER + " = \"" + username +"\" " +
+		    					 "AND " + KEY_CAT1 + " <> \"\"";
+		    					 
+		 
+		    // get a writable instance of our database 
+		    SQLiteDatabase db = this.getWritableDatabase();
+		    Cursor cursor = db.rawQuery(selectQuery, null);
+		 
+		    // looping through all rows and adding to list
+		    if (cursor.moveToFirst()) {
+		        do {
+		        	PlaceIt placeIt = new PlaceIt();
+		        	placeIt.setId(cursor.getInt(0));
+		            placeIt.setTitle(cursor.getString(1));
+		            placeIt.setStatus(cursor.getString(2));
+		            placeIt.setDescription(cursor.getString(3));
+		            placeIt.setLocation(new LatLng(cursor.getDouble(4),
+		            							   cursor.getDouble(5)));
+		            placeIt.setLocation_str(cursor.getString(6));
+		            placeIt.setSchedule( new Scheduler(cursor.getString(7), 
+		            								   cursor.getString(8),
+		            								   cursor.getString(9),
+		            								   cursor.getInt(10)));
+		            placeIt.setCategories(new String[]{cursor.getString(12),
+								            		   cursor.getString(13),
+								            		   cursor.getString(14)});
+		            // Adding placeIt to list
+		            placeItList.add(placeIt);
+		        } while (cursor.moveToNext());
+		    }
+		 
+		    // return placeIt list
+		    return placeItList;
+		}
 	
 	// Getting Schedulers based on status
 	public ArrayList<Scheduler> getAllSchedules(String status) {
@@ -305,7 +365,11 @@ public class PlaceItDbHelper extends SQLiteOpenHelper{
 	    values.put(KEY_SCHED_DOW, schedule.getScheduled_dow());			// Scheduled DOW
 	    values.put(KEY_SCHED_WEEK, schedule.getScheduled_week());		// Scheduled Week
 	    values.put(KEY_SCHED_MINUTES, schedule.getScheduled_minutes());	// Scheduled Minutes
+	    String[] categories = placeIt.getCategories();
 	    values.put(KEY_USER, placeIt.getUsername());					// Username
+	    values.put(KEY_CAT1, categories[0]);							// Category 1
+	    values.put(KEY_CAT2, categories[1]);							// Category 2
+	    values.put(KEY_CAT3, categories[2]);							// Category 3
 	    
 	    return values;
 	}
