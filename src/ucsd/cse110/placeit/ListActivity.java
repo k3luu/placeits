@@ -81,6 +81,9 @@ public class ListActivity extends FragmentActivity implements
 					.setTabListener(this));
 		}
 	}
+	
+	
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -173,6 +176,8 @@ public class ListActivity extends FragmentActivity implements
 				Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.fragment_main_dummy,
 					container, false);
+			
+			OnlineLocalDatabaseSynchronization tongBuShuJuKu = new OnlineLocalDatabaseSynchronization(getActivity());
 			db = new PlaceItDbHelper(getActivity());
 			if (getArguments().getInt(PlaceItUtil.ARG_SECTION_NUMBER) == 1) { 
 				// Here is the Pending List View fragment

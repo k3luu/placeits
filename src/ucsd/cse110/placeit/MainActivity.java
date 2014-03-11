@@ -1,13 +1,28 @@
 package ucsd.cse110.placeit;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+
+
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Point;
 import android.location.Address;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -60,6 +75,9 @@ OnMapLongClickListener, OnInfoWindowClickListener {
         setUpSearchbar();
         paManager = new ProximityAlertManager(this);
         
+        // update local database
+        OnlineLocalDatabaseSynchronization olds = new OnlineLocalDatabaseSynchronization(this);
+        
 	    // add markers to the map and prximity sensors
         generatePlaceIts();
         
@@ -69,11 +87,11 @@ OnMapLongClickListener, OnInfoWindowClickListener {
         display.getSize(size);
         int width = size.x;
 
-        PlaceIt placeTmp;
-        initTheFirstDatabase();
-        placeTmp = db.getAllPlaceIts("HACKER").get(0);
+        //PlaceIt placeTmp;
+        //initTheFirstDatabase();
+        //placeTmp = db.getAllPlaceIts("HACKER").get(0);
         
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(placeTmp.getLocation(), calculateZoomLevel(width)));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(32.8804, -117.242), calculateZoomLevel(width)));
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -168,7 +186,7 @@ OnMapLongClickListener, OnInfoWindowClickListener {
 			marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.placeit));
 			placeItMarkers.put(marker.getId(), (int) placeIt.getId());
 			
-			paManager.addProximityAlert(placeIt);
+			//WEIJIE paManager.addProximityAlert(placeIt);
 		}
     }
     
@@ -205,13 +223,14 @@ OnMapLongClickListener, OnInfoWindowClickListener {
     	
     	if (systemPlaceItList.size() == 0)
     	{
-    		Scheduler schedule = new Scheduler("","","",-1);
+    		Scheduler schedule = new Scheduler("-","","",-1);
 	    	LatLng loc = new LatLng(32.8804, -117.242);
 	    	PlaceIt place = new PlaceIt();
 	    	place.setLocation(loc);
 	    	place.setStatus("HACKER");
 	    	place.setTitle("Hidden");
 	    	place.setDescription("YOU SHOULD NEVER SEE THIS OR MODIFY THIS.!");
+	    	place.setLocation_str("UCSD");
 	    	place.setSchedule(schedule);
 	    	PlaceItDbHelper database = new PlaceItDbHelper(this);
 			database.addPlaceIt(place);

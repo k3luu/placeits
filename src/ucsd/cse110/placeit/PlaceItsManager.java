@@ -1,9 +1,24 @@
 package ucsd.cse110.placeit;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -49,21 +64,19 @@ ActionBar.TabListener, OnItemSelectedListener {
 		setContentView(R.layout.place_its_manager_activity);
 		
 		// Three cases
-		// Case 1: called by search from search bar
-		// Case 2: called by pressOnMap [LatLng given]
-		// Case 3: called by ListView [All info]
+		// Case 1: called by search from search bar or pressOnMap [LatLng given]
+		// Case 2: called by ListView [All info]
 		// cases ended
 				
 		Intent info = getIntent();
 		int validate = info.getIntExtra(PlaceItUtil.CHECK_SOURCE, 1);
 				
-		// Add case 3 later
-		if (validate == 1)//change to else if later on
+		if (validate == 1)//From map
 		{	
 			Bundle locBundle = getIntent().getParcelableExtra(PlaceItUtil.LOC_BUNDLE);
 			location = locBundle.getParcelable(PlaceItUtil.LOC_ONLY);
 		}
-		else // case 3
+		else//From List
 		{
 			data_id = info.getIntExtra(PlaceItUtil.PLACEIT_ID, -1);
 			PlaceItDbHelper db = new PlaceItDbHelper(this);
@@ -174,25 +187,35 @@ ActionBar.TabListener, OnItemSelectedListener {
     			
     			// add the PlaceIt to our database
     			if (data_id != PlaceItUtil.NOTSET) {
-    				placeItId = db.updatePlaceIt(placeIt);
+    				//placeItId = db.updatePlaceIt(placeIt);
+    				
+    				// 1. remove online -- 2. add the most  -- 3. Synchronization
+    				OnlineDatabaseDeletePlaceIt odlp = new OnlineDatabaseDeletePlaceIt(this, db.getPlaceIt(data_id).getTitle());
+    				odlp.startRemovingPlaceIt();
+    				OnlineDatabaseAddPlaceIt odba = new OnlineDatabaseAddPlaceIt (this, placeIt);
+    				odba.startAddingPlaceIt();
+    				OnlineLocalDatabaseSynchronization olds = new OnlineLocalDatabaseSynchronization(this);
     			}
     			else {
-    				placeItId = db.addPlaceIt(placeIt);
+    				//placeItId = db.addPlaceIt(placeIt);
+    				OnlineDatabaseAddPlaceIt odap = new OnlineDatabaseAddPlaceIt(this, placeIt);
+    				odap.startAddingPlaceIt();
+    				//instead of updating local database, add placeit to online database first, then overwrite local.
+    				OnlineLocalDatabaseSynchronization olds = new OnlineLocalDatabaseSynchronization(this);
     			}
     			
-    			// set up the Alarm for the PlaceIt if possible
-    			placeIt.getSchedule().setRepeatingAlarm(this, placeItId);
+    		
     			
-    			paManager = new ProximityAlertManager(this);
-    			paManager.addProximityAlert(placeIt);
+    			// WEIJIE paManager = new ProximityAlertManager(this);
+    			// WEIJIE paManager.addProximityAlert(placeIt);
     			
     			// save the location to return to later on
-    			SaveLastLocation action = new SaveLastLocation(location);
-    			action.saveLastPlaceIt(db);
+    			// WEIJIE SaveLastLocation action = new SaveLastLocation(location);
+    			// WEIJIE action.saveLastPlaceIt(db);
     			
-    			// navigate back to the map
-    			Intent mapIntent = new Intent(this, MainActivity.class);
-        		startActivity(mapIntent);
+    			// navigate back to the list
+    			Intent listIntent = new Intent(this, ListActivity.class);
+        		startActivity(listIntent);
     		}
     		else {
     			Toast.makeText(getApplicationContext(), "Incomplete form", Toast.LENGTH_SHORT).show();
@@ -266,5 +289,81 @@ ActionBar.TabListener, OnItemSelectedListener {
 	public void onNothingSelected(AdapterView<?> parent) {
 	    // do nothing
 	}
+	
+	
+	/*
+	public void addPlaceItToOnlineDatabase(PlaceIt placeIt) {
+		
+		final PlaceIt place = placeIt;
+		final ProgressDialog dialog = ProgressDialog.show(this,
+				"Posting Data...", "Please wait...", false);
+		Thread t = new Thread() {
+
+			public void run() {
+				HttpClient client = new DefaultHttpClient();
+				HttpPost post = new HttpPost("http://cs110group30ucsd.appspot.com/product");
+
+			    try {
+			      List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+			      nameValuePairs.add(new BasicNameValuePair("name",
+			    		  place.getTitle().toString()));
+			      nameValuePairs.add(new BasicNameValuePair("placeItStatus",
+			    		  place.getStatus().toString()));
+			      nameValuePairs.add(new BasicNameValuePair("placeItDescription",
+			    		  place.getDescription().toString()));
+			      nameValuePairs.add(new BasicNameValuePair("placeItLatitude",
+			    		  ""+place.getLocation().latitude));
+			      nameValuePairs.add(new BasicNameValuePair("placeItLongitude",
+			    		  ""+place.getLocation().longitude));
+			      nameValuePairs.add(new BasicNameValuePair("placeItLocationString",
+			    		  place.getLocation_str().toString()));
+			      nameValuePairs.add(new BasicNameValuePair("placeItScheduledOption",
+			    		  place.getSchedule().getScheduled_option().toString()));
+			      
+			      if (place.getSchedule().getScheduled_dow() == null) {
+			    	  nameValuePairs.add(new BasicNameValuePair("placeItScheduledDow",
+				    		  ""));
+			      }
+			      else {
+			    	  nameValuePairs.add(new BasicNameValuePair("placeItScheduledDow",
+				    		  place.getSchedule().getScheduled_dow().toString()));
+			      }
+			      
+			      if (place.getSchedule().getScheduled_week() == null) {
+			    	  nameValuePairs.add(new BasicNameValuePair("placeItScheduledWeek",
+			    			  ""));
+			      }
+			      else {
+			    	  nameValuePairs.add(new BasicNameValuePair("placeItScheduledWeek",
+				    		  place.getSchedule().getScheduled_week().toString()));
+			      }
+			      nameValuePairs.add(new BasicNameValuePair("placeItScheduledMinutes",
+			    		  ""+place.getSchedule().getScheduled_minutes()));
+			      
+			      
+			      
+			      nameValuePairs.add(new BasicNameValuePair("action",
+				          "put"));
+			      post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+			 
+			      HttpResponse response = client.execute(post);
+			      BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+			      String line = "";
+			      while ((line = rd.readLine()) != null) {
+			        Log.d("HAHA", line);
+			      }
+
+			    } catch (IOException e) {
+			    	Log.d("NONO", "IOException while trying to conect to GAE");
+			    }
+				dialog.dismiss();
+			}
+		};
+
+		t.start();
+		dialog.show();
+		
+	}
+	*/
 	
 }

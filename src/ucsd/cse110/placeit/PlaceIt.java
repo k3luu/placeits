@@ -17,14 +17,18 @@ public class PlaceIt {
 	private String status; 				// posted (active), pulled down (triggered), expired
 	private String description;			// Additional details of our PlaceIt
 	private Scheduler schedule;			// the PlaceIt schedule if any
+	private String username;			// the username
 	
 	////////////////////// constructors //////////////////////
 	
 	// empty constructor
-	public PlaceIt() {}
+	public PlaceIt() {this.username = PlaceItUtil.USERNAME;}
 	
 	// for map constructor
-	public PlaceIt(LatLng location) {this.location = location;}
+	public PlaceIt(LatLng location) {
+		this.location = location;
+		this.username = PlaceItUtil.USERNAME;
+	}
 	
 	// Minimal constructor
 	public PlaceIt(String title, String status, LatLng location, String location_str) {
@@ -33,6 +37,7 @@ public class PlaceIt {
 		this.status = status;
 		this.location = location;
 		this.location_str = location_str;
+		this.username = PlaceItUtil.USERNAME;
 	}
 	
 	// Minimal + description if exist constructor
@@ -49,6 +54,7 @@ public class PlaceIt {
 		this.location = location;
 		this.location_str = location_str;
 		this.schedule = schedule;
+		this.username = PlaceItUtil.USERNAME;
 
 	}
 	
@@ -68,6 +74,7 @@ public class PlaceIt {
 		this.location = location;
 		this.location_str = location_str;
 		this.schedule = schedule;
+		this.username = PlaceItUtil.USERNAME;
 		
 	}
 	
@@ -116,6 +123,10 @@ public class PlaceIt {
 		return schedule;
 	}
 	
+	public String getUsername() {
+		return username;
+	}
+	
 	
 	////////////////////// setters //////////////////////
 	
@@ -147,6 +158,9 @@ public class PlaceIt {
 		this.schedule = schedule;
 	}
 	
+	public void setUsername(String name) {
+		this.username = name;
+	}
 	////////////////////// Other methods //////////////////////
 	
 	public String toString() {
@@ -156,5 +170,24 @@ public class PlaceIt {
 	    		+ location_str+"\n\n"
 	    		+ "Schedule:\n"
 	    		+ schedule.toString();
+	}
+	
+	public boolean comparePlaceIt(PlaceIt source) {
+		if (this.getTitle().equals(source.getTitle())
+				&& this.getStatus().equals(source.getStatus())
+				&& this.getDescription().equals(source.getDescription())
+				&& this.getLocation().latitude == source.getLocation().latitude
+				&& this.getLocation().longitude == source.getLocation().longitude
+				&& this.getLocation_str().equals(source.getLocation_str())
+				&& this.getSchedule().getScheduled_option().equals(source.getSchedule().getScheduled_option())
+				&& this.getSchedule().getScheduled_dow().equals(source.getSchedule().getScheduled_dow())
+				&& this.getSchedule().getScheduled_week().equals(source.getSchedule().getScheduled_week())
+				&& this.getSchedule().getScheduled_minutes() == source.getSchedule().getScheduled_minutes()
+				) {
+			return true;
+		}
+		else {
+			return false;
+		}		
 	}
 }

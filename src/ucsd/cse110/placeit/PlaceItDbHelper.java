@@ -20,7 +20,7 @@ public class PlaceItDbHelper extends SQLiteOpenHelper{
 	///////////////////////// Static variables //////////////////////////
     
 	// Database Version
-    private static final int DATABASE_VERSION = 14;
+    private static final int DATABASE_VERSION = 15;
  
     // Database Name
     private static final String DATABASE_NAME = "PlaceItsManager";
@@ -40,6 +40,7 @@ public class PlaceItDbHelper extends SQLiteOpenHelper{
     private static final String KEY_SCHED_DOW = "scheduled_dow";
     private static final String KEY_SCHED_WEEK = "scheduled_week_interval";
     private static final String KEY_SCHED_MINUTES = "scheduled_minutes";
+    private static final String KEY_USER = "username";
  
 
     ///////////////////////// Required Methods ////////////////////////////
@@ -64,7 +65,8 @@ public class PlaceItDbHelper extends SQLiteOpenHelper{
 										    KEY_SCHED_OPTION + " TEXT," +
 										    KEY_SCHED_DOW + " TEXT," +
 										    KEY_SCHED_WEEK + " TEXT," +
-										    KEY_SCHED_MINUTES + " INTEGER" +
+										    KEY_SCHED_MINUTES + " INTEGER," +
+										    KEY_USER + " TEXT" +
 									    ")";
         db.execSQL(CREATE_PLACEITS_TABLE);
 		
@@ -113,6 +115,7 @@ public class PlaceItDbHelper extends SQLiteOpenHelper{
 	    									   	KEY_SCHED_DOW,		// 8
 	    									   	KEY_SCHED_WEEK, 	// 9
 	    									   	KEY_SCHED_MINUTES,  // 10
+	    									   	KEY_USER,			// 11
 	    									   }, KEY_ID + "=?",
 	    						 new String[] { String.valueOf(placeIt_id) }, 
 	    						 null, null, null, null);
@@ -141,6 +144,45 @@ public class PlaceItDbHelper extends SQLiteOpenHelper{
 	    
 	}
 	 
+	
+	// Getting EVERY SINGLE PlaceIts
+	public ArrayList<PlaceIt> getAllPlaceItsByUsername(String username) {
+		ArrayList<PlaceIt> placeItList = new ArrayList<PlaceIt>();
+	 
+		 // Select All Query
+	    String selectQuery = "SELECT  * " +
+	    					 "FROM " + TABLE_PLACEITS + " " +
+	    					 "WHERE "+ KEY_USER + " = \"" + username +"\"";
+	 
+	    // get a writable instance of our database 
+	    SQLiteDatabase db = this.getWritableDatabase();
+	    Cursor cursor = db.rawQuery(selectQuery, null);
+	 
+	    // looping through all rows and adding to list
+	    if (cursor.moveToFirst()) {
+	        do {
+	        	PlaceIt placeIt = new PlaceIt();
+	        	placeIt.setId(cursor.getInt(0));
+	            placeIt.setTitle(cursor.getString(1));
+	            placeIt.setStatus(cursor.getString(2));
+	            placeIt.setDescription(cursor.getString(3));
+	            placeIt.setLocation(new LatLng(cursor.getDouble(4),
+	            							   cursor.getDouble(5)));
+	            placeIt.setLocation_str(cursor.getString(6));
+	            placeIt.setSchedule( new Scheduler(cursor.getString(7), 
+	            								   cursor.getString(8),
+	            								   cursor.getString(9),
+	            								   cursor.getInt(10)));
+	            // Adding placeIt to list
+	            placeItList.add(placeIt);
+	        } while (cursor.moveToNext());
+	    }
+	 
+	    // return placeIt list
+	    return placeItList;
+	}
+	
+	
 	// Getting PlaceIts based on status
 	public ArrayList<PlaceIt> getAllPlaceIts(String placeIt_status) {
 		ArrayList<PlaceIt> placeItList = new ArrayList<PlaceIt>();
@@ -263,6 +305,7 @@ public class PlaceItDbHelper extends SQLiteOpenHelper{
 	    values.put(KEY_SCHED_DOW, schedule.getScheduled_dow());			// Scheduled DOW
 	    values.put(KEY_SCHED_WEEK, schedule.getScheduled_week());		// Scheduled Week
 	    values.put(KEY_SCHED_MINUTES, schedule.getScheduled_minutes());	// Scheduled Minutes
+	    values.put(KEY_USER, placeIt.getUsername());					// Username
 	    
 	    return values;
 	}
