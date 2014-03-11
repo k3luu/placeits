@@ -62,7 +62,10 @@ public class LoginManager extends FragmentActivity {
 					// account
 					ArrayList<Login> list = new ArrayList<Login>();
 					try {
-						list = new OnlineDatabaseLoginValidation().execute("http://www.cse110group30login.appspot.com/login").get();
+						list = new OnlineDatabaseLoginValidation()
+								.execute(
+										"http://www.cse110group30login.appspot.com/login")
+								.get();
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -70,20 +73,24 @@ public class LoginManager extends FragmentActivity {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					
+
 					boolean valid = false;
-					
+
 					for (int i = 0; i < list.size(); i++) {
-						if (list.get(i).getUsername().equals(sLogin) && list.get(i).getPassword().equals(sPass)) {
+						if (list.get(i).getUsername().equals(sLogin)
+								&& list.get(i).getPassword().equals(sPass)) {
 							valid = true;
 							PlaceItUtil.USERNAME = sLogin;
-							
-							// Go back to the map view after successful login
-							Intent mapIntent = new Intent(activity, MainActivity.class);
-							startActivity(mapIntent);
-						} else {
-							Toast.makeText(getApplicationContext(), "Invalid username and/or password", Toast.LENGTH_SHORT).show();
+							break;
 						}
+					}
+					if (valid) {
+						// Go back to the map view after successful login
+						Intent mapIntent = new Intent(activity,
+								MainActivity.class);
+						startActivity(mapIntent);
+					} else {
+						Toast.makeText(getApplicationContext(),"Invalid username and/or password", Toast.LENGTH_SHORT).show();
 					}
 				}
 			}
@@ -96,26 +103,24 @@ public class LoginManager extends FragmentActivity {
 				Log.i("register button clicked", "hahaha");
 				// Load registration layout
 				setContentView(R.layout.registration_page);
-				
+
 				final Button register = (Button) findViewById(R.id.regbutton);
-				
-			/*	do {
-					login = (EditText) findViewById(R.id.regEdit1);
-					password = (EditText) findViewById(R.id.regEdit2);
-					if (login.length() <= 0 || password.length() <= 0) { // Check if
-						// values
-						// entered
-						Toast.makeText(getApplicationContext(), "Incomplete form",
-						Toast.LENGTH_SHORT).show();
-					}
-				} while (login.length() <= 0 || password.length() <= 0); */
-				
+
+				/*
+				 * do { login = (EditText) findViewById(R.id.regEdit1); password
+				 * = (EditText) findViewById(R.id.regEdit2); if (login.length()
+				 * <= 0 || password.length() <= 0) { // Check if // values //
+				 * entered Toast.makeText(getApplicationContext(),
+				 * "Incomplete form", Toast.LENGTH_SHORT).show(); } } while
+				 * (login.length() <= 0 || password.length() <= 0);
+				 */
+
 				// Check login from database
 				// Get string value of entered text to pass to
 				// OnlineDatabaseAddLogin()
-				
+
 				register.setOnClickListener(new View.OnClickListener() {
-					
+
 					@Override
 					public void onClick(View v) {
 						login = (EditText) findViewById(R.id.regEdit1);
@@ -123,93 +128,72 @@ public class LoginManager extends FragmentActivity {
 						String sLogin = login.getText().toString();
 						String sPass = password.getText().toString();
 						if (login.length() <= 0 || password.length() <= 0) {
-							Toast.makeText(getApplicationContext(), "Incomplete form",
-									Toast.LENGTH_SHORT).show();
-						}
-						else {
+							Toast.makeText(getApplicationContext(),
+									"Incomplete form", Toast.LENGTH_SHORT)
+									.show();
+						} else {
 							sLogin = login.getText().toString();
 							sPass = password.getText().toString();
 
-							OnlineDatabaseAddLogin newLogin = new OnlineDatabaseAddLogin(activity, sLogin, sPass);
+							OnlineDatabaseAddLogin newLogin = new OnlineDatabaseAddLogin(
+									activity, sLogin, sPass);
 							newLogin.startAddingLogin();
-							Toast.makeText(getApplicationContext(), "registed successfully",
-									Toast.LENGTH_SHORT).show();
+							Toast.makeText(getApplicationContext(),
+									"registed successfully", Toast.LENGTH_SHORT)
+									.show();
 							setContentView(R.layout.login_page);
-							
+
 						}
-						
-						
+
 					}
 				});
 			}
 		});
 	}
-/*
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// If add button pressed
-		if (item.getItemId() == R.id.login) { // Create and start intent
-			// Intent listIntent = new Intent(this, ListActivity.class);
-			// startActivity(listIntent);
-			if (login.length() <= 0 || password.length() <= 0) { // Check if
-																	// values
-																	// entered
-				Toast.makeText(getApplicationContext(), "Incomplete form",
-						Toast.LENGTH_SHORT).show();
-			} else { // Check login from database
-				// Get string value of entered text to pass to
-				// OnlineDatabaseAddLogin()
-				String sLogin = login.getText().toString();
-				String sPass = password.getText().toString();
 
-				// TODO: Query database, check if login exists, then load
-				// account
-
-				// Go back to the map view after successful login
-				Intent mapIntent = new Intent(this, MainActivity.class);
-				startActivity(mapIntent);
-			}
-			return true;
-
-			// If register button pressed
-		} else if (item.getItemId() == R.id.register) {
-			Log.i("register button clicked", "hahaha");
-			// Load registration layout
-			setContentView(R.layout.registration_page);
-			login = (EditText) findViewById(R.id.regEdit1);
-			password = (EditText) findViewById(R.id.regEdit2);
-
-			// Create intent
-			// Intent regIntent = new Intent(this, ListActivity.class);
-			// startActivity(regIntent);
-			if (login.length() <= 0 || password.length() <= 0) { // Check if
-																	// values
-																	// entered
-				Toast.makeText(getApplicationContext(), "Incomplete form",
-						Toast.LENGTH_SHORT).show();
-			} else { // Check login from database
-				// Get string value of entered text to pass to
-				// OnlineDatabaseAddLogin()
-				String sLogin = login.getText().toString();
-				String sPass = password.getText().toString();
-
-				OnlineDatabaseAddLogin newLogin = new OnlineDatabaseAddLogin(
-						this, sLogin, sPass);
-				newLogin.startAddingLogin();
-
-				// Go back to the map view after successful login
-				Intent mapIntent = new Intent(this, MainActivity.class);
-				startActivity(mapIntent);
-			}
-
-			// Go back to the map view
-			Intent mapIntent = new Intent(this, MainActivity.class);
-			startActivity(mapIntent);
-			return true;
-		} else {
-			return super.onOptionsItemSelected(item);
-		}
-	} */
+	/*
+	 * @Override public boolean onOptionsItemSelected(MenuItem item) { // If add
+	 * button pressed if (item.getItemId() == R.id.login) { // Create and start
+	 * intent // Intent listIntent = new Intent(this, ListActivity.class); //
+	 * startActivity(listIntent); if (login.length() <= 0 || password.length()
+	 * <= 0) { // Check if // values // entered
+	 * Toast.makeText(getApplicationContext(), "Incomplete form",
+	 * Toast.LENGTH_SHORT).show(); } else { // Check login from database // Get
+	 * string value of entered text to pass to // OnlineDatabaseAddLogin()
+	 * String sLogin = login.getText().toString(); String sPass =
+	 * password.getText().toString();
+	 * 
+	 * // TODO: Query database, check if login exists, then load // account
+	 * 
+	 * // Go back to the map view after successful login Intent mapIntent = new
+	 * Intent(this, MainActivity.class); startActivity(mapIntent); } return
+	 * true;
+	 * 
+	 * // If register button pressed } else if (item.getItemId() ==
+	 * R.id.register) { Log.i("register button clicked", "hahaha"); // Load
+	 * registration layout setContentView(R.layout.registration_page); login =
+	 * (EditText) findViewById(R.id.regEdit1); password = (EditText)
+	 * findViewById(R.id.regEdit2);
+	 * 
+	 * // Create intent // Intent regIntent = new Intent(this,
+	 * ListActivity.class); // startActivity(regIntent); if (login.length() <= 0
+	 * || password.length() <= 0) { // Check if // values // entered
+	 * Toast.makeText(getApplicationContext(), "Incomplete form",
+	 * Toast.LENGTH_SHORT).show(); } else { // Check login from database // Get
+	 * string value of entered text to pass to // OnlineDatabaseAddLogin()
+	 * String sLogin = login.getText().toString(); String sPass =
+	 * password.getText().toString();
+	 * 
+	 * OnlineDatabaseAddLogin newLogin = new OnlineDatabaseAddLogin( this,
+	 * sLogin, sPass); newLogin.startAddingLogin();
+	 * 
+	 * // Go back to the map view after successful login Intent mapIntent = new
+	 * Intent(this, MainActivity.class); startActivity(mapIntent); }
+	 * 
+	 * // Go back to the map view Intent mapIntent = new Intent(this,
+	 * MainActivity.class); startActivity(mapIntent); return true; } else {
+	 * return super.onOptionsItemSelected(item); } }
+	 */
 
 	public void onNothingSelected(AdapterView<?> parent) {
 		// do nothing
