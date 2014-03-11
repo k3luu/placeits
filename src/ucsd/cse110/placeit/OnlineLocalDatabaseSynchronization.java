@@ -24,7 +24,7 @@ public class OnlineLocalDatabaseSynchronization implements AsyncResponse{
 		activity = myActivity;
 		localDatabase = new PlaceItDbHelper(myActivity);
 		asyncTask.delegate = this;
-		asyncTask.execute("http://cs110group30ucsd.appspot.com/product");
+		asyncTask.execute("http://cse110group30db.appspot.com/product");
 	}
 	
 	@Override

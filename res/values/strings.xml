@@ -36,6 +36,15 @@
     <string name="description">description</string>
     <string name="title">title</string>
     
+    <!--  Strings for Login/Registration -->
+    <string name="createuser">createuser</string>
+    <string name="createpw">createpw</string>
+    <string name="register">register</string>
+    <string name="username">username</string>
+    <string name="pw">pw</string>
+    <string name="login">login</string>
+    <string name="or">or</string>
+        
     <!-- For day of week selection -->
     <string name="week_day"> - </string>
     <string-array name="day_array">

@@ -37,7 +37,8 @@ public class PlaceItUtil {
 	public static final String REPOST = "ucsd.cse110.placeit.REPOST_PLACEIT";
 	public static final String REPOST_OPTION = "PRESS to repost | SWIPE to discard";
 	
-	public static final String USERNAME = "group30";
+	public static String USERNAME;
+	public static boolean loginFlag = false;
 	
 	
 

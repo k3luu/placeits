@@ -50,6 +50,10 @@
             
         </activity>
 
+        <activity
+            android:name="ucsd.cse110.placeit.LoginManager">
+        </activity>
+        
         <!-- Added Activity -->
         <activity
             android:name="ucsd.cse110.placeit.ListActivity"
