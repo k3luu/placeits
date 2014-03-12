@@ -1,5 +1,6 @@
 package ucsd.cse110.placeit;
 
+import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -18,12 +19,14 @@ public class PlaceItIntentReceiever extends BroadcastReceiver {
 	
 	String lm_key = LocationManager.KEY_PROXIMITY_ENTERING;
 	private PlaceIt placeIt;
+	private Context context;
 
 	// triggered when user enters PlaceIt boundary
 	@Override
-	public void onReceive(Context context, Intent intent) {
+	public void onReceive(Context myContext, Intent intent) {
 		
 		// recover the PlaceIt object that set off this alert
+		context = myContext;
 		PlaceItDbHelper db = new PlaceItDbHelper(context);
 		int placeIt_id = intent.getIntExtra(PlaceItUtil.PLACEIT_ID, -1);
 		placeIt = db.getPlaceIt(placeIt_id);
@@ -35,7 +38,15 @@ public class PlaceItIntentReceiever extends BroadcastReceiver {
 						
 			// set the status of the PlaceIt to triggered
 			placeIt.setStatus(PlaceItUtil.TRIGGERED);
+			
 			db.updatePlaceIt(placeIt);
+			
+			// 1. remove online -- 2. add the most  -- 3. Synchronization
+			OnlineDatabaseAddPlaceIt odba = new OnlineDatabaseAddPlaceIt (null, placeIt);
+			odba.startAddingPlaceIt();
+			OnlineLocalDatabaseSynchronization olds = new OnlineLocalDatabaseSynchronization(context);	
+			
+			
 			db.close();
 			
 		}

@@ -28,14 +28,19 @@ public class NotificationActivity extends Activity {
 			PlaceIt placeIt = db.getPlaceIt(placeItId);
 			if (placeIt != null) {
 				placeIt.setStatus(PlaceItUtil.ACTIVE);
-				db.updatePlaceIt(placeIt);				
+				// 1. remove online -- 2. add the most  -- 3. Synchronization
+				OnlineDatabaseDeletePlaceIt odlp = new OnlineDatabaseDeletePlaceIt(this, placeIt.getTitle());
+				odlp.startRemovingPlaceIt();
+				OnlineDatabaseAddPlaceIt odba = new OnlineDatabaseAddPlaceIt (this, placeIt);
+				odba.startAddingPlaceIt();
+				OnlineLocalDatabaseSynchronization olds = new OnlineLocalDatabaseSynchronization(this);			
 			}
 			
 			db.close();
 			
 			// reset the ProximityAlerts
-			ProximityAlertManager paManager = new ProximityAlertManager(this);
-			paManager.addProximityAlert(placeIt);
+			//ProximityAlertManager paManager = new ProximityAlertManager(this);
+			//paManager.addProximityAlert(placeIt);
 			
 			//finish the NotificationActivity
 			finish();

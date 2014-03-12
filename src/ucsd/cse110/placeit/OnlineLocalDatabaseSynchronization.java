@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 
 import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -18,13 +19,14 @@ public class OnlineLocalDatabaseSynchronization implements AsyncResponse{
 	private GetPlaceitFromUrl asyncTask = new GetPlaceitFromUrl();
 	private PlaceItDbHelper localDatabase;
 	private ArrayList<PlaceIt> list = new ArrayList<PlaceIt>();
-	private Activity activity;
+	private Context context;
+	private ProximityAlertManager paManager;
 	
-	OnlineLocalDatabaseSynchronization(Activity myActivity) {
-		activity = myActivity;
-		localDatabase = new PlaceItDbHelper(myActivity);
+	OnlineLocalDatabaseSynchronization(Context myContext) {
+		context = myContext;
+		localDatabase = new PlaceItDbHelper(myContext);
 		asyncTask.delegate = this;
-		asyncTask.execute("http://cs110group30ucsd.appspot.com/product");
+		asyncTask.execute(PlaceItUtil.ONLINEDATABASE);
 	}
 	
 	@Override
@@ -41,6 +43,7 @@ public class OnlineLocalDatabaseSynchronization implements AsyncResponse{
 
 			for (int i = 0; i < array.length(); i++) {
 				PlaceIt pl = new PlaceIt();
+				String cate[] = {"", "", ""};
 				JSONObject obj = array.getJSONObject(i);
 				pl.setTitle(obj.get("name").toString());
 				pl.setStatus(obj.get("placeItStatus").toString());
@@ -48,6 +51,12 @@ public class OnlineLocalDatabaseSynchronization implements AsyncResponse{
 				pl.setLocation(new LatLng(Double.parseDouble(obj.get("placeItLatitude").toString()), Double.parseDouble(obj.get("placeItLongitude").toString())));
 				pl.setLocation_str(obj.get("placeItLocationString").toString());
 				pl.setSchedule(new Scheduler(obj.get("placeItScheduledOption").toString(), obj.get("placeItScheduledDow").toString(), obj.get("placeItScheduledWeek").toString(), Integer.parseInt(obj.get("placeItScheduledMinutes").toString())));
+				cate[0] = obj.get("placeItCategory1").toString();
+				cate[1] = obj.get("placeItCategory2").toString();
+				cate[2] = obj.get("placeItCategory3").toString();
+				pl.setCategories(cate);
+				pl.setUsername(obj.get("placeItUsername").toString());
+				
 				onlineList.add(pl);
 			}
 
@@ -56,7 +65,7 @@ public class OnlineLocalDatabaseSynchronization implements AsyncResponse{
 		}
 		
 		// Load local database
-		list = localDatabase.getAllPlaceItsByUsername(PlaceItUtil.USERNAME);
+		list = localDatabase.getAllPlaceIts();
 		Log.i("local database", "size is "+list.size());
 		
 		int largest = 0;
@@ -109,13 +118,13 @@ public class OnlineLocalDatabaseSynchronization implements AsyncResponse{
 		
 		for (PlaceIt place:localDatabase.getAllPlaceItsByUsername(PlaceItUtil.USERNAME)) {
 			// set up the Alarm for the PlaceIt if possible
-			place.getSchedule().setRepeatingAlarm(activity, place.getId());
+			place.getSchedule().setRepeatingAlarm(context, place.getId());
 		}
 		
-		for (PlaceIt place:localDatabase.getAllPlaceIts(PlaceItUtil.ACTIVE)) {
+		for (PlaceIt place:localDatabase.getAllPlaceItsByUsernameAndStatus(PlaceItUtil.USERNAME, PlaceItUtil.ACTIVE)) {
 			// set up proximity
-			// WEIJIE paManager = new ProximityAlertManager(myActivity);
-			// WEIJIE paManager.addProximityAlert(place);
+			paManager = new ProximityAlertManager(context);
+			paManager.addProximityAlert(place);
 		}
 	}
 

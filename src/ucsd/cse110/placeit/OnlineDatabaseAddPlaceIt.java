@@ -17,27 +17,32 @@ import org.apache.http.message.BasicNameValuePair;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.util.Log;
 
 public class OnlineDatabaseAddPlaceIt {
 	
-	private Activity activity;
+	private Context context;
 	private PlaceIt placeIt;
+	private ProgressDialog dialog;
 	
-	OnlineDatabaseAddPlaceIt(Activity myActivity, PlaceIt pl) {
-		activity = myActivity;
+	OnlineDatabaseAddPlaceIt(Context myContext, PlaceIt pl) {
+		context = myContext;
 		placeIt = pl;
 	}
 	
 	public void startAddingPlaceIt() {
 		final PlaceIt place = placeIt;
-		final ProgressDialog dialog = ProgressDialog.show(activity,
-				"Posting Data...", "Please wait...", false);
+		
+		if (context != null) {
+			dialog = ProgressDialog.show(context,
+					"Posting Data...", "Please wait...", false);
+		}
 		Thread t = new Thread() {
 
 			public void run() {
 				HttpClient client = new DefaultHttpClient();
-				HttpPost post = new HttpPost("http://cs110group30ucsd.appspot.com/product");
+				HttpPost post = new HttpPost(PlaceItUtil.ONLINEDATABASE);
 
 			    try {
 			      List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
@@ -75,6 +80,14 @@ public class OnlineDatabaseAddPlaceIt {
 			      }
 			      nameValuePairs.add(new BasicNameValuePair("placeItScheduledMinutes",
 			    		  ""+place.getSchedule().getScheduled_minutes()));
+			      nameValuePairs.add(new BasicNameValuePair("placeItCategory1",
+			    		  ""+place.getCategories()[0]));
+			      nameValuePairs.add(new BasicNameValuePair("placeItCategory2",
+			    		  ""+place.getCategories()[1]));
+			      nameValuePairs.add(new BasicNameValuePair("placeItCategory3",
+			    		  ""+place.getCategories()[2]));
+			      nameValuePairs.add(new BasicNameValuePair("placeItUsername",
+			    		  ""+place.getUsername()));
 			      
 			      
 			      
@@ -92,11 +105,15 @@ public class OnlineDatabaseAddPlaceIt {
 			    } catch (IOException e) {
 			    	Log.d("NONO", "IOException while trying to conect to GAE");
 			    }
-				dialog.dismiss();
+			    if (context != null) {
+			    	dialog.dismiss();
+			    }
 			}
 		};
 
 		t.start();
-		dialog.show();
+		if (context != null) {
+			dialog.show();
+		}
 	}
 }

@@ -94,7 +94,7 @@ public class ListActivity extends FragmentActivity implements
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Menu buttons click to associated activity
 		if (item.getItemId() == R.id.map_view_btn) {
-			Intent intent1 = new Intent(this, MainActivity.class);
+			Intent intent1 = new Intent(this, MapActivity.class);
 			startActivity(intent1);
 			return true;
 		} else if (item.getItemId() == R.id.list_view_btn) {
@@ -182,7 +182,7 @@ public class ListActivity extends FragmentActivity implements
 			if (getArguments().getInt(PlaceItUtil.ARG_SECTION_NUMBER) == 1) { 
 				// Here is the Pending List View fragment
 				//PlaceIt placeIt;
-				currentPlaceItList = db.getAllPlaceIts(PlaceItUtil.ACTIVE);
+				currentPlaceItList = db.getAllPlaceItsByUsernameAndStatus(PlaceItUtil.USERNAME, PlaceItUtil.ACTIVE);
 				
 				ArrayList<Map<String, String>> data = new ArrayList<Map<String, String>>();
 				for (PlaceIt item : currentPlaceItList) {
@@ -203,7 +203,7 @@ public class ListActivity extends FragmentActivity implements
 				listView.setOnItemClickListener(this);
 				listView.setOnItemLongClickListener(this);
 			} else { // Here is the Completed List View fragment
-				currentPlaceItList = db.getAllPlaceIts(PlaceItUtil.TRIGGERED);
+				currentPlaceItList = db.getAllPlaceItsByUsernameAndStatus(PlaceItUtil.USERNAME, PlaceItUtil.TRIGGERED);
 				ArrayList<Map<String, String>> data = new ArrayList<Map<String, String>>();
 				for (PlaceIt item : currentPlaceItList) {
 					Map<String, String> datum = new HashMap<String, String>(3);

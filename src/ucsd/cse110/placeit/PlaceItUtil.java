@@ -16,6 +16,8 @@ public class PlaceItUtil {
 	public static final String MODIFY = "Modify";
 	public static final String DELETE = "Delete";
 	public static final String REACTIVATE = "Reactive";
+	public static final String PLACES_SEARCH_URL = "https://maps.googleapis.com/maps/api/place/search/json?";
+	public static final String API_KEY = "AIzaSyDzypjrGheMxwFiuKssWIy1glMnhwaaJDA";
 	
 	public static final String PLACEIT_ID = "ucsd.cse110.placeit.PLACEIT_ID";
 	public static final String BOOT_COMPLETED = "android.intent.action.BOOT_COMPLETED";
@@ -39,6 +41,7 @@ public class PlaceItUtil {
 	
 	public static String USERNAME;
 	public static boolean loginFlag = false;
+	public static String ONLINEDATABASE = "http://cse110group30db.appspot.com/product";
 	
 	
 

@@ -1,24 +1,9 @@
 package ucsd.cse110.placeit;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -53,8 +38,15 @@ ActionBar.TabListener, OnItemSelectedListener {
 	private int data_id = -1;
 	private LatLng location;
 	private String title;
+	private String originalTitle;
 	private String description;
 	private ProximityAlertManager paManager;
+	
+	// category field
+	private Spinner cateSpinner_1;
+	private Spinner cateSpinner_2;
+	private Spinner cateSpinner_3;
+	private String categories[] = {"", "", ""};
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -83,8 +75,10 @@ ActionBar.TabListener, OnItemSelectedListener {
 			PlaceIt placeIt = db.getPlaceIt(data_id);
 
 			title = placeIt.getTitle();
+			originalTitle = title;
 			description = placeIt.getDescription();
 			location = placeIt.getLocation();
+			categories = placeIt.getCategories();
 		}
 	}
 
@@ -107,7 +101,10 @@ ActionBar.TabListener, OnItemSelectedListener {
 		Spinner spinner = (Spinner) findViewById(R.id.scheduling_option_spinner);
 		spinner.setOnItemSelectedListener(this);
 		
-		Log.i("info ", "is "+data_id+" "+location+" "+title+" "+description);
+		cateSpinner_1 = (Spinner) findViewById(R.id.cate_spinner1);
+		cateSpinner_2 = (Spinner) findViewById(R.id.cate_spinner2);
+		cateSpinner_3 = (Spinner) findViewById(R.id.cate_spinner3);
+		
 		try {
 			editView.setText((new GetAddressTask(this)).execute(location).get());
 			editViewTitle.setText(title);
@@ -146,6 +143,14 @@ ActionBar.TabListener, OnItemSelectedListener {
     		Spinner week_interval_field = (Spinner) findViewById(R.id.week_spinner);
     		EditText minutes_field = (EditText) findViewById(R.id.minute_field);
     		
+    		cateSpinner_1 = (Spinner) findViewById(R.id.cate_spinner1);
+    		cateSpinner_2 = (Spinner) findViewById(R.id.cate_spinner2);
+    		cateSpinner_3 = (Spinner) findViewById(R.id.cate_spinner3);
+    		
+    		categories[0] = String.valueOf (cateSpinner_1.getSelectedItem());
+    		categories[1] = String.valueOf (cateSpinner_2.getSelectedItem());
+    		categories[2] = String.valueOf (cateSpinner_3.getSelectedItem());
+    		
     		String schedulingOption = String.valueOf(scheduling_field.getSelectedItem());
     		String scheduleDOW = String.valueOf(day_field.getSelectedItem());
     		String scheduleWeekInterval = String.valueOf(week_interval_field.getSelectedItem());
@@ -158,40 +163,61 @@ ActionBar.TabListener, OnItemSelectedListener {
     		Scheduler schedule = new Scheduler(schedulingOption, scheduleDOW, scheduleWeekInterval, scheduleMinutes);
     		
     		PlaceIt placeIt;
-    		
     		// if a PlaceIt is already in the database
     		if (data_id != PlaceItUtil.NOTSET) {
 				placeIt = db.getPlaceIt(data_id);
-				
+				Log.i("manager checker", "11111");
 				paManager.removeProximityAlert(placeIt.getId());
+				Log.i("manager checker", "111111");
 		        placeIt.getSchedule().removeAlarm(this, placeIt.getId());
-				
+		        Log.i("manager checker", "11111111");
 				placeIt.setStatus(PlaceItUtil.PLACEIT_ID);
 				placeIt.setTitle(title);
 				placeIt.setDescription(description);
 				placeIt.setLocation(location);
 				placeIt.setLocation_str(location_str);
 				placeIt.setSchedule(schedule);
+				
+				if(categories[0]=="" || categories[1]=="" || categories[2]==""){
+					placeIt.setLocation_str(location_str);
+				}
+				else {
+					placeIt.setLocation_str("");
+					placeIt.setCategories(categories);
+				}
 			}
+    		else if (categories[0]=="" || categories[1]=="" || categories[2]==""){
+    			placeIt = new PlaceIt(title, PlaceItUtil.ACTIVE, description, location, location_str, schedule, categories);
+    		}
 			else {
 				// create a new PlaceIt
-	    		placeIt = new PlaceIt(title, PlaceItUtil.ACTIVE, description, location, location_str, schedule);
+	    		placeIt = new PlaceIt(title, PlaceItUtil.ACTIVE, description, location, location_str, schedule, categories);
 			}
     		
+    		Log.i("manager checker", "1");
     		PlaceItDataChecker checker = new PlaceItDataChecker(placeIt);
+    		Boolean validData = checker.checkNormal();
+    		PlaceIt ppp = placeIt;
+    		Log.i("manager checker", "2");
+    		if (data_id != PlaceItUtil.NOTSET) {
+    			if (ppp.getTitle().equals(originalTitle)) {
+    			}
+    			else {
+    				validData = false;
+    			}
+    		}
+    		Log.i("manager checker", "3");
     		
     		// If valid add it to the database otherwise prompt user
-    		if (checker.checkNormal()) {
+    		if (validData) {
     			
-    			long placeItId;
+    			//long placeItId;
     			
     			// add the PlaceIt to our database
     			if (data_id != PlaceItUtil.NOTSET) {
     				//placeItId = db.updatePlaceIt(placeIt);
     				
     				// 1. remove online -- 2. add the most  -- 3. Synchronization
-    				OnlineDatabaseDeletePlaceIt odlp = new OnlineDatabaseDeletePlaceIt(this, db.getPlaceIt(data_id).getTitle());
-    				odlp.startRemovingPlaceIt();
     				OnlineDatabaseAddPlaceIt odba = new OnlineDatabaseAddPlaceIt (this, placeIt);
     				odba.startAddingPlaceIt();
     				OnlineLocalDatabaseSynchronization olds = new OnlineLocalDatabaseSynchronization(this);
@@ -218,6 +244,10 @@ ActionBar.TabListener, OnItemSelectedListener {
         		startActivity(listIntent);
     		}
     		else {
+    			
+    			if (data_id != PlaceItUtil.NOTSET) {
+    				Toast.makeText(getApplicationContext(), "Modifying must keep same title", Toast.LENGTH_SHORT).show();
+        		}
     			Toast.makeText(getApplicationContext(), "Incomplete form", Toast.LENGTH_SHORT).show();
     		}
     		db.close();
@@ -235,7 +265,7 @@ ActionBar.TabListener, OnItemSelectedListener {
     		// set toggles back to OFF position.
     		
     		// Go back to the map view
-    		Intent mapIntent = new Intent(this, MainActivity.class);
+    		Intent mapIntent = new Intent(this, MapActivity.class);
         	startActivity(mapIntent);
         	return true;
     	}

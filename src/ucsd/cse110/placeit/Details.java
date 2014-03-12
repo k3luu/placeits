@@ -113,11 +113,9 @@ public class Details{
 						//db.updatePlaceIt(placeIt);
 						
 						// 1. remove online -- 2. add the most  -- 3. Synchronization
-						OnlineDatabaseDeletePlaceIt odlp = new OnlineDatabaseDeletePlaceIt(activity, placeIt.getTitle());
-	    				odlp.startRemovingPlaceIt();
 	    				OnlineDatabaseAddPlaceIt odba = new OnlineDatabaseAddPlaceIt (activity, placeIt);
 	    				odba.startAddingPlaceIt();
-	    				OnlineLocalDatabaseSynchronization olds = new OnlineLocalDatabaseSynchronization(activity);
+	    				//OnlineLocalDatabaseSynchronization olds = new OnlineLocalDatabaseSynchronization(activity);
 						db.close();
 						
 						// Proximity added in Synchronization

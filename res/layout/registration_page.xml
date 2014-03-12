@@ -5,30 +5,36 @@
     android:orientation="vertical" >
 
     <!-- Username field -->
+
     <EditText
         android:id="@+id/regEdit1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dip"
+        android:ems="10"
         android:hint="@string/createuser"
-        android:ems="10" />
+        android:textSize="24sp" />
     
 	<!-- Password field -->
+
     <EditText
         android:id="@+id/regEdit2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dip"
-        android:hint="@string/createpw"
         android:ems="10"
-        android:inputType="textPassword" />
+        android:hint="@string/createpw"
+        android:inputType="textPassword"
+        android:textSize="24sp" />
 
     <!-- Register button -->
+
     <Button
         android:id="@+id/regbutton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dip"
-        android:text="@string/register" />
+        android:text="@string/register"
+        android:textSize="24sp" />
     
 </LinearLayout>

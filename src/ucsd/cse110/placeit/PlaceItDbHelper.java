@@ -7,6 +7,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -155,9 +156,92 @@ public class PlaceItDbHelper extends SQLiteOpenHelper{
 	    return null;
 	    
 	}
-	 
 	
-	// Getting EVERY SINGLE PlaceIts
+	
+	// Getting all placeit for synchronization
+		public ArrayList<PlaceIt> getAllPlaceIts() {
+			ArrayList<PlaceIt> placeItList = new ArrayList<PlaceIt>();
+		 
+			 // Select All Query
+		    String selectQuery = "SELECT  * " +
+		    					 "FROM " + TABLE_PLACEITS + " " +
+		    					 "WHERE "+ KEY_TITLE + " != \"" + null +"\"";
+		 
+		    // get a writable instance of our database 
+		    SQLiteDatabase db = this.getWritableDatabase();
+		    Cursor cursor = db.rawQuery(selectQuery, null);
+		 
+		    // looping through all rows and adding to list
+		    if (cursor.moveToFirst()) {
+		        do {
+		        	PlaceIt placeIt = new PlaceIt();
+		        	placeIt.setId(cursor.getInt(0));
+		            placeIt.setTitle(cursor.getString(1));
+		            placeIt.setStatus(cursor.getString(2));
+		            placeIt.setDescription(cursor.getString(3));
+		            placeIt.setLocation(new LatLng(cursor.getDouble(4),
+		            							   cursor.getDouble(5)));
+		            placeIt.setLocation_str(cursor.getString(6));
+		            placeIt.setSchedule( new Scheduler(cursor.getString(7), 
+		            								   cursor.getString(8),
+		            								   cursor.getString(9),
+		            								   cursor.getInt(10)));
+		            placeIt.setCategories(new String[]{cursor.getString(12),
+								            		   cursor.getString(13),
+								            		   cursor.getString(14)});
+		            // Adding placeIt to list
+		            placeItList.add(placeIt);
+		        } while (cursor.moveToNext());
+		    }
+		 
+		    // return placeIt list
+		    return placeItList;
+		}
+	
+	
+	// Getting placeit by username and status
+	public ArrayList<PlaceIt> getAllPlaceItsByUsernameAndStatus(String username, String status) {
+		ArrayList<PlaceIt> placeItList = new ArrayList<PlaceIt>();
+	 
+		 // Select All Query
+	    String selectQuery = "SELECT  * " +
+	    					 "FROM " + TABLE_PLACEITS + " " +
+	    					 "WHERE "+ KEY_USER + " = \"" + username +"\"" +
+	    					 " AND "  + KEY_STATUS + "= \"" + status +"\"";
+	 
+	    // get a writable instance of our database 
+	    SQLiteDatabase db = this.getWritableDatabase();
+	    Cursor cursor = db.rawQuery(selectQuery, null);
+	 
+	    // looping through all rows and adding to list
+	    if (cursor.moveToFirst()) {
+	        do {
+	        	PlaceIt placeIt = new PlaceIt();
+	        	placeIt.setId(cursor.getInt(0));
+	            placeIt.setTitle(cursor.getString(1));
+	            placeIt.setStatus(cursor.getString(2));
+	            placeIt.setDescription(cursor.getString(3));
+	            placeIt.setLocation(new LatLng(cursor.getDouble(4),
+	            							   cursor.getDouble(5)));
+	            placeIt.setLocation_str(cursor.getString(6));
+	            placeIt.setSchedule( new Scheduler(cursor.getString(7), 
+	            								   cursor.getString(8),
+	            								   cursor.getString(9),
+	            								   cursor.getInt(10)));
+	            placeIt.setCategories(new String[]{cursor.getString(12),
+							            		   cursor.getString(13),
+							            		   cursor.getString(14)});
+	            // Adding placeIt to list
+	            placeItList.add(placeIt);
+	        } while (cursor.moveToNext());
+	    }
+	 
+	    // return placeIt list
+	    return placeItList;
+	}
+	
+	
+	// Getting PlaceIts by username
 	public ArrayList<PlaceIt> getAllPlaceItsByUsername(String username) {
 		ArrayList<PlaceIt> placeItList = new ArrayList<PlaceIt>();
 	 
@@ -237,47 +321,46 @@ public class PlaceItDbHelper extends SQLiteOpenHelper{
 	    return placeItList;
 	}
 	
-	
-		// Getting Category PlaceIts 
-		public ArrayList<PlaceIt> getCategoryPlaceIts(String username) {
-			ArrayList<PlaceIt> placeItList = new ArrayList<PlaceIt>();
-		    // Select All Query
-		    String selectQuery = "SELECT  * " +
-		    					 "FROM " + TABLE_PLACEITS + " " +
-		    					 "WHERE "+ KEY_USER + " = \"" + username +"\" " +
-		    					 "AND " + KEY_CAT1 + " <> \"\"";
-		    					 
-		 
-		    // get a writable instance of our database 
-		    SQLiteDatabase db = this.getWritableDatabase();
-		    Cursor cursor = db.rawQuery(selectQuery, null);
-		 
-		    // looping through all rows and adding to list
-		    if (cursor.moveToFirst()) {
-		        do {
-		        	PlaceIt placeIt = new PlaceIt();
-		        	placeIt.setId(cursor.getInt(0));
-		            placeIt.setTitle(cursor.getString(1));
-		            placeIt.setStatus(cursor.getString(2));
-		            placeIt.setDescription(cursor.getString(3));
-		            placeIt.setLocation(new LatLng(cursor.getDouble(4),
-		            							   cursor.getDouble(5)));
-		            placeIt.setLocation_str(cursor.getString(6));
-		            placeIt.setSchedule( new Scheduler(cursor.getString(7), 
-		            								   cursor.getString(8),
-		            								   cursor.getString(9),
-		            								   cursor.getInt(10)));
-		            placeIt.setCategories(new String[]{cursor.getString(12),
-								            		   cursor.getString(13),
-								            		   cursor.getString(14)});
-		            // Adding placeIt to list
-		            placeItList.add(placeIt);
-		        } while (cursor.moveToNext());
-		    }
-		 
-		    // return placeIt list
-		    return placeItList;
-		}
+	// Getting Category PlaceIts 
+	public ArrayList<PlaceIt> getCategoryPlaceIts(String username) {
+		ArrayList<PlaceIt> placeItList = new ArrayList<PlaceIt>();
+	    // Select All Query
+	    String selectQuery = "SELECT  * " +
+	    					 "FROM " + TABLE_PLACEITS + " " +
+	    					 "WHERE "+ KEY_USER + " = \"" + username +"\" " +
+	    					 "AND " + KEY_CAT1 + " <> \"\"";
+	    					 
+	 
+	    // get a writable instance of our database 
+	    SQLiteDatabase db = this.getWritableDatabase();
+	    Cursor cursor = db.rawQuery(selectQuery, null);
+	 
+	    // looping through all rows and adding to list
+	    if (cursor.moveToFirst()) {
+	        do {
+	        	PlaceIt placeIt = new PlaceIt();
+	        	placeIt.setId(cursor.getInt(0));
+	            placeIt.setTitle(cursor.getString(1));
+	            placeIt.setStatus(cursor.getString(2));
+	            placeIt.setDescription(cursor.getString(3));
+	            placeIt.setLocation(new LatLng(cursor.getDouble(4),
+	            							   cursor.getDouble(5)));
+	            placeIt.setLocation_str(cursor.getString(6));
+	            placeIt.setSchedule( new Scheduler(cursor.getString(7), 
+	            								   cursor.getString(8),
+	            								   cursor.getString(9),
+	            								   cursor.getInt(10)));
+	            placeIt.setCategories(new String[]{cursor.getString(12),
+							            		   cursor.getString(13),
+							            		   cursor.getString(14)});
+	            // Adding placeIt to list
+	            placeItList.add(placeIt);
+	        } while (cursor.moveToNext());
+	    }
+	 
+	    // return placeIt list
+	    return placeItList;
+	}
 	
 	// Getting Schedulers based on status
 	public ArrayList<Scheduler> getAllSchedules(String status) {
@@ -365,11 +448,14 @@ public class PlaceItDbHelper extends SQLiteOpenHelper{
 	    values.put(KEY_SCHED_DOW, schedule.getScheduled_dow());			// Scheduled DOW
 	    values.put(KEY_SCHED_WEEK, schedule.getScheduled_week());		// Scheduled Week
 	    values.put(KEY_SCHED_MINUTES, schedule.getScheduled_minutes());	// Scheduled Minutes
-	    String[] categories = placeIt.getCategories();
-	    values.put(KEY_USER, placeIt.getUsername());					// Username
+	    Log.i("Debugging DB","1");
+	    String[] categories = placeIt.getCategories();  
+	    Log.i("Debugging DB","2");
 	    values.put(KEY_CAT1, categories[0]);							// Category 1
 	    values.put(KEY_CAT2, categories[1]);							// Category 2
 	    values.put(KEY_CAT3, categories[2]);							// Category 3
+	    Log.i("Debugging DB","3");
+	    values.put(KEY_USER, placeIt.getUsername());					// Username
 	    
 	    return values;
 	}

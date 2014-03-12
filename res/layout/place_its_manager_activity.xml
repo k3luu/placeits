@@ -143,6 +143,31 @@
 	        tools:ignore="HardcodedText" />
 	 </LinearLayout>
      
-     
+    <!-- category choice -->
+
+    <TextView
+        android:id="@+id/textViewForCategory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="@string/category_prompt" />
+    
+  	 <Spinner
+        android:id="@+id/cate_spinner1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:entries="@array/category_array" />
+  	 
+  	  <Spinner
+        android:id="@+id/cate_spinner2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:entries="@array/category_array" />
+  	  
+  	   <Spinner
+        android:id="@+id/cate_spinner3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:entries="@array/category_array" />
 
 </LinearLayout>

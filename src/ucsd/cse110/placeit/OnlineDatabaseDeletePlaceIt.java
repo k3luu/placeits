@@ -14,28 +14,31 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.util.Log;
 
 public class OnlineDatabaseDeletePlaceIt {
-	private Activity activity;
+	private Context context;
 	private String name;
+	private ProgressDialog dialog;
 	
-	OnlineDatabaseDeletePlaceIt(Activity myActivity, String placeItName) {
-		this.name = placeItName;
-		this.activity = myActivity;
+	OnlineDatabaseDeletePlaceIt(Context myContext, String placeItName) {
+		name = placeItName;
+		context = myContext;
 	}
 	
 	public void startRemovingPlaceIt() {
 		
-		final ProgressDialog dialog = ProgressDialog.show(activity,
+		if (context != null) {
+			dialog = ProgressDialog.show(context,
 				"Posting Data...", "Please wait...", false);
+		}
 		Thread t = new Thread() {
 
 			public void run() {
 				HttpClient client = new DefaultHttpClient();
-				HttpPost post = new HttpPost("http://cs110group30ucsd.appspot.com/product");
+				HttpPost post = new HttpPost(PlaceItUtil.ONLINEDATABASE);
 
 			    try {
 			      List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
@@ -57,11 +60,15 @@ public class OnlineDatabaseDeletePlaceIt {
 			    } catch (IOException e) {
 			    	Log.d("NONO", "IOException while trying to conect to GAE");
 			    }
-				dialog.dismiss();
+			    if (context != null) {
+			    	dialog.dismiss();
+			    }
 			}
 		};
 
 		t.start();
-		dialog.show();
+		if (context != null) {
+			dialog.show();
+		}
 	}
 }

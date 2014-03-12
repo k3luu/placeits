@@ -47,7 +47,8 @@ public class PlaceIt {
 				   String description, 
 				   LatLng location, 
 				   String location_str,
-				   Scheduler schedule) {
+				   Scheduler schedule,
+				   String[] categories) {
 		
 		this.title = title;
 		this.status = status;
@@ -55,9 +56,11 @@ public class PlaceIt {
 		this.location = location;
 		this.location_str = location_str;
 		this.schedule = schedule;
+		this.categories = categories;
 		this.username = PlaceItUtil.USERNAME;
-
 	}
+	
+	
 	
 	// for Database constructor
 	public PlaceIt(int id, 
