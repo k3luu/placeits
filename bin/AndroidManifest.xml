@@ -45,7 +45,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="ucsd.cse110.placeit.MapActivity" >
+        <activity 
+            android:name="ucsd.cse110.placeit.MapActivity"
+            android:windowSoftInputMode="stateHidden|adjustResize" >
         </activity>
 
         <!-- Added Activity -->

@@ -159,49 +159,24 @@ public class PlaceItDbHelper extends SQLiteOpenHelper{
 	
 	
 	// Getting all placeit for synchronization
-		public ArrayList<PlaceIt> getAllPlaceIts() {
-			ArrayList<PlaceIt> placeItList = new ArrayList<PlaceIt>();
-		 
-			 // Select All Query
-		    String selectQuery = "SELECT  * " +
-		    					 "FROM " + TABLE_PLACEITS + " " +
-		    					 "WHERE "+ KEY_TITLE + " != \"" + null +"\"";
-		 
-		    // get a writable instance of our database 
-		    SQLiteDatabase db = this.getWritableDatabase();
-		    Cursor cursor = db.rawQuery(selectQuery, null);
-		 
-		    // looping through all rows and adding to list
-		    if (cursor.moveToFirst()) {
-		        do {
-		        	PlaceIt placeIt = new PlaceIt();
-		        	placeIt.setId(cursor.getInt(0));
-		            placeIt.setTitle(cursor.getString(1));
-		            placeIt.setStatus(cursor.getString(2));
-		            placeIt.setDescription(cursor.getString(3));
-		            placeIt.setLocation(new LatLng(cursor.getDouble(4),
-		            							   cursor.getDouble(5)));
-		            placeIt.setLocation_str(cursor.getString(6));
-		            placeIt.setSchedule( new Scheduler(cursor.getString(7), 
-		            								   cursor.getString(8),
-		            								   cursor.getString(9),
-		            								   cursor.getInt(10)));
-		            placeIt.setCategories(new String[]{cursor.getString(12),
-								            		   cursor.getString(13),
-								            		   cursor.getString(14)});
-		            // Adding placeIt to list
-		            placeItList.add(placeIt);
-		        } while (cursor.moveToNext());
-		    }
-		 
-		    // return placeIt list
-		    return placeItList;
-		}
+	public ArrayList<PlaceIt> getAllPlaceIts() {
+	 
+		 // Select All Query
+	    String selectQuery = "SELECT  * " +
+	    					 "FROM " + TABLE_PLACEITS + " " +
+	    					 "WHERE "+ KEY_TITLE + " != \"" + null +"\"";
+	 
+	    // get a writable instance of our database 
+	    SQLiteDatabase db = this.getWritableDatabase();
+	    Cursor cursor = db.rawQuery(selectQuery, null);
+	 
+	    // return placeIt list
+	    return getPlaceItList(cursor);
+	}
 	
 	
 	// Getting placeit by username and status
 	public ArrayList<PlaceIt> getAllPlaceItsByUsernameAndStatus(String username, String status) {
-		ArrayList<PlaceIt> placeItList = new ArrayList<PlaceIt>();
 	 
 		 // Select All Query
 	    String selectQuery = "SELECT  * " +
@@ -213,37 +188,13 @@ public class PlaceItDbHelper extends SQLiteOpenHelper{
 	    SQLiteDatabase db = this.getWritableDatabase();
 	    Cursor cursor = db.rawQuery(selectQuery, null);
 	 
-	    // looping through all rows and adding to list
-	    if (cursor.moveToFirst()) {
-	        do {
-	        	PlaceIt placeIt = new PlaceIt();
-	        	placeIt.setId(cursor.getInt(0));
-	            placeIt.setTitle(cursor.getString(1));
-	            placeIt.setStatus(cursor.getString(2));
-	            placeIt.setDescription(cursor.getString(3));
-	            placeIt.setLocation(new LatLng(cursor.getDouble(4),
-	            							   cursor.getDouble(5)));
-	            placeIt.setLocation_str(cursor.getString(6));
-	            placeIt.setSchedule( new Scheduler(cursor.getString(7), 
-	            								   cursor.getString(8),
-	            								   cursor.getString(9),
-	            								   cursor.getInt(10)));
-	            placeIt.setCategories(new String[]{cursor.getString(12),
-							            		   cursor.getString(13),
-							            		   cursor.getString(14)});
-	            // Adding placeIt to list
-	            placeItList.add(placeIt);
-	        } while (cursor.moveToNext());
-	    }
-	 
 	    // return placeIt list
-	    return placeItList;
+	    return getPlaceItList(cursor);
 	}
 	
 	
 	// Getting PlaceIts by username
 	public ArrayList<PlaceIt> getAllPlaceItsByUsername(String username) {
-		ArrayList<PlaceIt> placeItList = new ArrayList<PlaceIt>();
 	 
 		 // Select All Query
 	    String selectQuery = "SELECT  * " +
@@ -254,37 +205,13 @@ public class PlaceItDbHelper extends SQLiteOpenHelper{
 	    SQLiteDatabase db = this.getWritableDatabase();
 	    Cursor cursor = db.rawQuery(selectQuery, null);
 	 
-	    // looping through all rows and adding to list
-	    if (cursor.moveToFirst()) {
-	        do {
-	        	PlaceIt placeIt = new PlaceIt();
-	        	placeIt.setId(cursor.getInt(0));
-	            placeIt.setTitle(cursor.getString(1));
-	            placeIt.setStatus(cursor.getString(2));
-	            placeIt.setDescription(cursor.getString(3));
-	            placeIt.setLocation(new LatLng(cursor.getDouble(4),
-	            							   cursor.getDouble(5)));
-	            placeIt.setLocation_str(cursor.getString(6));
-	            placeIt.setSchedule( new Scheduler(cursor.getString(7), 
-	            								   cursor.getString(8),
-	            								   cursor.getString(9),
-	            								   cursor.getInt(10)));
-	            placeIt.setCategories(new String[]{cursor.getString(12),
-							            		   cursor.getString(13),
-							            		   cursor.getString(14)});
-	            // Adding placeIt to list
-	            placeItList.add(placeIt);
-	        } while (cursor.moveToNext());
-	    }
-	 
 	    // return placeIt list
-	    return placeItList;
+	    return getPlaceItList(cursor);
 	}
 	
 	
 	// Getting PlaceIts based on status
 	public ArrayList<PlaceIt> getAllPlaceIts(String placeIt_status) {
-		ArrayList<PlaceIt> placeItList = new ArrayList<PlaceIt>();
 	    // Select All Query
 	    String selectQuery = "SELECT  * " +
 	    					 "FROM " + TABLE_PLACEITS + " " +
@@ -294,37 +221,14 @@ public class PlaceItDbHelper extends SQLiteOpenHelper{
 	    SQLiteDatabase db = this.getWritableDatabase();
 	    Cursor cursor = db.rawQuery(selectQuery, null);
 	 
-	    // looping through all rows and adding to list
-	    if (cursor.moveToFirst()) {
-	        do {
-	        	PlaceIt placeIt = new PlaceIt();
-	        	placeIt.setId(cursor.getInt(0));
-	            placeIt.setTitle(cursor.getString(1));
-	            placeIt.setStatus(cursor.getString(2));
-	            placeIt.setDescription(cursor.getString(3));
-	            placeIt.setLocation(new LatLng(cursor.getDouble(4),
-	            							   cursor.getDouble(5)));
-	            placeIt.setLocation_str(cursor.getString(6));
-	            placeIt.setSchedule( new Scheduler(cursor.getString(7), 
-	            								   cursor.getString(8),
-	            								   cursor.getString(9),
-	            								   cursor.getInt(10)));
-	            placeIt.setCategories(new String[]{cursor.getString(12),
-							            		   cursor.getString(13),
-							            		   cursor.getString(14)});
-	            // Adding placeIt to list
-	            placeItList.add(placeIt);
-	        } while (cursor.moveToNext());
-	    }
-	 
 	    // return placeIt list
-	    return placeItList;
+	    return getPlaceItList(cursor);
 	}
 	
 	// Getting Category PlaceIts 
 	public ArrayList<PlaceIt> getCategoryPlaceIts(String username) {
-		ArrayList<PlaceIt> placeItList = new ArrayList<PlaceIt>();
-	    // Select All Query
+		
+	    // Select Categories Query
 	    String selectQuery = "SELECT  * " +
 	    					 "FROM " + TABLE_PLACEITS + " " +
 	    					 "WHERE "+ KEY_USER + " = \"" + username +"\" " +
@@ -336,31 +240,8 @@ public class PlaceItDbHelper extends SQLiteOpenHelper{
 	    SQLiteDatabase db = this.getWritableDatabase();
 	    Cursor cursor = db.rawQuery(selectQuery, null);
 	 
-	    // looping through all rows and adding to list
-	    if (cursor.moveToFirst()) {
-	        do {
-	        	PlaceIt placeIt = new PlaceIt();
-	        	placeIt.setId(cursor.getInt(0));
-	            placeIt.setTitle(cursor.getString(1));
-	            placeIt.setStatus(cursor.getString(2));
-	            placeIt.setDescription(cursor.getString(3));
-	            placeIt.setLocation(new LatLng(cursor.getDouble(4),
-	            							   cursor.getDouble(5)));
-	            placeIt.setLocation_str(cursor.getString(6));
-	            placeIt.setSchedule( new Scheduler(cursor.getString(7), 
-	            								   cursor.getString(8),
-	            								   cursor.getString(9),
-	            								   cursor.getInt(10)));
-	            placeIt.setCategories(new String[]{cursor.getString(12),
-							            		   cursor.getString(13),
-							            		   cursor.getString(14)});
-	            // Adding placeIt to list
-	            placeItList.add(placeIt);
-	        } while (cursor.moveToNext());
-	    }
-	 
 	    // return placeIt list
-	    return placeItList;
+	    return getPlaceItList(cursor);
 	}
 	
 	// Getting Schedulers based on status
@@ -461,4 +342,31 @@ public class PlaceItDbHelper extends SQLiteOpenHelper{
 	    return values;
 	}
 	
+	// returns an ArrayList of PlaceIts from a given Cursor
+	private ArrayList<PlaceIt> getPlaceItList (Cursor cursor) {
+		ArrayList<PlaceIt> placeItList = new ArrayList<PlaceIt>();
+		if (cursor.moveToFirst()) {
+	        do {
+	        	PlaceIt placeIt = new PlaceIt();
+	        	placeIt.setId(cursor.getInt(0));
+	            placeIt.setTitle(cursor.getString(1));
+	            placeIt.setStatus(cursor.getString(2));
+	            placeIt.setDescription(cursor.getString(3));
+	            placeIt.setLocation(new LatLng(cursor.getDouble(4),
+	            							   cursor.getDouble(5)));
+	            placeIt.setLocation_str(cursor.getString(6));
+	            placeIt.setSchedule( new Scheduler(cursor.getString(7), 
+	            								   cursor.getString(8),
+	            								   cursor.getString(9),
+	            								   cursor.getInt(10)));
+	            placeIt.setCategories(new String[]{cursor.getString(12),
+							            		   cursor.getString(13),
+							            		   cursor.getString(14)});
+	            // Adding placeIt to list
+	            placeItList.add(placeIt);
+	        } while (cursor.moveToNext());
+	    }
+		return placeItList;
+		
+	}
 }

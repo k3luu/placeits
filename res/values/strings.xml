@@ -16,6 +16,7 @@
     <!-- Weijie Hu and Zhengde Zhen Added -->
     <string name="menu_map">Map</string>
     <string name="menu_list">List</string>
+    <string name="menu_add_category">Add Category</string>
     <string name="menu_create">Create</string>
     <string name="title_section1">Pending</string>
     <string name="title_section2">Completed</string>

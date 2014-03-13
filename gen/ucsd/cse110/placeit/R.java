@@ -247,11 +247,12 @@ containing a value of this type.
     public static final class id {
         public static final int RelativeLayout1=0x7f05000c;
         public static final int action_settings=0x7f05002a;
+        public static final int add_category_btn=0x7f05002d;
         public static final int cate_spinner1=0x7f05001c;
         public static final int cate_spinner2=0x7f05001d;
         public static final int cate_spinner3=0x7f05001e;
-        public static final int database_add_edit=0x7f05002d;
-        public static final int datebase_cancel=0x7f05002e;
+        public static final int database_add_edit=0x7f05002e;
+        public static final int datebase_cancel=0x7f05002f;
         public static final int day_spinner=0x7f050014;
         public static final int delete_button=0x7f050009;
         public static final int description=0x7f050006;
@@ -339,7 +340,7 @@ containing a value of this type.
         [CHAR LIMIT=70] 
          */
         public static final int auth_client_using_bad_version_title=0x7f060014;
-        public static final int category_prompt=0x7f060042;
+        public static final int category_prompt=0x7f060043;
         /**  Button in confirmation dialog to enable Google Play services.  Clicking it
         will direct user to application settings of Google Play services where they
         can enable it [CHAR LIMIT=40] 
@@ -411,58 +412,59 @@ containing a value of this type.
         /**  Long form sign-in button text [CHAR LIMIT=30] 
          */
         public static final int common_signin_button_text_long=0x7f060013;
-        public static final int createpw=0x7f06003a;
+        public static final int createpw=0x7f06003b;
         /**  Strings for Login/Registration 
          */
-        public static final int createuser=0x7f060039;
-        public static final int delete_btn=0x7f060034;
-        public static final int description=0x7f060037;
-        public static final int description_hint=0x7f06002f;
+        public static final int createuser=0x7f06003a;
+        public static final int delete_btn=0x7f060035;
+        public static final int description=0x7f060038;
+        public static final int description_hint=0x7f060030;
         public static final int enter_description=0x7f060023;
         public static final int enter_location=0x7f060024;
         public static final int enter_title=0x7f060022;
         public static final int hello_world=0x7f06001c;
-        public static final int icon_gap=0x7f060031;
-        public static final int location=0x7f060036;
-        public static final int location_hint=0x7f060030;
-        public static final int login=0x7f06003e;
-        public static final int login_page_title=0x7f060043;
-        public static final int menu_create=0x7f060027;
+        public static final int icon_gap=0x7f060032;
+        public static final int location=0x7f060037;
+        public static final int location_hint=0x7f060031;
+        public static final int login=0x7f06003f;
+        public static final int login_page_title=0x7f060044;
+        public static final int menu_add_category=0x7f060027;
+        public static final int menu_create=0x7f060028;
         public static final int menu_list=0x7f060026;
         /**  Weijie Hu and Zhengde Zhen Added 
          */
         public static final int menu_map=0x7f060025;
         public static final int move_the_camera=0x7f06001f;
         public static final int placeIt_details=0x7f06001d;
-        public static final int place_it_manager_menu_add=0x7f06002b;
-        public static final int place_it_manager_menu_cancel=0x7f06002c;
-        public static final int pw=0x7f06003d;
-        public static final int register=0x7f06003b;
-        public static final int schedule=0x7f060035;
+        public static final int place_it_manager_menu_add=0x7f06002c;
+        public static final int place_it_manager_menu_cancel=0x7f06002d;
+        public static final int pw=0x7f06003e;
+        public static final int register=0x7f06003c;
+        public static final int schedule=0x7f060036;
         /**  For repeated events 
          */
-        public static final int scheduling_choices=0x7f060041;
-        public static final int search_location=0x7f060032;
+        public static final int scheduling_choices=0x7f060042;
+        public static final int search_location=0x7f060033;
         public static final int str_btn_find=0x7f060021;
         public static final int tap_instructions=0x7f06001e;
-        public static final int title=0x7f060038;
-        public static final int title_activity_details=0x7f060033;
+        public static final int title=0x7f060039;
+        public static final int title_activity_details=0x7f060034;
         public static final int title_activity_place_it_form=0x7f060020;
-        public static final int title_activity_place_its_category_form=0x7f060044;
-        public static final int title_data_manager=0x7f06002d;
-        public static final int title_hint=0x7f06002e;
+        public static final int title_activity_place_its_category_form=0x7f060045;
+        public static final int title_data_manager=0x7f06002e;
+        public static final int title_hint=0x7f06002f;
         /**  Ctring name="title_section3">Expired</string> 
          */
-        public static final int title_list_view_activity=0x7f06002a;
-        public static final int title_section1=0x7f060028;
-        public static final int title_section2=0x7f060029;
-        public static final int username=0x7f06003c;
+        public static final int title_list_view_activity=0x7f06002b;
+        public static final int title_section1=0x7f060029;
+        public static final int title_section2=0x7f06002a;
+        public static final int username=0x7f06003d;
         /**  For day of week selection 
          */
-        public static final int week_day=0x7f06003f;
+        public static final int week_day=0x7f060040;
         /**  For repeated events 
          */
-        public static final int week_interval=0x7f060040;
+        public static final int week_interval=0x7f060041;
     }
     public static final class style {
         /** 

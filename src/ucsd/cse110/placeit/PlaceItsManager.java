@@ -220,14 +220,14 @@ ActionBar.TabListener, OnItemSelectedListener {
     				// 1. remove online -- 2. add the most  -- 3. Synchronization
     				OnlineDatabaseAddPlaceIt odba = new OnlineDatabaseAddPlaceIt (this, placeIt);
     				odba.startAddingPlaceIt();
-    				OnlineLocalDatabaseSynchronization olds = new OnlineLocalDatabaseSynchronization(this);
+    				new OnlineLocalDatabaseSynchronization(this);
     			}
     			else {
     				//placeItId = db.addPlaceIt(placeIt);
     				OnlineDatabaseAddPlaceIt odap = new OnlineDatabaseAddPlaceIt(this, placeIt);
     				odap.startAddingPlaceIt();
     				//instead of updating local database, add placeit to online database first, then overwrite local.
-    				OnlineLocalDatabaseSynchronization olds = new OnlineLocalDatabaseSynchronization(this);
+    				new OnlineLocalDatabaseSynchronization(this);
     			}
     			
     		

@@ -32,14 +32,14 @@ public class PlaceIt {
 	}
 	
 	// Minimal constructor
-	public PlaceIt(String title, String status, LatLng location, String location_str) {
-		
-		this.title = title;
-		this.status = status;
-		this.location = location;
-		this.location_str = location_str;
-		this.username = PlaceItUtil.USERNAME;
-	}
+//	public PlaceIt(String title, String status, LatLng location, String location_str) {
+//		
+//		this.title = title;
+//		this.status = status;
+//		this.location = location;
+//		this.location_str = location_str;
+//		this.username = PlaceItUtil.USERNAME;
+//	}
 	
 	// Minimal + description if exist constructor
 	public PlaceIt(String title, 

@@ -43,8 +43,7 @@ public class PlaceItIntentReceiever extends BroadcastReceiver {
 			// 1. remove online -- 2. add the most  -- 3. Synchronization
 			OnlineDatabaseAddPlaceIt odba = new OnlineDatabaseAddPlaceIt (null, placeIt);
 			odba.startAddingPlaceIt();
-			OnlineLocalDatabaseSynchronization olds = new OnlineLocalDatabaseSynchronization(context);	
-			
+			new OnlineLocalDatabaseSynchronization(context);	
 			
 			db.close();
 			

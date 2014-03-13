@@ -17,6 +17,12 @@
         android:orderInCategory="2"
         android:showAsAction="always"
         />
+    
+    <item android:id="@+id/add_category_btn"
+        android:title="@string/menu_add_category"
+        android:orderInCategory="2"
+        android:showAsAction="always"
+        />
         
 
 </menu>

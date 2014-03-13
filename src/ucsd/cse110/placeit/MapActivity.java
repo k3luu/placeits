@@ -105,7 +105,6 @@ public class MapActivity extends FragmentActivity implements
 				32.8804, -117.242), calculateZoomLevel(width)));
 		
 		//track users location to check for categories
-		Log.i("Loctation Changed", "About to be started");
 		this.startService(new Intent(this, LocationTrackerService.class));
 	}
 
@@ -126,7 +125,12 @@ public class MapActivity extends FragmentActivity implements
 			Intent intent1 = new Intent(this, ListActivity.class);
 			startActivity(intent1);
 			return true;
-		} else {
+		} else if (item.getItemId() == R.id.add_category_btn) {
+			Intent intent1 = new Intent(this, PlaceItsCategoryForm.class);
+			startActivity(intent1);
+			return true;
+		}
+		else {
 			return super.onOptionsItemSelected(item);
 		}
 	}
