@@ -328,7 +328,8 @@ public class PlaceItDbHelper extends SQLiteOpenHelper{
 	    String selectQuery = "SELECT  * " +
 	    					 "FROM " + TABLE_PLACEITS + " " +
 	    					 "WHERE "+ KEY_USER + " = \"" + username +"\" " +
-	    					 "AND " + KEY_CAT1 + " <> \"\"";
+	    					 "AND " + KEY_CAT1 + " <> \"\" " + 
+	    					 "AND " + KEY_STATUS + " = \"" + PlaceItUtil.ACTIVE +"\"";
 	    					 
 	 
 	    // get a writable instance of our database 

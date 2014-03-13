@@ -36,7 +36,7 @@
         android:uiOptions="splitActionBarWhenNarrow" >
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyCBAwleCbWnHyln9ec1eSVqCnSt-wFmLR4" />
+            android:value="AIzaSyC1--iQtHqIz-L-Ffi7NEBcEkS5i9oUmzs" />
 
         <activity
             android:name="ucsd.cse110.placeit.LoginActivity"
@@ -83,11 +83,14 @@
         <!-- Scheduling Receiver -->
         <receiver android:name="ucsd.cse110.placeit.AlarmReceiver"></receiver>
         
-        <!-- Service PlaceIt -->
+        <!-- Service Boot -->
         <service android:enabled="true" android:name=".BootService" />
         
-        <!-- Service PlaceIt -->
+        <!-- Service Alarm -->
         <service android:enabled="true" android:name=".AlarmService" />
+        
+        <!-- Service Category -->
+        <service android:enabled="true" android:name=".LocationTrackerService" />
         
         <!-- Boot Receiver -->
         <receiver android:name="ucsd.cse110.placeit.BootReceiver">

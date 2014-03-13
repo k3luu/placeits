@@ -104,6 +104,9 @@ public class MapActivity extends FragmentActivity implements
 		mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(
 				32.8804, -117.242), calculateZoomLevel(width)));
 		
+		//track users location to check for categories
+		Log.i("Loctation Changed", "About to be started");
+		this.startService(new Intent(this, LocationTrackerService.class));
 	}
 
 	public boolean onCreateOptionsMenu(Menu menu) {
