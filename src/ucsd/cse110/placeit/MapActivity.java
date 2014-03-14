@@ -120,8 +120,12 @@ public class MapActivity extends FragmentActivity implements
 
 		// Menu buttons click to associated activity
 
-		if (item.getItemId() == R.id.list_view_btn) {
-
+		if (item.getItemId() == R.id.map_view_btn) {
+			Intent intent1 = new Intent(this, MapActivity.class);
+			startActivity(intent1);
+			return true;
+		}
+		else if (item.getItemId() == R.id.list_view_btn) {
 			Intent intent1 = new Intent(this, ListActivity.class);
 			startActivity(intent1);
 			return true;

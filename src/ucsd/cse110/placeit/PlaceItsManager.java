@@ -42,12 +42,6 @@ ActionBar.TabListener, OnItemSelectedListener {
 	private String description;
 	private ProximityAlertManager paManager;
 	
-	// category field
-	private Spinner cateSpinner_1;
-	private Spinner cateSpinner_2;
-	private Spinner cateSpinner_3;
-	private String categories[] = {"", "", ""};
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -78,7 +72,6 @@ ActionBar.TabListener, OnItemSelectedListener {
 			originalTitle = title;
 			description = placeIt.getDescription();
 			location = placeIt.getLocation();
-			categories = placeIt.getCategories();
 		}
 	}
 
@@ -100,10 +93,6 @@ ActionBar.TabListener, OnItemSelectedListener {
 		
 		Spinner spinner = (Spinner) findViewById(R.id.scheduling_option_spinner);
 		spinner.setOnItemSelectedListener(this);
-		
-		cateSpinner_1 = (Spinner) findViewById(R.id.cate_spinner1);
-		cateSpinner_2 = (Spinner) findViewById(R.id.cate_spinner2);
-		cateSpinner_3 = (Spinner) findViewById(R.id.cate_spinner3);
 		
 		try {
 			editView.setText((new GetAddressTask(this)).execute(location).get());
@@ -143,14 +132,6 @@ ActionBar.TabListener, OnItemSelectedListener {
     		Spinner week_interval_field = (Spinner) findViewById(R.id.week_spinner);
     		EditText minutes_field = (EditText) findViewById(R.id.minute_field);
     		
-    		cateSpinner_1 = (Spinner) findViewById(R.id.cate_spinner1);
-    		cateSpinner_2 = (Spinner) findViewById(R.id.cate_spinner2);
-    		cateSpinner_3 = (Spinner) findViewById(R.id.cate_spinner3);
-    		
-    		categories[0] = String.valueOf (cateSpinner_1.getSelectedItem());
-    		categories[1] = String.valueOf (cateSpinner_2.getSelectedItem());
-    		categories[2] = String.valueOf (cateSpinner_3.getSelectedItem());
-    		
     		String schedulingOption = String.valueOf(scheduling_field.getSelectedItem());
     		String scheduleDOW = String.valueOf(day_field.getSelectedItem());
     		String scheduleWeekInterval = String.valueOf(week_interval_field.getSelectedItem());
@@ -177,21 +158,15 @@ ActionBar.TabListener, OnItemSelectedListener {
 				placeIt.setLocation(location);
 				placeIt.setLocation_str(location_str);
 				placeIt.setSchedule(schedule);
+				placeIt.setLocation_str(location_str);
 				
-				if(categories[0]=="" || categories[1]=="" || categories[2]==""){
-					placeIt.setLocation_str(location_str);
-				}
-				else {
-					placeIt.setLocation_str("");
-					placeIt.setCategories(categories);
-				}
+				String cate[] = {"","",""};
+				placeIt.setCategories(cate);
 			}
-    		else if (categories[0]=="" || categories[1]=="" || categories[2]==""){
-    			placeIt = new PlaceIt(title, PlaceItUtil.ACTIVE, description, location, location_str, schedule, categories);
-    		}
 			else {
 				// create a new PlaceIt
-	    		placeIt = new PlaceIt(title, PlaceItUtil.ACTIVE, description, location, location_str, schedule, categories);
+				String cate[] = {"","",""};
+	    		placeIt = new PlaceIt(title, PlaceItUtil.ACTIVE, description, location, location_str, schedule, cate);
 			}
     		
     		Log.i("manager checker", "1");

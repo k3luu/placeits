@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.json.JSONObject;
+
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.content.Intent;
@@ -13,6 +15,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -102,7 +105,12 @@ public class ListActivity extends FragmentActivity implements
 			intent2.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			startActivity(intent2);
 			return true;
-		} else {
+		} else if (item.getItemId() == R.id.add_category_btn) {
+			Intent intent1 = new Intent(this, PlaceItsCategoryForm.class);
+			startActivity(intent1);
+			return true;
+		}
+		else {
 			return super.onOptionsItemSelected(item);
 		}
 	}

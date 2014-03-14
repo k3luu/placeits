@@ -33,7 +33,7 @@
         android:uiOptions="splitActionBarWhenNarrow" >
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyC1--iQtHqIz-L-Ffi7NEBcEkS5i9oUmzs" />
+            android:value="AIzaSyCBAwleCbWnHyln9ec1eSVqCnSt-wFmLR4" />
 
         <activity
             android:name="ucsd.cse110.placeit.LoginActivity"

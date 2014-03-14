@@ -23,7 +23,7 @@ public class OnlineDatabaseDeletePlaceIt {
 	private String name;
 	private ProgressDialog dialog;
 	
-	OnlineDatabaseDeletePlaceIt(Context myContext, String placeItName) {
+	public OnlineDatabaseDeletePlaceIt(Context myContext, String placeItName) {
 		name = placeItName;
 		context = myContext;
 	}

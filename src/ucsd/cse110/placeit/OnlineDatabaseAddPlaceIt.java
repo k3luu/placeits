@@ -14,8 +14,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
-
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.util.Log;
@@ -26,7 +24,7 @@ public class OnlineDatabaseAddPlaceIt {
 	private PlaceIt placeIt;
 	private ProgressDialog dialog;
 	
-	OnlineDatabaseAddPlaceIt(Context myContext, PlaceIt pl) {
+	public OnlineDatabaseAddPlaceIt(Context myContext, PlaceIt pl) {
 		context = myContext;
 		placeIt = pl;
 	}
@@ -52,12 +50,22 @@ public class OnlineDatabaseAddPlaceIt {
 			    		  place.getStatus().toString()));
 			      nameValuePairs.add(new BasicNameValuePair("placeItDescription",
 			    		  place.getDescription().toString()));
-			      nameValuePairs.add(new BasicNameValuePair("placeItLatitude",
-			    		  ""+place.getLocation().latitude));
-			      nameValuePairs.add(new BasicNameValuePair("placeItLongitude",
-			    		  ""+place.getLocation().longitude));
-			      nameValuePairs.add(new BasicNameValuePair("placeItLocationString",
-			    		  place.getLocation_str().toString()));
+			      if (place.getLocation() == null) {
+			    	  nameValuePairs.add(new BasicNameValuePair("placeItLatitude",
+				    		  ""));
+				      nameValuePairs.add(new BasicNameValuePair("placeItLongitude",
+				    		  ""));
+				      nameValuePairs.add(new BasicNameValuePair("placeItLocationString",
+				    		  ""));
+			      }
+			      else {
+			    	  nameValuePairs.add(new BasicNameValuePair("placeItLatitude",
+				    		  ""+place.getLocation().latitude));
+				      nameValuePairs.add(new BasicNameValuePair("placeItLongitude",
+				    		  ""+place.getLocation().longitude));
+				      nameValuePairs.add(new BasicNameValuePair("placeItLocationString",
+				    		  place.getLocation_str().toString()));
+			      }
 			      nameValuePairs.add(new BasicNameValuePair("placeItScheduledOption",
 			    		  place.getSchedule().getScheduled_option().toString()));
 			      

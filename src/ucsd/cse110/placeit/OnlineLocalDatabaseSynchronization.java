@@ -22,7 +22,7 @@ public class OnlineLocalDatabaseSynchronization implements AsyncResponse{
 	private Context context;
 	private ProximityAlertManager paManager;
 	
-	OnlineLocalDatabaseSynchronization(Context myContext) {
+	public OnlineLocalDatabaseSynchronization(Context myContext) {
 		context = myContext;
 		localDatabase = new PlaceItDbHelper(myContext);
 		asyncTask.delegate = this;

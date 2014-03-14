@@ -330,13 +330,10 @@ public class PlaceItDbHelper extends SQLiteOpenHelper{
 	    values.put(KEY_SCHED_DOW, schedule.getScheduled_dow());			// Scheduled DOW
 	    values.put(KEY_SCHED_WEEK, schedule.getScheduled_week());		// Scheduled Week
 	    values.put(KEY_SCHED_MINUTES, schedule.getScheduled_minutes());	// Scheduled Minutes
-	    Log.i("Debugging DB","1");
-	    String[] categories = placeIt.getCategories();  
-	    Log.i("Debugging DB","2");
+	    String[] categories = placeIt.getCategories();
 	    values.put(KEY_CAT1, categories[0]);							// Category 1
 	    values.put(KEY_CAT2, categories[1]);							// Category 2
 	    values.put(KEY_CAT3, categories[2]);							// Category 3
-	    Log.i("Debugging DB","3");
 	    values.put(KEY_USER, placeIt.getUsername());					// Username
 	    
 	    return values;

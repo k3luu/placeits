@@ -36,6 +36,18 @@ public class PlaceItDataChecker {
 			return true;
 	}
 	
+	public Boolean checkCategoryNormal()
+	{
+		String ary[] = theData.getCategories();
+		if (theData.getTitle().toString().length() == 0 ||
+				theData.getDescription().toString().length() == 0 ||
+				(ary[0].length()==0 && ary[1].length()==0 && ary[2].length()==0)) {
+			return false;
+		}
+		else
+			return true;
+	}
+	
 	public void setData(PlaceIt data)
 	{
 		this.theData = data;

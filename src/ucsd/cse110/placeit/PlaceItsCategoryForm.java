@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +15,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import com.google.android.gms.maps.model.LatLng;
 
 /*
  * Displays the form of the PlaceIt
@@ -28,20 +29,16 @@ ActionBar.TabListener, OnItemSelectedListener {
 	 */
 	ViewPager mViewPager;
 	
-	private EditText editView;
 	private EditText editViewTitle;
 	private EditText editViewDescription;
-	private int data_id = -1;
-	private String title;
-	private String originalTitle;
-	private String description;
-	private ProximityAlertManager paManager;
 	
 	// category field
 	private Spinner cateSpinner_1;
 	private Spinner cateSpinner_2;
 	private Spinner cateSpinner_3;
 	private String categories[] = {"", "", ""};
+	
+	private PlaceIt newCategoryPlaceit;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -54,18 +51,9 @@ ActionBar.TabListener, OnItemSelectedListener {
 		// Case 1: called by search from search bar or pressOnMap [LatLng given]
 		// Case 2: called by ListView [All info]
 		// cases ended
-				
-		Intent info = getIntent();
-				
+		
 		// categories can only be created from List
-		data_id = info.getIntExtra(PlaceItUtil.PLACEIT_ID, -1);
-		PlaceItDbHelper db = new PlaceItDbHelper(this);
-		PlaceIt placeIt = db.getPlaceIt(data_id);
-
-		title = placeIt.getTitle();
-		originalTitle = title;
-		description = placeIt.getDescription();
-		categories = placeIt.getCategories();
+		
 	}
 
 	@Override
@@ -80,7 +68,7 @@ ActionBar.TabListener, OnItemSelectedListener {
 		super.onResume();
 		
 		// fills the Location with the string version passed by the map/search bar
-		editView = (EditText) findViewById(R.id.location);
+		
 		editViewTitle = (EditText) findViewById(R.id.editTextTitle);
 		editViewDescription = (EditText) findViewById(R.id.editTextDesc);
 		
@@ -90,9 +78,6 @@ ActionBar.TabListener, OnItemSelectedListener {
 		cateSpinner_1 = (Spinner) findViewById(R.id.cate_spinner1);
 		cateSpinner_2 = (Spinner) findViewById(R.id.cate_spinner2);
 		cateSpinner_3 = (Spinner) findViewById(R.id.cate_spinner3);
-		
-		editViewTitle.setText(title);
-		editViewDescription.setText(description);
 			
 	}
 	
@@ -102,13 +87,9 @@ ActionBar.TabListener, OnItemSelectedListener {
     	// the confirm button pressed
     	if ( item.getItemId() == R.id.database_add_edit ) {
     		
-    		// get an instance of our database to add
-    		PlaceItDbHelper db = new PlaceItDbHelper(this);
-    		
     		// recover the strings form the edit views
     		EditText title_field = (EditText) findViewById(R.id.editTextTitle);
     		EditText description_field = (EditText) findViewById(R.id.editTextDesc);
-    		EditText location_field = (EditText) findViewById(R.id.location);
     		
     		String title = title_field.getText().toString();
     		String description = description_field.getText().toString();
@@ -126,6 +107,10 @@ ActionBar.TabListener, OnItemSelectedListener {
     		categories[0] = String.valueOf (cateSpinner_1.getSelectedItem());
     		categories[1] = String.valueOf (cateSpinner_2.getSelectedItem());
     		categories[2] = String.valueOf (cateSpinner_3.getSelectedItem());
+ 
+    		if (categories[0].length() == 0) {categories[0]="";}
+    		if (categories[1].length() == 0) {categories[1]="";}
+    		if (categories[2].length() == 0) {categories[2]="";}
     		
     		String schedulingOption = String.valueOf(scheduling_field.getSelectedItem());
     		String scheduleDOW = String.valueOf(day_field.getSelectedItem());
@@ -138,94 +123,37 @@ ActionBar.TabListener, OnItemSelectedListener {
     		// let Scheduler class determine the PlaceIt's schedule
     		Scheduler schedule = new Scheduler(schedulingOption, scheduleDOW, scheduleWeekInterval, scheduleMinutes);
     		
-    		PlaceIt placeIt;
-    		// if a PlaceIt is already in the database
-    		if (data_id != PlaceItUtil.NOTSET) {
-				placeIt = db.getPlaceIt(data_id);
-				Log.i("manager checker", "11111");
-				paManager.removeProximityAlert(placeIt.getId());
-				Log.i("manager checker", "111111");
-		        placeIt.getSchedule().removeAlarm(this, placeIt.getId());
-		        Log.i("manager checker", "11111111");
-				placeIt.setStatus(PlaceItUtil.PLACEIT_ID);
-				placeIt.setTitle(title);
-				placeIt.setDescription(description);
-				placeIt.setSchedule(schedule);
-				placeIt.setCategories(categories);
-			}
-			else {
-				// create a new PlaceIt
-	    		placeIt = new PlaceIt(title, PlaceItUtil.ACTIVE, description, null, "", schedule, categories);
-			}
+    		newCategoryPlaceit = new PlaceIt(title, PlaceItUtil.ACTIVE, description, new LatLng(0.0,0.0), "", schedule, categories);
     		
-    		Log.i("manager checker", "1");
-    		PlaceItDataChecker checker = new PlaceItDataChecker(placeIt);
-    		Boolean validData = checker.checkNormal();
-    		PlaceIt ppp = placeIt;
-    		Log.i("manager checker", "2");
-    		if (data_id != PlaceItUtil.NOTSET) {
-    			if (ppp.getTitle().equals(originalTitle)) {
-    			}
-    			else {
-    				validData = false;
-    			}
-    		}
-    		Log.i("manager checker", "3");
+    		
+    		PlaceItDataChecker checker = new PlaceItDataChecker(newCategoryPlaceit);
+    		Boolean validData = checker.checkCategoryNormal();
+    		
     		
     		// If valid add it to the database otherwise prompt user
     		if (validData) {
-    			
-    			//long placeItId;
-    			
-    			// add the PlaceIt to our database
-    			if (data_id != PlaceItUtil.NOTSET) {
-    				//placeItId = db.updatePlaceIt(placeIt);
-    				
-    				// 1. remove online -- 2. add the most  -- 3. Synchronization
-    				OnlineDatabaseAddPlaceIt odba = new OnlineDatabaseAddPlaceIt (this, placeIt);
-    				odba.startAddingPlaceIt();
-    				OnlineLocalDatabaseSynchronization olds = new OnlineLocalDatabaseSynchronization(this);
-    			}
-    			else {
-    				//placeItId = db.addPlaceIt(placeIt);
-    				OnlineDatabaseAddPlaceIt odap = new OnlineDatabaseAddPlaceIt(this, placeIt);
-    				odap.startAddingPlaceIt();
-    				//instead of updating local database, add placeit to online database first, then overwrite local.
-    				OnlineLocalDatabaseSynchronization olds = new OnlineLocalDatabaseSynchronization(this);
-    			}
-    			
-    		
-    			
-    			// WEIJIE paManager = new ProximityAlertManager(this);
-    			// WEIJIE paManager.addProximityAlert(placeIt);
-    			
-    			// save the location to return to later on
-    			// WEIJIE SaveLastLocation action = new SaveLastLocation(location);
-    			// WEIJIE action.saveLastPlaceIt(db);
+
+    			// 1. add the most  -- 3. Synchronization
+    			OnlineDatabaseAddPlaceIt odba = new OnlineDatabaseAddPlaceIt (this, newCategoryPlaceit);
+    			odba.startAddingPlaceIt();
+    			OnlineLocalDatabaseSynchronization olds = new OnlineLocalDatabaseSynchronization(this);
     			
     			// navigate back to the list
     			Intent listIntent = new Intent(this, ListActivity.class);
         		startActivity(listIntent);
     		}
     		else {
-    			
-    			if (data_id != PlaceItUtil.NOTSET) {
-    				Toast.makeText(getApplicationContext(), "Modifying must keep same title", Toast.LENGTH_SHORT).show();
-        		}
     			Toast.makeText(getApplicationContext(), "Incomplete form", Toast.LENGTH_SHORT).show();
     		}
-    		db.close();
     		return true;
     	}
     	else if ( item.getItemId() == R.id.datebase_cancel ) {
     		
     		// When clicked, clear all the fields
-    		EditText title_field = (EditText) findViewById(R.id.editTextTitle);
-    		EditText description_field = (EditText) findViewById(R.id.editTextDesc);
-    		EditText location_field = (EditText) findViewById(R.id.location);
-    		title_field.clearComposingText();
-    		description_field.clearComposingText();
-    		location_field.clearComposingText();
+    		editViewTitle = (EditText) findViewById(R.id.editTextTitle);
+    		editViewDescription = (EditText) findViewById(R.id.editTextDesc);
+    		editViewTitle.clearComposingText();
+    		editViewDescription.clearComposingText();
     		// set toggles back to OFF position.
     		
     		// Go back to the map view
