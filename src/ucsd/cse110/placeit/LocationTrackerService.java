@@ -119,7 +119,7 @@ public class LocationTrackerService extends Service implements LocationListener 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
+		db.close();
 		return location;
 	}
 

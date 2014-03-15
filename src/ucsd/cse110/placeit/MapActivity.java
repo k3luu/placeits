@@ -83,7 +83,7 @@ public class MapActivity extends FragmentActivity implements
 		Log.i("Debugging","3");
 
 		// update local database
-		//OnlineLocalDatabaseSynchronization olds = new OnlineLocalDatabaseSynchronization(this);
+		OnlineLocalDatabaseSynchronization olds = new OnlineLocalDatabaseSynchronization(this);
 		Log.i("Debugging","4");
 
 		// add markers to the map and prximity sensors
@@ -96,9 +96,6 @@ public class MapActivity extends FragmentActivity implements
 		display.getSize(size);
 		int width = size.x;
 		Log.i("Debugging","6");
-		// PlaceIt placeTmp;
-		// initTheFirstDatabase();
-		// placeTmp = db.getAllPlaceIts("HACKER").get(0);
 
 		
 		mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(
@@ -207,6 +204,7 @@ public class MapActivity extends FragmentActivity implements
 
 			// WEIJIE paManager.addProximityAlert(placeIt);
 		}
+		db.close();
 	}
 
 	// /////////////////// OnMapLongClickListener Methods //////////////////////
@@ -252,6 +250,7 @@ public class MapActivity extends FragmentActivity implements
 			database.addPlaceIt(place);
 			database.close();
 		}
+		db.close();
 	}
 
 	private int calculateZoomLevel(int screenWidth) {

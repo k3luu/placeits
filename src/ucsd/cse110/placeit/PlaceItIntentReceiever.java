@@ -78,5 +78,6 @@ public class PlaceItIntentReceiever extends BroadcastReceiver {
 		mBuilder.setContentIntent(displayDetailsPendingIntent);
 		mBuilder.setAutoCancel(true);
 		mNotifyMgr.notify(placeIt_id, mBuilder.build());
+		Log.i("again","again");
 	}
 }

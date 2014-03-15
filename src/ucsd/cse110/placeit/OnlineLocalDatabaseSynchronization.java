@@ -66,6 +66,12 @@ public class OnlineLocalDatabaseSynchronization implements AsyncResponse{
 		
 		// Load local database
 		list = localDatabase.getAllPlaceIts();
+		paManager = new ProximityAlertManager(context);
+		for (PlaceIt ppp : list) {
+			paManager.removeProximityAlert(ppp.getId());
+			ppp.getSchedule().removeAlarm(context, ppp.getId());
+		}
+		
 		Log.i("local database", "size is "+list.size());
 		
 		int largest = 0;
@@ -121,11 +127,22 @@ public class OnlineLocalDatabaseSynchronization implements AsyncResponse{
 			place.getSchedule().setRepeatingAlarm(context, place.getId());
 		}
 		
+		
+		paManager = new ProximityAlertManager(context);
 		for (PlaceIt place:localDatabase.getAllPlaceItsByUsernameAndStatus(PlaceItUtil.USERNAME, PlaceItUtil.ACTIVE)) {
 			// set up proximity
-			paManager = new ProximityAlertManager(context);
-			paManager.addProximityAlert(place);
+			if (place.getCategories()[0].toString().length() > 0 || 
+					place.getCategories()[1].toString().length() > 0 || 
+					place.getCategories()[2].toString().length() > 0) {
+				Log.i("category string ","is "+place.getCategories()[0].toString());
+			}
+			else {
+				paManager.addProximityAlert(place);
+				Log.i("????????? ","?????????? "+place.getCategories()[0].toString());
+			}
+			
 		}
+		localDatabase.close();
 	}
 
 }
